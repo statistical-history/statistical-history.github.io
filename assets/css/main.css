@@ -95,6 +95,18 @@ button:focus-visible {
   transform: translateY(0);
 }
 
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
 .site-header {
   position: relative;
   z-index: 20;
@@ -522,6 +534,7 @@ button:focus-visible {
 }
 
 .section-heading h2,
+.grading-section h2,
 .materials-section h2,
 .questions-section h2 {
   margin: 0;
@@ -666,6 +679,137 @@ button:focus-visible {
   font-size: clamp(1.35rem, 2.5vw, 2rem);
   font-weight: 400;
   line-height: 1.3;
+}
+
+.grading-section {
+  background: var(--paper-deep);
+}
+
+.grading-section__inner {
+  width: min(100% - (2 * var(--gutter)), var(--page-width));
+  margin: 0 auto;
+  padding: var(--section-space) 0;
+}
+
+.grading-section__header {
+  display: grid;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  align-items: end;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+}
+
+.grading-section__header .section-index {
+  margin-bottom: 1rem;
+}
+
+.grading-section__header > p {
+  max-width: 510px;
+  margin: 0 0 0.5rem;
+  color: var(--ink-700);
+}
+
+.grading-table-wrap {
+  border-top: 2px solid var(--navy-900);
+}
+
+.grading-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.grading-table th,
+.grading-table td {
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.grading-table thead th {
+  color: var(--ink-500);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.grading-table thead th:first-child,
+.grading-table tbody th,
+.grading-table tfoot th {
+  width: 57%;
+  padding-right: clamp(1rem, 4vw, 4rem);
+}
+
+.grading-table thead th:last-child {
+  text-align: right;
+}
+
+.grading-table tbody th {
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 1.8vw, 1.35rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.grade-meter {
+  display: grid;
+  align-items: center;
+  gap: clamp(0.7rem, 2vw, 1.5rem);
+  grid-template-columns: minmax(70px, 1fr) 3.2rem;
+}
+
+.grade-meter strong,
+.grading-table tfoot td {
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.grade-track {
+  display: block;
+  height: 6px;
+  background: rgba(0, 26, 87, 0.11);
+}
+
+.grade-bar {
+  display: block;
+  height: 100%;
+  background: var(--blue-600);
+}
+
+.grade-bar--5 {
+  width: 16.667%;
+}
+
+.grade-bar--10 {
+  width: 33.333%;
+}
+
+.grade-bar--25 {
+  width: 83.333%;
+}
+
+.grade-bar--30 {
+  width: 100%;
+  background: var(--gold-500);
+}
+
+.grading-table tfoot th,
+.grading-table tfoot td {
+  padding-top: 1.4rem;
+  border-bottom: 0;
+  color: var(--navy-900);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .materials-section__header {
@@ -888,6 +1032,7 @@ button:focus-visible {
 
   .section-heading,
   .section-intro,
+  .grading-section__header,
   .materials-section__header,
   .questions-section__header {
     grid-template-columns: 1fr;
@@ -982,6 +1127,18 @@ button:focus-visible {
     grid-template-columns: 34px 1fr;
   }
 
+  .grading-table thead th:first-child,
+  .grading-table tbody th,
+  .grading-table tfoot th {
+    width: 60%;
+    padding-right: 1rem;
+  }
+
+  .grade-meter {
+    gap: 0.55rem;
+    grid-template-columns: minmax(38px, 1fr) 2.7rem;
+  }
+
   .status {
     width: max-content;
     margin-top: 0.3rem;
@@ -1026,6 +1183,7 @@ button:focus-visible {
 
   body,
   .hero,
+  .grading-section,
   .questions-section,
   .site-footer {
     color: #000;
