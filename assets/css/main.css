@@ -784,19 +784,19 @@ button:focus-visible {
 }
 
 .grade-bar--5 {
-  width: 16.667%;
+  width: 5%;
 }
 
 .grade-bar--10 {
-  width: 33.333%;
+  width: 10%;
 }
 
 .grade-bar--25 {
-  width: 83.333%;
+  width: 25%;
 }
 
 .grade-bar--30 {
-  width: 100%;
+  width: 30%;
   background: var(--gold-500);
 }
 
