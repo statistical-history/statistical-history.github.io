@@ -7,11 +7,23 @@ on:
 
 name: Build and deploy site
 
+# Uses GitHub's native Actions -> Pages deployment (upload-pages-artifact +
+# deploy-pages) rather than pushing to a gh-pages branch. That older approach
+# needs `contents: write` on the GITHUB_TOKEN, which this org's Actions
+# settings have locked to read-only repo-wide. `pages`/`id-token` are a
+# separate permission scope that isn't covered by that lock.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -31,9 +43,19 @@ jobs:
       - name: Render site
         uses: quarto-dev/quarto-actions/render@v2
 
-      - name: Deploy to gh-pages
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: _site
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
