@@ -1,0 +1,28 @@
+<footer class="site-footer" id="site-footer-root">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__course">STA 119FS</p>
+      <p>Statistics as a Way of Thinking:<br>History, Ideas, and Evidence</p>
+    </div>
+    <p class="site-footer__affiliation">Duke University<br>Department of Statistical Science</p>
+    <a class="back-to-top" href="#">Back to top <span aria-hidden="true">↑</span></a>
+  </div>
+</footer>
+<script>
+  // Same reasoning as site-header.html's script: this lands inside Quarto's
+  // page-columns grid (a sibling of <main> and the TOC sidebar), constrained
+  // to one grid column. Moving it to be body's last child puts it truly
+  // outside that grid, after Quarto's own footer too.
+  //
+  // Deferred to DOMContentLoaded, not run inline: at the point this script
+  // tag is parsed, appendChild would only make it "last so far" -- more of
+  // Quarto's own template (its own footer, trailing scripts) is still being
+  // parsed after this point and would land after it again. Waiting until the
+  // whole document is parsed guarantees this really ends up last.
+  document.addEventListener("DOMContentLoaded", function () {
+    var root = document.getElementById("site-footer-root");
+    if (root && document.body.lastChild !== root) {
+      document.body.appendChild(root);
+    }
+  });
+</script>

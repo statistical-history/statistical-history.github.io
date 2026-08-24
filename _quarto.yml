@@ -22,23 +22,18 @@ project:
   resources:
     - "assets/**"
 
+# No website.navbar / website.page-footer here on purpose: Quarto's own
+# navbar+footer (Bootstrap/cosmo styled) looked nothing like the hand-written
+# site's navy header and footer. format.html.include-before-body/after-body
+# below inject the SAME header/footer markup index.html and calendar.html use
+# instead, so labs/hw pages match the rest of the site. See _includes/ and
+# assets/css/site-chrome.css.
 website:
   title: "STA 119FS — Statistics as a Way of Thinking"
   site-url: "https://statistical-history.github.io"
   repo-url: "https://github.com/statistical-history/statistical-history.github.io"
   repo-actions: [edit, issue]
   page-navigation: true
-  navbar:
-    left:
-      - href: index.html
-        text: Home
-      - href: calendar.html
-        text: Calendar
-      - href: assignments.html
-        text: Assignments
-  page-footer:
-    left: "STA 119FS — Statistics as a Way of Thinking"
-    right: "Duke University, Department of Statistical Science"
 
 format:
   html:
@@ -46,6 +41,9 @@ format:
     toc: true
     code-copy: true
     code-overflow: wrap
+    include-in-header: _includes/site-head.html
+    include-before-body: _includes/site-header.html
+    include-after-body: _includes/site-footer.html
 
 execute:
   freeze: auto

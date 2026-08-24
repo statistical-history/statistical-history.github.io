@@ -1,0 +1,38 @@
+<div id="site-header-root">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-brand" href="/index.html" aria-label="STA 119FS home">
+        <span class="site-brand__mark" aria-hidden="true">119</span>
+        <span class="site-brand__text">
+          <strong>STA 119FS</strong>
+          <span>Statistics as a Way of Thinking</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="/index.html">Home</a>
+        <a href="/calendar.html">Calendar</a>
+        <a href="/assignments.html">Assignments</a>
+      </nav>
+    </div>
+  </header>
+
+  <span id="main-content" tabindex="-1"></span>
+</div>
+<script>
+  // Quarto's page-columns template nests include-before-body content inside
+  // <main>, which is just one column of its TOC/content grid -- our header
+  // ends up the same width as the article text and overlapping the "On this
+  // page" sidebar instead of spanning the full page. Moving it to be body's
+  // first child, outside that grid entirely, is the reliable fix (a pure CSS
+  // fix would have to depend on Quarto's internal grid line names, which
+  // aren't documented and can change between versions).
+  (function () {
+    var root = document.getElementById("site-header-root");
+    if (root && document.body.firstChild !== root) {
+      document.body.insertBefore(root, document.body.firstChild);
+    }
+  })();
+</script>

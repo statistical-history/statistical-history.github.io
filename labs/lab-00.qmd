@@ -172,7 +172,7 @@ This survey will help me learn more about you, your interests, and your previous
 
 You now have a container, a GitHub account, a working SSH key, a configured Git, and a cloned repository.
 
-Next week: pull, commit, push, and the first real data — Mayer's 27 equations (`labs/lab-01/`).
+Next week: pull, commit, push, and the first real data — Mayer's 27 equations.
 
 ::: callout-tip
 ## If you got stuck
