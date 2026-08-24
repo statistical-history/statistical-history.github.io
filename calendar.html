@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#001a57">
+    <meta name="description" content="Seminar calendar for STA 119FS — Statistics as a Way of Thinking, Duke University.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Seminar Calendar | STA 119FS">
+    <meta property="og:description" content="Meetings, topics, and due dates for STA 119FS, pulled live from the course planning sheet.">
+    <meta property="og:url" content="https://statistical-history.github.io/calendar.html">
+
+    <title>Seminar Calendar | STA 119FS</title>
+    <link rel="canonical" href="https://statistical-history.github.io/calendar.html">
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;family=Titillium+Web:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+  </head>
+
+  <body id="top">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html" aria-label="STA 119FS home">
+          <span class="site-brand__mark" aria-hidden="true">119</span>
+          <span class="site-brand__text">
+            <strong>STA 119FS</strong>
+            <span>Statistics as a Way of Thinking</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a href="index.html">Home</a>
+          <a href="index.html#materials">Materials</a>
+          <a href="calendar.html" aria-current="page">Calendar</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      <section class="course-section" id="calendar" aria-labelledby="calendar-heading">
+        <div class="section-heading">
+          <p class="section-index">02 / Seminar calendar</p>
+          <h1 id="calendar-heading">Meetings, topics, and due dates.</h1>
+        </div>
+
+        <div class="section-intro">
+          <p class="section-intro__lead">Pulled live from the course planning sheet, so it always reflects the latest schedule.</p>
+          <p>Labs, homework, and readings are added straight to the shared Google Sheet — no site update required. This page just fetches and renders whatever the sheet currently says.</p>
+        </div>
+
+        <p><a class="text-link" href="index.html#materials"><span aria-hidden="true">←</span> Back to course materials</a></p>
+
+        <p id="calendar-status" class="calendar-status" role="status">Loading calendar…</p>
+
+        <div class="calendar-table-wrap">
+          <table class="calendar-table" id="calendar-table" aria-label="Seminar calendar"></table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div>
+          <p class="site-footer__course">STA 119FS</p>
+          <p>Statistics as a Way of Thinking:<br>History, Ideas, and Evidence</p>
+        </div>
+        <p class="site-footer__affiliation">Duke University<br>Department of Statistical Science</p>
+        <a class="back-to-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        // ---------------------------------------------------------------
+        // How to connect this to a real Google Sheet:
+        //   1. Open the sheet, then File → Share → Publish to web.
+        //   2. Under "Link", choose the specific tab (e.g. "Sheet1") and
+        //      set the format to "Comma-separated values (.csv)".
+        //   3. Click Publish and copy the URL it gives you.
+        //   4. Paste that URL below, replacing the placeholder.
+        // The first row of the sheet becomes the table header, so any
+        // columns you add there (week, date, topic, lab, hw, due, ...)
+        // show up automatically. A cell containing a bare URL renders as
+        // a "Link" — handy for linking straight to a lab or hw file.
+        // ---------------------------------------------------------------
+        const SHEET_CSV_URL = "PASTE_YOUR_PUBLISHED_SHEET_CSV_URL_HERE";
+
+        const statusEl = document.getElementById("calendar-status");
+        const tableEl = document.getElementById("calendar-table");
+
+        function showError(message) {
+          statusEl.textContent = message;
+          statusEl.classList.add("calendar-status--error");
+        }
+
+        function parseCSV(text) {
+          const rows = [];
+          let row = [];
+          let field = "";
+          let inQuotes = false;
+
+          for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (inQuotes) {
+              if (c === '"') {
+                if (text[i + 1] === '"') {
+                  field += '"';
+                  i++;
+                } else {
+                  inQuotes = false;
+                }
+              } else {
+                field += c;
+              }
+            } else if (c === '"') {
+              inQuotes = true;
+            } else if (c === ",") {
+              row.push(field);
+              field = "";
+            } else if (c === "\n") {
+              row.push(field);
+              rows.push(row);
+              row = [];
+              field = "";
+            } else if (c === "\r") {
+              // ignore, \n handles the line break
+            } else {
+              field += c;
+            }
+          }
+          if (field.length || row.length) {
+            row.push(field);
+            rows.push(row);
+          }
+          return rows.filter((r) => r.some((cell) => cell.trim() !== ""));
+        }
+
+        function escapeHTML(str) {
+          return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function cellHTML(text) {
+          const trimmed = text.trim();
+          if (/^https?:\/\/\S+$/.test(trimmed)) {
+            return '<a href="' + escapeHTML(trimmed) + '" target="_blank" rel="noopener">Link <span aria-hidden="true">↗</span></a>';
+          }
+          return escapeHTML(text).replace(/\n/g, "<br>");
+        }
+
+        function render(rows) {
+          const header = rows[0];
+          const body = rows.slice(1);
+
+          const thead =
+            "<thead><tr>" +
+            header.map((h) => "<th scope=\"col\">" + escapeHTML(h) + "</th>").join("") +
+            "</tr></thead>";
+
+          const tbody =
+            "<tbody>" +
+            body
+              .map((r) => "<tr>" + r.map((cell) => "<td>" + cellHTML(cell || "") + "</td>").join("") + "</tr>")
+              .join("") +
+            "</tbody>";
+
+          tableEl.innerHTML = thead + tbody;
+          statusEl.hidden = true;
+        }
+
+        if (!SHEET_CSV_URL || SHEET_CSV_URL.indexOf("PASTE_YOUR") !== -1) {
+          showError("This calendar isn't connected to a sheet yet — add the published CSV link in calendar.html.");
+          return;
+        }
+
+        fetch(SHEET_CSV_URL)
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("sheet request failed (" + res.status + ")");
+            }
+            return res.text();
+          })
+          .then((text) => {
+            const rows = parseCSV(text);
+            if (!rows.length) {
+              throw new Error("sheet returned no rows");
+            }
+            render(rows);
+          })
+          .catch((err) => {
+            showError("Couldn't load the calendar right now (" + err.message + "). Check that the sheet is published to the web.");
+          });
+      })();
+    </script>
+  </body>
+</html>

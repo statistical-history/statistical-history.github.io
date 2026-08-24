@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# Quarto renders ONLY labs/ and hw/. index.html and calendar.html are
+# hand-written static pages and are left completely alone -- Quarto copies
+# them into _site/ untouched because they aren't in the render list below.
+#
+# The "!...-key.qmd" exclusions are here pre-emptively, matching the
+# instructor-answer-key convention used in the stigler-course repo: once a
+# KEY file exists, it must never render to a public page. Keep this even
+# before any key file exists.
+# ---------------------------------------------------------------------------
+project:
+  type: website
+  render:
+    - "labs/*.qmd"
+    - "hw/*.qmd"
+    - "!labs/*-key.qmd"
+    - "!hw/*-key.qmd"
+
+website:
+  title: "STA 119FS — Statistics as a Way of Thinking"
+  site-url: "https://statistical-history.github.io"
+  repo-url: "https://github.com/statistical-history/statistical-history.github.io"
+  repo-actions: [edit, issue]
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.html
+        text: Home
+      - href: calendar.html
+        text: Calendar
+  page-footer:
+    left: "STA 119FS — Statistics as a Way of Thinking"
+    right: "Duke University, Department of Statistical Science"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+
+execute:
+  freeze: auto
+
+editor: visual

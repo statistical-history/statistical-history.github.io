@@ -1,4 +1,8 @@
 .DS_Store
 _site/
+.quarto/
 .jekyll-cache/
 .sass-cache/
+.Rproj.user
+.Rhistory
+.RData
