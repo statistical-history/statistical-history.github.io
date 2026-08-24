@@ -34,6 +34,8 @@ website:
         text: Home
       - href: calendar.html
         text: Calendar
+      - href: assignments.html
+        text: Assignments
   page-footer:
     left: "STA 119FS — Statistics as a Way of Thinking"
     right: "Duke University, Department of Statistical Science"
