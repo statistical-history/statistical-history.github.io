@@ -1,0 +1,219 @@
+---
+title: "Lab 00: Getting Started"
+execute:
+  freeze: auto
+  echo: true
+  eval: false
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+---
+
+
+::: callout-important
+Please complete all of today's lab tasks before leaving lab today.
+:::
+
+# Introduction
+
+The goal of today's lab is to briefly introduce you to the computing tools we'll use in
+this course, set up your computing access, and complete the entry survey. We'll talk more
+about these tools in lecture and in upcoming labs.
+
+There is no statistics in today's lab, and nothing to hand in for a grade.
+
+::: callout-note
+## What is a container?
+
+A container is a self-contained copy of RStudio for you, and you alone. All your computing
+for this course happens inside it — no installation, no version mismatches between
+sixteen different laptops.
+:::
+
+# Computing setup
+
+## RStudio
+
+::: callout-note
+R is the name of the programming language itself and RStudio is a convenient interface.
+:::
+
+### Reserve your RStudio container
+
+- Go to <https://cmgr.oit.duke.edu/containers>. Log in with your Duke NetID credentials.
+- Click **"Reserve STA 119F"** to reserve an RStudio container. 
+
+You only need to reserve a container once per semester.
+
+### Open your RStudio container
+
+- Go back to <https://cmgr.oit.duke.edu/containers> and log in again if needed.
+- Click **`STA119F`** to open the container. You should now see the RStudio environment
+  in your browser, with a **Console** pane showing a `>` prompt.
+
+## Git and GitHub
+
+In addition to R and RStudio, we'll use Git and GitHub for version control.
+
+::: callout-note
+Git is a version control system (like "Track Changes" in Microsoft Word, but far more
+powerful) and GitHub is the home for your Git-based projects on the internet (like
+Dropbox, but much better — and it makes collaboration visible).
+:::
+
+### Sign up for a GitHub account
+
+You'll need a GitHub account to access the assignments and labs for this course.
+
+- If you don't have one, go to [github.com](https://github.com/) and create one. Using
+  your university email address is recommended but not required.
+- If you already have an account, **log in right now and confirm you know your
+  credentials** — don't assume. Too many failed login attempts locks the account **for
+  the day**, which would end your participation in today's lab.
+
+::: callout-tip
+[Click here](https://happygitwithr.com/github-acct#username-advice) for advice on
+choosing a username — it's a professional account you may still be using in ten years.
+:::
+
+## Connect RStudio and GitHub
+
+Now that you have RStudio and a GitHub account, we'll configure Git so RStudio and GitHub
+can talk to each other.
+
+### Set up your SSH key
+
+You'll authenticate to GitHub using SSH. **Follow along on the projector for this one** —
+it's the step most likely to go sideways, and it's much easier to fix while everyone does
+it together.
+
+::: callout-note
+You only do this once. Once the key exists, it keeps working — you won't repeat this in
+any later lab.
+:::
+
+Type this in the **Console** and press Enter:
+
+```{r}
+#| label: ssh-setup
+credentials::ssh_setup_github()
+```
+
+- **Step 1:** It asks *"No SSH key found. Generate one now?"* — press **1** for yes.
+- **Step 2:** It generates a key (starting `ssh-rsa...`), then asks *"Would you like to
+  open a browser now?"* — press **1**.
+- **Step 3:** You may be asked for your GitHub username and password.
+- **Step 4:** On the GitHub page that opens, **paste the key** into the box and give it a
+  name — anything recognizable works, e.g. `histstat-container`.
+- **Step 5:** Click the button to add the key.
+
+
+### Configure Git to introduce yourself
+
+Git labels every change with who made it, so it needs your name and email address.
+
+Type this in the **Console**, with your own details substituted in:
+
+```{r}
+#| label: git-config
+usethis::use_git_config(
+  user.name = "Your name",
+  user.email = "Email associated with your GitHub account"
+)
+```
+
+For example:
+
+```{r}
+#| label: git-config-example
+usethis::use_git_config(
+  user.name = "Jane Doe",
+  user.email = "jane.doe@duke.edu"
+)
+```
+
+**Use the exact same email you used to create your GitHub account.** If these differ, Git
+and GitHub won't connect your work to your account — the symptom is confusing rather than
+obvious.
+
+::: callout-tip
+## How do I know I did it right?
+
+Nothing visible happens, which is unnerving. To check: click the **Terminal** tab (next to
+**Console**) and type:
+
+```bash
+git config user.name
+git config user.email
+```
+
+Each should echo back exactly what you typed. If there's a typo, just run
+`use_git_config()` again with the correction — the last one wins.
+:::
+
+# Clone your first repository
+
+A **repository** ("repo") is a collection of files hosted on GitHub. Copying one down to
+your container is called **cloning**.
+
+::: callout-note
+Today's repo is **public**, and there's nothing to commit or push yet — that starts in
+**Lab 01**, which gets a full walkthrough of its own. Today is purely: does the pipeline work end to end, and can you read an error
+message?
+:::
+
+1. Go to `https://github.com/.../lab-01`.
+2. Click the green **Code** button. Choose **SSH** (it may already be selected — the
+   label reads *Clone with SSH*), then click the clipboard icon to copy the address. It
+   should start with `git@github.com:`, **not** `https://`.
+3. In RStudio: **File → New Project → Version Control → Git**.
+4. Paste the address into **Repository URL**. Leave the directory name as it fills in.
+5. Click **Create Project**.
+
+The first time your container talks to GitHub, you may see a message asking whether you
+trust the host — *"the authenticity of host github.com can't be established."* Type
+**yes** and press Enter.
+
+::: callout-important
+## If step 2 gave you an `https://` address
+
+Go back and switch it to SSH. An `https://` address will ask for a password on every
+single operation and will not accept your GitHub password — this is the single most
+common way this step fails.
+:::
+
+RStudio will clone the repo and open it as a project. You should see its files in the
+**Files** pane, bottom right.
+
+**That's the whole skill.** You'll clone about one repo a week for the rest of the
+semester, and after the third time you'll stop thinking about it.
+
+# Tell me who you are
+
+Fill in the entry survey: **[SURVEY-LINK]**
+
+I use the answers for practical things — sending your GitHub organization invitation,
+forming groups — and for one non-practical thing: I ask what you want out of the course
+and what you're worried about. I read all sixteen. In week 8 I hand your own answers back
+to you.
+
+# Done
+
+You now have a container, a GitHub account, a working SSH key, a configured Git, and a
+cloned repository.
+
+Next week: pull, commit, push, and the first real data — Mayer's 27 equations
+(`labs/lab-01/`).
+
+::: callout-tip
+## If you got stuck
+
+Come to office hours or send a message — **don't spend an evening fighting this alone,
+and don't skip Lab 01 because today didn't finish.** Every later lab assumes today's setup
+works, so a broken setup is the one problem worth interrupting me about.
+
+If you finished early: **help the person next to you.** That's not extra credit, it's how
+today goes well for everyone.
+:::
