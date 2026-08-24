@@ -952,6 +952,20 @@ button:focus-visible {
   font-weight: 600;
 }
 
+.assignment-group + .assignment-group {
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+}
+
+.assignment-group__label {
+  margin: 0 0 1.1rem;
+  color: var(--blue-600);
+  font-family: var(--font-display);
+  font-size: 0.77rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 .closing-note {
   display: grid;
   width: min(100% - (2 * var(--gutter)), var(--page-width));
