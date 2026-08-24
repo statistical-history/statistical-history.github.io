@@ -1,0 +1,306 @@
+/* ---------------------------------------------------------------------------
+ * Shared header/footer chrome for pages Quarto renders (labs/*.qmd, hw/*.qmd).
+ *
+ * This is a DELIBERATELY NARROW subset of assets/css/main.css -- just the
+ * rules the site-header/site-footer markup needs, plus the page background,
+ * copied over rather than loading main.css wholesale. main.css also has
+ * `a { color: inherit }`, which would bleed into Quarto's own Bootstrap/
+ * cosmo content styling and make every link inside a rendered lab invisible
+ * against body text -- deliberately left out here. Keep new rules scoped to
+ * .site-header/.site-footer/.skip-link/body background, not text/links.
+ *
+ * If you change the header/footer markup or its styling in main.css, update
+ * the matching rule here too -- there's no single source of truth linking
+ * the two.
+ * --------------------------------------------------------------------------- */
+
+/* Quarto's own site-level footer (repeats "Edit this page" / "Report an
+   issue" for mobile). Our relocated .site-footer (see _includes/site-footer
+   .html) replaces it entirely -- left in place it shows as an empty-looking
+   light band between the article content and our real footer. */
+footer.footer {
+  display: none;
+}
+
+:root {
+  --navy-950: #00143f;
+  --navy-900: #001a57;
+  --navy-800: #072866;
+  --blue-600: #0064a8;
+  --blue-100: #dcebf3;
+  --ink-900: #142033;
+  --ink-700: #3b4858;
+  --ink-500: #596574;
+  --paper: #f7f4ec;
+  --paper-deep: #efeadf;
+  --white: #fff;
+  --gold-500: #d3a446;
+  --gold-300: #f4c96f;
+  --line: #d8d3c8;
+  --line-dark: rgba(255, 255, 255, 0.22);
+  --font-display: "Titillium Web", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Open Sans", Helvetica, Arial, sans-serif;
+  --page-width: 1180px;
+  --reading-width: 760px;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --section-space: clamp(5rem, 10vw, 9rem);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body {
+  background: var(--paper);
+}
+
+body::before {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: var(--gold-500);
+  content: "";
+}
+
+.site-header a,
+.site-footer a,
+.skip-link {
+  color: inherit;
+}
+
+.site-header a:focus-visible,
+.site-footer a:focus-visible,
+.skip-link:focus-visible {
+  border-radius: 2px;
+  outline: 3px solid var(--white);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--navy-900);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.8rem;
+  left: 1rem;
+  padding: 0.7rem 1rem;
+  color: var(--navy-950);
+  background: var(--white);
+  font-weight: 700;
+  transform: translateY(-180%);
+  transition: transform 180ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.site-header {
+  position: relative;
+  z-index: 20;
+  color: var(--white);
+  background: var(--navy-900);
+}
+
+.site-header__inner {
+  display: flex;
+  width: min(100% - (2 * var(--gutter)), var(--page-width));
+  min-height: 88px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.site-brand {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+}
+
+.site-brand__mark {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  color: var(--gold-300);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  place-items: center;
+}
+
+.site-brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.site-brand__text strong {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.site-brand__text span {
+  margin-top: 0.18rem;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(1rem, 3vw, 2.3rem);
+}
+
+.site-nav a {
+  position: relative;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  left: 0;
+  height: 2px;
+  background: var(--gold-300);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 220ms var(--ease);
+}
+
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.site-footer {
+  color: rgba(255, 255, 255, 0.72);
+  background: var(--navy-950);
+}
+
+.site-footer__inner {
+  display: grid;
+  width: min(100% - (2 * var(--gutter)), var(--page-width));
+  margin: 0 auto;
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  align-items: end;
+  gap: 2rem;
+  grid-template-columns: 1.2fr 1fr auto;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.site-footer__course {
+  margin-bottom: 0.55rem !important;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 1rem !important;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.site-footer__affiliation {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.back-to-top {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .site-header__inner {
+    min-height: 80px;
+    align-items: center;
+  }
+
+  .site-brand__text span {
+    display: none;
+  }
+
+  .site-nav {
+    gap: 0.75rem;
+  }
+
+  .site-nav a {
+    padding: 0 0.15rem;
+    font-size: 0.69rem;
+  }
+
+  .site-footer__inner {
+    align-items: start;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .back-to-top {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --gutter: 1.15rem;
+  }
+
+  .site-header__inner {
+    min-height: 112px;
+    padding: 0.75rem 0 0.45rem;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .site-brand {
+    min-height: 45px;
+  }
+
+  .site-nav {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    justify-content: space-between;
+  }
+
+  .site-nav a {
+    min-height: 42px;
+  }
+
+  .site-footer__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .back-to-top {
+    grid-column: auto;
+  }
+}

@@ -85,8 +85,13 @@
         //   4. Paste that URL below, replacing the placeholder.
         // The first row of the sheet becomes the table header, so any
         // columns you add there (week, date, topic, lab, hw, due, ...)
-        // show up automatically. A cell containing a bare URL renders as
-        // a "Link" — handy for linking straight to a lab or hw file.
+        // show up automatically. Two ways to link from a cell:
+        //   - a bare URL (the whole cell is just the link) -> shows as "Link"
+        //   - "[HW1](https://...)" typed literally as the cell's text -> shows
+        //     as a link labelled "HW1". Type this exactly, as plain text --
+        //     do NOT use Sheets' own Insert > Link or HYPERLINK(), since
+        //     "Publish to web as CSV" only exports a cell's literal text and
+        //     silently drops that kind of link target.
         // ---------------------------------------------------------------
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXW-4oIyx8OLxdYjY_5TJx3QPTOpqBV9RcaWDvsUlT-uhuMoy4AuSA3L6I0ipVqaSlQSKFigfDFYWZ/pub?gid=0&single=true&output=csv";
 
@@ -150,10 +155,22 @@
 
         function cellHTML(text) {
           const trimmed = text.trim();
+
+          // A cell that's just a bare URL -> generic "Link" text.
           if (/^https?:\/\/\S+$/.test(trimmed)) {
             return '<a href="' + escapeHTML(trimmed) + '" target="_blank" rel="noopener">Link <span aria-hidden="true">↗</span></a>';
           }
-          return escapeHTML(text).replace(/\n/g, "<br>");
+
+          // [Label](https://...) typed literally in the cell -> a link with
+          // custom text, e.g. "[HW1](https://.../hw/hw-01.html)". This is the
+          // only way to get custom link text through a CSV export -- Sheets'
+          // own Insert > Link / HYPERLINK() display text doesn't survive
+          // "Publish to web as CSV" at all, only the raw cell text does.
+          const escaped = escapeHTML(text).replace(/\n/g, "<br>");
+          return escaped.replace(
+            /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+            (match, label, url) => '<a href="' + url + '" target="_blank" rel="noopener">' + label + '</a>'
+          );
         }
 
         function render(rows) {
