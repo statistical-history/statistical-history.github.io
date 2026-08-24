@@ -15,6 +15,12 @@ project:
     - "hw/*.qmd"
     - "!labs/*-key.qmd"
     - "!hw/*-key.qmd"
+  # Quarto only auto-copies static files it finds referenced from documents it
+  # renders (the labs/hw .qmd above). index.html and calendar.html are plain
+  # passthrough HTML that Quarto never parses, so assets/ (CSS, favicon) has
+  # to be listed here explicitly or it silently gets left out of _site/.
+  resources:
+    - "assets/**"
 
 website:
   title: "STA 119FS — Statistics as a Way of Thinking"
