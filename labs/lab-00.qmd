@@ -138,7 +138,7 @@ A **repository** ("repo") is a collection of files hosted on GitHub. Copying one
 Today's repo is **public**, and there's nothing to commit or push yet — that starts in **Lab 01**, which gets a full walkthrough of its own. Today is purely: does the pipeline work end to end, and can you read an error message?
 :::
 
-1.  Go to `https://github.com/.../lab-00 [LINK]`.
+1.  Go to <https://github.com/statistical-history/lab-00>.
 2.  Click the green **Code** button. Choose **SSH** (it may already be selected — the label reads *Clone with SSH*), then click the clipboard icon to copy the address. It should start with `git@github.com:`, **not** `https://`.
 3.  In RStudio: **File → New Project → Version Control → Git**.
 4.  Paste the address into **Repository URL**. Leave the directory name as it fills in.
@@ -156,7 +156,7 @@ RStudio will clone the repo and open it as a project. You should see its files i
 
 **That's the whole skill.** You'll clone about one repo a week for the rest of the semester, and after the third time you'll stop thinking about it.
 
-# Submit GitHub userbame
+# Submit GitHub username
 
 Use the link below to submit your GitHub username and confirm that you (1) have access to an RStudio container and (2) have completed the steps to configure git and send files between RStudio and GitHub.
 
