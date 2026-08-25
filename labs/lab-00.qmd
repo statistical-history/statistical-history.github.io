@@ -160,11 +160,11 @@ RStudio will clone the repo and open it as a project. You should see its files i
 
 Use the link below to submit your GitHub username and confirm that you (1) have access to an RStudio container and (2) have completed the steps to configure git and send files between RStudio and GitHub.
 
-\[LINK\]
+<https://forms.cloud.microsoft/r/ydwhLDMjec>
 
 # Tell me who you are
 
-Fill in the entry survey: \[LINK\]
+Fill in the entry survey: <https://forms.cloud.microsoft/r/uwjPAKK6rZ>
 
 This survey will help me learn more about you, your interests, and your previous statistics and computing experience.
 
