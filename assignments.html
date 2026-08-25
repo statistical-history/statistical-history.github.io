@@ -18,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;family=Titillium+Web:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
+    <script src="assets/js/site-navigation.js" defer></script>
   </head>
 
   <body id="top">
@@ -34,9 +35,17 @@
         </a>
 
         <nav class="site-nav" aria-label="Primary navigation">
-          <a href="index.html">Home</a>
+          <a href="index.html#course">Course</a>
+          <a href="index.html#questions">Questions</a>
           <a href="calendar.html">Calendar</a>
-          <a href="assignments.html" aria-current="page">Assignments</a>
+          <details class="site-nav__menu site-nav__menu--current">
+            <summary>Materials <span class="site-nav__chevron" aria-hidden="true">▾</span></summary>
+            <ul class="site-nav__dropdown">
+              <li><a href="syllabus.html">Syllabus</a></li>
+              <li><a href="index.html#materials">Materials overview</a></li>
+              <li><a href="assignments.html" aria-current="page">Assignments</a></li>
+            </ul>
+          </details>
         </nav>
       </div>
     </header>

@@ -18,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;family=Titillium+Web:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
+    <script src="assets/js/site-navigation.js" defer></script>
   </head>
 
   <body id="top">
@@ -25,7 +26,7 @@
 
     <header class="site-header">
       <div class="site-header__inner">
-        <a class="site-brand" href="#top" aria-label="STA 119FS home">
+        <a class="site-brand" href="index.html" aria-label="STA 119FS home">
           <span class="site-brand__mark" aria-hidden="true">119</span>
           <span class="site-brand__text">
             <strong>STA 119FS</strong>
@@ -34,10 +35,17 @@
         </a>
 
         <nav class="site-nav" aria-label="Primary navigation">
-          <a href="#course">Course</a>
-          <a href="#questions">Questions</a>
-          <a href="#grading">Grading</a>
-          <a href="#materials">Materials</a>
+          <a href="index.html#course">Course</a>
+          <a href="index.html#questions">Questions</a>
+          <a href="calendar.html">Calendar</a>
+          <details class="site-nav__menu">
+            <summary>Materials <span class="site-nav__chevron" aria-hidden="true">▾</span></summary>
+            <ul class="site-nav__dropdown">
+              <li><a href="syllabus.html">Syllabus</a></li>
+              <li><a href="index.html#materials">Materials overview</a></li>
+              <li><a href="assignments.html">Assignments</a></li>
+            </ul>
+          </details>
         </nav>
       </div>
     </header>
@@ -205,119 +213,26 @@
         </div>
       </section>
 
-      <section class="grading-section" id="grading" aria-labelledby="grading-heading">
-        <div class="grading-section__inner">
-          <div class="grading-section__header">
-            <div>
-              <p class="section-index">03 / Grading</p>
-              <h2 id="grading-heading">How the course grade is built.</h2>
-            </div>
-            <p>The final grade is distributed across eight components. Detailed prompts and grading criteria will be provided separately.</p>
-          </div>
-
-          <div class="grading-table-wrap">
-            <table class="grading-table grading-table--weights-hidden">
-              <caption class="visually-hidden">Course assessments. Percentage weights are temporarily hidden.</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Assessment</th>
-                  <th scope="col">Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">Lab attendance</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Lab completion</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Homework</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Homework presentation in class</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Class discussion lead</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">General class discussion</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Quiz</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Final project</th>
-                  <td>
-                    <div class="grade-meter" aria-hidden="true">
-                      <strong>TBD</strong>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th scope="row">Total</th>
-                  <td><strong aria-hidden="true">TBD</strong></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-      </section>
-
       <section class="materials-section" id="materials" aria-labelledby="materials-heading">
         <div class="materials-section__header">
           <div>
-            <p class="section-index">04 / Course materials</p>
+            <p class="section-index">03 / Course materials</p>
             <h2 id="materials-heading">A home for the seminar.</h2>
           </div>
-          <p>Materials will appear here as the course takes shape. The site is ready for the syllabus, calendar, readings, and assignments.</p>
+          <p>The syllabus, live calendar, and assignments are collected here. Readings and additional materials will appear as the course takes shape.</p>
         </div>
 
-        <div class="resource-list" role="list" aria-label="Planned course resources">
+        <div class="resource-list" role="list" aria-label="Course resources">
           <div class="resource" role="listitem">
             <span class="resource__index">01</span>
             <div>
               <h3>Syllabus</h3>
               <p>Aims, expectations, and policies</p>
             </div>
-            <span class="status">Planned</span>
+            <div class="resource__actions">
+              <a class="status status--live" href="syllabus.html">View <span aria-hidden="true">→</span></a>
+              <a class="status status--download" href="syllabus/statistics-as-a-way-of-thinking-syllabus-fall-2026.pdf" download="Statistics-as-a-Way-of-Thinking-Syllabus-Fall-2026.pdf" aria-label="Download syllabus PDF">PDF <span aria-hidden="true">↓</span></a>
+            </div>
           </div>
 
           <a class="resource resource--link" role="listitem" href="calendar.html">

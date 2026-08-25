@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
-# Quarto renders ONLY labs/ and hw/. index.html and calendar.html are
-# hand-written static pages and are left completely alone -- Quarto copies
+# Quarto renders ONLY labs/ and hw/. The root HTML pages are hand-written or
+# pre-rendered static pages and are left completely alone -- Quarto copies
 # them into _site/ untouched because they aren't in the render list below.
 #
 # The "!...-key.qmd" exclusions are here pre-emptively, matching the
@@ -16,16 +16,18 @@ project:
     - "!labs/*-key.qmd"
     - "!hw/*-key.qmd"
   # Quarto only auto-copies static files it finds referenced from documents it
-  # renders (the labs/hw .qmd above). index.html and calendar.html are plain
-  # passthrough HTML that Quarto never parses, so assets/ (CSS, favicon) has
+  # renders (the labs/hw .qmd above). Root pages are plain passthrough HTML
+  # that Quarto never parses, so assets/ (CSS, favicon) has
   # to be listed here explicitly or it silently gets left out of _site/.
+  # The syllabus source and PDF are copied as downloadable resources too.
   resources:
     - "assets/**"
+    - "syllabus/**"
 
 # No website.navbar / website.page-footer here on purpose: Quarto's own
 # navbar+footer (Bootstrap/cosmo styled) looked nothing like the hand-written
 # site's navy header and footer. format.html.include-before-body/after-body
-# below inject the SAME header/footer markup index.html and calendar.html use
+# below inject the SAME header/footer markup the root HTML pages use
 # instead, so labs/hw pages match the rest of the site. See _includes/ and
 # assets/css/site-chrome.css.
 website:
