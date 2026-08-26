@@ -36,14 +36,14 @@ R is the name of the programming language itself and RStudio is a convenient int
 ### Reserve your RStudio container
 
 - Go to <https://cmgr.oit.duke.edu/containers>. Log in with your Duke NetID credentials.
-- Click **"Reserve STA119"** to reserve an RStudio container.
+- Click **"Reserve STA101"** to reserve an RStudio container (this is not a typo, our two classes share computing resources).
 
 You only need to reserve a container once per semester.
 
 ### Open your RStudio container
 
 - Go back to <https://cmgr.oit.duke.edu/containers> and log in again if needed.
-- Click **`STA119`** to open the container. You should now see the RStudio environment in your browser, with a **Console** pane showing a `>` prompt.
+- Click **`STA 101`** to open the container. You should now see the RStudio environment in your browser, with a **Console** pane showing a `>` prompt.
 
 ## Git and GitHub
 
