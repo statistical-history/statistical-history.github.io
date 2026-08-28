@@ -19,9 +19,10 @@ project:
   # renders (the labs/hw .qmd above). Root pages are plain passthrough HTML
   # that Quarto never parses, so assets/ (CSS, favicon) has
   # to be listed here explicitly or it silently gets left out of _site/.
-  # The syllabus source and PDF are copied as downloadable resources too.
+  # The syllabus files and lecture PDFs are copied as downloadable resources.
   resources:
     - "assets/**"
+    - "lectures/**"
     - "syllabus/**"
 
 # No website.navbar / website.page-footer here on purpose: Quarto's own
