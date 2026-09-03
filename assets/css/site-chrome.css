@@ -402,3 +402,41 @@ body::before {
     left: 0;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * ::: render-commit-push :::
+ *
+ * Lab 01 and HW 01 mark their "stop here and push your work" checkpoints with
+ * a fenced div of this class. Quarto has no built-in styling for a custom
+ * class, so without this rule those checkpoints render as ordinary paragraphs
+ * and read as narration rather than as an instruction to act on.
+ *
+ * Scoped to a class that appears only inside lab/hw body content, so it does
+ * not bleed into Quarto's own Bootstrap/cosmo styling the way a bare element
+ * selector would (see the note at the top of this file). Deliberately gold
+ * rather than blue so it doesn't read as one more callout-note.
+ * --------------------------------------------------------------------------- */
+.render-commit-push {
+  margin: 1.4rem 0;
+  padding: 0.85rem 1.1rem 0.85rem 2.6rem;
+  position: relative;
+  border: 1px solid var(--gold-500);
+  border-left: 4px solid var(--gold-500);
+  border-radius: 4px;
+  background: rgba(211, 164, 70, 0.09);
+  color: var(--ink-900);
+}
+
+.render-commit-push::before {
+  position: absolute;
+  top: 0.85rem;
+  left: 1rem;
+  content: "\2191";  /* up arrow = push */
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--gold-500);
+}
+
+.render-commit-push > :last-child {
+  margin-bottom: 0;
+}
