@@ -23,17 +23,27 @@ Statistics did not arrive as a finished toolbox. It grew out of attempts to lear
 
 ## Assessment and grading
 
-| Assessment | Weight | What it recognizes |
-|---|---:|---|
-| Lab attendance | 5% | Presence for hands-on work; up to two absences are allowed without penalty. |
-| Lab completion | 5% | Completion of the assigned lab work. |
-| Homework | 20% | Historical reconstruction, quantitative work, and interpretation; the lowest score is dropped. |
-| Homework presentation in class | 10% | Clear explanation of a homework approach, code, and conclusions. |
-| Class discussion lead | 10% | Preparation and leadership of an assigned class discussion. |
-| General class discussion | 10% | Consistent, thoughtful participation; up to two class absences are allowed without penalty. |
-| Quiz | 10% | Understanding of the course's central historical and statistical ideas. |
-| Final project | 30% | An integrated investigation bringing together course reasoning, analysis, and communication. |
-| **Total** | **100%** | |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Assessment                     | Weight                    | What it recognizes                                                                             |
++================================+==========================:+================================================================================================+
+| Lab attendance                 | 5%                        | Presence for hands-on work; up to two absences are allowed without penalty.                    |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Lab completion                 | 5%                        | Completion of the assigned lab work.                                                           |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Homework                       | 20%                       | Historical reconstruction, quantitative work, and interpretation; the lowest score is dropped. |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Homework presentation in class | 10%                       | Clear explanation of a homework approach, code, and conclusions.                               |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Class discussion lead          | 10%                       | Preparation and leadership of an assigned class discussion.                                    |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| General class discussion       | 10%                       | Consistent, thoughtful participation; up to two class absences are allowed without penalty.    |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Quiz                           | 10%                       | Understanding of the course's central historical and statistical ideas.                        |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| Final project                  | 30%                       | An integrated investigation bringing together course reasoning, analysis, and communication.   |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
+| **Total**                      | **100%**                  |                                                                                                |
++--------------------------------+---------------------------+------------------------------------------------------------------------------------------------+
 
 ## Key policies
 
@@ -51,11 +61,11 @@ Discussion is part of every lecture, so attendance and participation are essenti
 
 ## Success tips
 
-1. Complete the reading before class and arrive with a question, puzzle, or claim to discuss.
-2. Be present and take part in the conversation during lectures and the work during labs.
-3. Ask questions early and often, including questions about why a method seemed sensible.
-4. Start assignments early enough to investigate choices, debug code, and explain your result.
-5. Stay current, and ask for help before a historical, statistical, or computational question begins to compound.
+1.  Complete the reading before class and arrive with a question, puzzle, or claim to discuss.
+2.  Be present and take part in the conversation during lectures and the work during labs.
+3.  Ask questions early and often, including questions about why a method seemed sensible.
+4.  Start assignments early enough to investigate choices, debug code, and explain your result.
+5.  Stay current, and ask for help before a historical, statistical, or computational question begins to compound.
 
 ## Important dates
 
@@ -71,26 +81,36 @@ This is a seminar rather than a spectator course. Reading, discussion, hands-on 
 
 # Course information
 
-| Item | Information |
-|---|---|
-| Course | STA 119F: Statistics as a Way of Thinking |
-| Term | Fall 2026 |
-| Instructors | Alexander Volfovsky and Kat Husar |
-| Email | [Alex](mailto:alexander.volfovsky@duke.edu); [Kat](mailto:kat.husar@duke.edu) |
-| Lecture | Tuesday and Thursday, 10:05--11:20 a.m.; room posted on the course site |
-| Lab | Friday, 11:45 a.m.--1:00 p.m., Link 065 |
-| Office hours | Times and locations posted on the course site |
-| Course website | [statistical-history.github.io](https://statistical-history.github.io/) |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Item                              | Information                                                                   |
++===================================+===============================================================================+
+| Course                            | STA 119F: Statistics as a Way of Thinking                                     |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Term                              | Fall 2026                                                                     |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Instructors                       | Alexander Volfovsky and Kat Husar                                             |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Email                             | [Alex](mailto:alexander.volfovsky@duke.edu); [Kat](mailto:kat.husar@duke.edu) |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Lecture                           | Tuesday and Thursday, 10:05--11:20 a.m.; room posted on the course site       |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Lab                               | Friday, 11:45 a.m.--1:00 p.m., Link 065                                       |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Office hours                      | Alex: Wed 12pm - 2pm, Old Chemistry 223 \                                     |
+|                                   | Kat: Mon 2pm - 4pm, Old Chemistry 203A                                        |
++-----------------------------------+-------------------------------------------------------------------------------+
+| Course website                    | [statistical-history.github.io](https://statistical-history.github.io/)       |
++-----------------------------------+-------------------------------------------------------------------------------+
 
 # Course learning objectives
 
 By the end of the course, students will be able to:
 
-1. Explain how important statistical ideas developed in response to particular scientific and social problems.
-2. Reconstruct foundational analyses using historical data, hand calculations, and introductory R.
-3. Describe a dataset's provenance, unit of observation, measurements, denominators, important omissions, and limitations.
-4. Interpret and compare statistical ideas in the settings that gave rise to them rather than treating them as formulas detached from a problem.
-5. Evaluate and communicate evidence-based claims with attention to uncertainty, design, measurement, selection, analytical choices, and historical context.
+1.  Explain how important statistical ideas developed in response to particular scientific and social problems.
+2.  Reconstruct foundational analyses using historical data, hand calculations, and introductory R.
+3.  Describe a dataset's provenance, unit of observation, measurements, denominators, important omissions, and limitations.
+4.  Interpret and compare statistical ideas in the settings that gave rise to them rather than treating them as formulas detached from a problem.
+5.  Evaluate and communicate evidence-based claims with attention to uncertainty, design, measurement, selection, analytical choices, and historical context.
 
 # Course materials
 
@@ -116,11 +136,11 @@ For standard course matters, you may email [Kat Husar](mailto:kat.husar@duke.edu
 
 # Five tips for success
 
-1. **Prepare for the conversation.** Complete the assigned reading before class and arrive with at least one question, puzzle, or claim that you want to discuss.
-2. **Be present and participate.** Lectures depend on discussion, and labs depend on hands-on work. Listening carefully, asking questions, testing ideas, and responding to classmates are all forms of useful participation.
-3. **Ask questions.** Ask about the reading, the historical setting, the statistical reasoning, the code, and anything else that is unclear. In particular, keep asking what problem a method was meant to solve and which assumptions made it seem sensible.
-4. **Treat homework and labs as investigations.** Start early enough to compare choices, debug R code, and explain what a result means rather than merely producing an answer.
-5. **Ask for help and stay current.** The historical and statistical ideas build across readings, discussions, and labs. Do not let a confusing idea or technical problem sit unanswered.
+1.  **Prepare for the conversation.** Complete the assigned reading before class and arrive with at least one question, puzzle, or claim that you want to discuss.
+2.  **Be present and participate.** Lectures depend on discussion, and labs depend on hands-on work. Listening carefully, asking questions, testing ideas, and responding to classmates are all forms of useful participation.
+3.  **Ask questions.** Ask about the reading, the historical setting, the statistical reasoning, the code, and anything else that is unclear. In particular, keep asking what problem a method was meant to solve and which assumptions made it seem sensible.
+4.  **Treat homework and labs as investigations.** Start early enough to compare choices, debug R code, and explain what a result means rather than merely producing an answer.
+5.  **Ask for help and stay current.** The historical and statistical ideas build across readings, discussions, and labs. Do not let a confusing idea or technical problem sit unanswered.
 
 # Getting help
 
@@ -140,17 +160,17 @@ Labs are hands-on sessions in which students work with historical data and repro
 
 # Grading
 
-| Assessment | Weight |
-|---|---:|
-| Lab attendance | 5% |
-| Lab completion | 5% |
-| Homework | 20% |
-| Homework presentation in class | 10% |
-| Class discussion lead | 10% |
-| General class discussion | 10% |
-| Quiz | 10% |
-| Final project | 30% |
-| **Total** | **100%** |
+| Assessment                     |   Weight |
+|--------------------------------|---------:|
+| Lab attendance                 |       5% |
+| Lab completion                 |       5% |
+| Homework                       |      20% |
+| Homework presentation in class |      10% |
+| Class discussion lead          |      10% |
+| General class discussion       |      10% |
+| Quiz                           |      10% |
+| Final project                  |      30% |
+| **Total**                      | **100%** |
 
 The lowest homework score will be dropped automatically. The remaining homework scores will be averaged and reweighted to the full 20% homework category. Detailed prompts and grading criteria for assignments, presentations, discussion leadership, the quiz, and the final project will be provided separately.
 
@@ -176,8 +196,8 @@ Unless an assignment explicitly limits their use, you may consult online resourc
 
 Treat generative AI as an online resource. Its use in this course is governed by two principles:
 
-1. **Cognitive responsibility:** Working with AI should support your thinking and learning, not replace them.
-2. **Ethical responsibility:** Be transparent about your use of AI and make sure that it complies with academic-integrity expectations.
+1.  **Cognitive responsibility:** Working with AI should support your thinking and learning, not replace them.
+2.  **Ethical responsibility:** Be transparent about your use of AI and make sure that it complies with academic-integrity expectations.
 
 \newpage
 
@@ -232,7 +252,7 @@ The classroom does not support lecture recording, so recordings will not be avai
 
 ## Academic accommodations
 
-Students who need disability-related accommodations should register with the Student Disability Access Office (SDAO) and provide the required documentation. SDAO will determine appropriate accommodations and issue a Professor Accommodation Letter. Accommodations are not retroactive and cannot be implemented until the instructors receive that letter. For more information, email [sdao@duke.edu](mailto:sdao@duke.edu) or visit [Duke Access and Accommodation Services](https://access.duke.edu/students/).
+Students who need disability-related accommodations should register with the Student Disability Access Office (SDAO) and provide the required documentation. SDAO will determine appropriate accommodations and issue a Professor Accommodation Letter. Accommodations are not retroactive and cannot be implemented until the instructors receive that letter. For more information, email [sdao\@duke.edu](mailto:sdao@duke.edu) or visit [Duke Access and Accommodation Services](https://access.duke.edu/students/).
 
 ## Religious accommodations
 
