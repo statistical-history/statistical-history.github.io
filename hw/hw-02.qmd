@@ -1,0 +1,582 @@
+---
+title: "HW 02: How much evidence is enough?"
+subtitle: "Instructions — read these; do the work in the `hw-02.qmd` in your own repo"
+execute:
+  freeze: auto
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Wednesday, September 23, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+HW 01 gave you two ways to combine observations that disagree — Mayer's grouping and
+Boscovich's method of situation. Both produced a number. Neither produced a *reason to
+trust the number*. Mayer's own attempt at one ("nine times as many observations, therefore
+nine times more correct") was an assertion, not a derivation.
+
+Jacob Bernoulli went at that gap from the other direction. Instead of starting with
+observations and hunting for a rule, he started with a mechanism whose chances he *already
+knew* — an urn with a stated number of red and black balls — and asked: **how many draws
+before the observed frequency is dependably close to the true proportion?** "Dependably" had
+to be made precise before the question had an answer, and making it precise is most of the
+work.
+
+In the example from lecture, the true proportion is $30/50$, the allowed gap is $1/50$, and
+the required odds are $1000:1$ in favor of landing inside that gap. Bernoulli's answer was
+25,550 draws. De Moivre's later work made probabilities for large collections of trials far
+easier to approximate, which mattered enormously when every such number had to be computed
+by hand.
+
+This assignment has three problems:
+
+| Problem | What you do | What it is for |
+|---|---|---|
+| **1** | Probability calculations on a known urn | The model has to exist before it can be simulated |
+| **2** | Build that urn in R and rebuild Bernoulli's question | Find an $N$ by simulation, and compare it to his bound |
+| **3** | Design the same standard for two games of different rarity | Then try to break both, and say what passing really proved |
+
+## Learning goals
+
+In this assignment, you will...
+
+- work out probabilities, expectations, and variances from a fully specified model.
+- see what averaging does to variation, and why counts and proportions behave differently.
+- distinguish the size of one experiment from the number of experiments.
+- decide what evidence would make you call a random mechanism honest — and find the limits
+  of that decision.
+- see what changes when the same standard is applied to a common event and a rare one.
+
+## Reading
+
+Stigler, **pp. 62–77** (Bernoulli and the expanded binomial) and **pp. 78–87** (de Moivre's
+approximation and its limits), with a bridge to **pp. 88–98** (Simpson, Bayes, and
+assumptions about errors).
+
+Parts 1b and 1c adapt Exercises 2.2 and 2.7 of Peter Hoff's *A First Course in Bayesian
+Statistical Methods* (2009), pp. 225–226. **Everything you need is stated below — you do not
+need another book.** If you want extra review of random variables, expectations, and
+variances, [Hoff's text](https://sites.math.rutgers.edu/~zeilberg/EM20/Hoff.pdf) §2.4 is
+freely available.
+
+
+Your own `hw-02.qmd` uses the **same headings, in the same order** as these instructions, so Part 2c Question 4 in
+these instructions is item 4 under the heading "Part 2c" in your document.
+
+::: callout-important
+## Caution
+**This assignment also collects code.** Several chunks in your template are deliberately
+unfinished and carry `#| eval: false` so they display without running. Replace the `TO DO`
+comments, the `NA` values, and any `stop("Complete ...")` line, then **delete the
+`#| eval: false` line** so the chunk actually runs.
+:::
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-02`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 01's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps
+  again.
+- Keep the supplied folder arrangement so `source("homework_02_helpers.R")` resolves.
+- Run the document top to bottom before you submit, and **keep the seeds you used** so your
+  results can be reproduced.
+
+# Packages and helper functions
+
+**No packages.** Base R only, same as HW 01.
+
+
+# Problem 1 — What follows from a probability model?
+
+Show your reasoning for every answer. You may use R for arithmetic, but **a number from
+a simulation does not replace a probability calculation here.**
+
+::: callout-note
+## Working by hand
+
+You may do any part of this problem on paper or a tablet. If you do:
+
+- Label each part, so a grader can tell 1a from 1b without guessing.
+- **Merge** the scan into your rendered PDF and submit **one file**, not two.
+- Say so in your `hw-02.qmd` — a line under the part, naming where the work is.
+- Page-match the handwritten pages in Gradescope along with the rest.
+:::
+
+## Part 1a — The contents of the urn
+
+An urn contains **30 red balls and 20 black balls**. Each ball is equally likely to be
+selected. After each draw, the ball is returned and the urn is mixed thoroughly.
+
+1. Find the probability of red on one draw, red on **both** of two draws, and **at least
+   one** red in two draws. Explain where you use independence.
+2. Let $X$ count red balls in five draws. Find $P(X=3)$, explaining the counting factor in
+   your calculation.
+3. Now draw twice **without replacement**. Find the probability of two reds. Why did it
+   change?
+4. Return to sampling with replacement. Could observing only the colors, even for a very
+   long time, distinguish this urn from one containing **three red and two black** balls?
+   What can be learned about the contents, and what remains unidentified?
+
+**Answer in your `hw-02.qmd`:** the calculations and a short explanation for each question.
+
+## Part 1b — What does averaging buy us?
+
+*Adapted from Hoff, Exercise 2.2.*
+
+1. For independent $Y_1, Y_2$ with means $\mu_1, \mu_2$ and variances $\sigma_1^2, \sigma_2^2$, 
+derive the mean and variance of $aY_1 + bY_2$ and of $aY_1 - bY_2$. **State where
+independence is needed** — one of the two derivations needs it and the other does not.
+
+Then apply your results to independent red-draw indicators with $p = 0.6$:
+
+2. Find the mean and variance of $(Y_1 + Y_2)/2$ (using part 1).
+3. Now replace $Y_2$ by a **copy of $Y_1$** — the same observation written down twice. Does
+   averaging still reduce variation?
+4. For $N$ independent draws, give the mean and standard deviation of both the red count
+   $X_N = Y_1 + \dots + Y_N$ and the proportion $\widehat p_N = X_N/N$. If $N$ is multiplied by **four**, what
+   happens to each standard deviation? Connect this distinction to the scale of fluctuations
+   in de Moivre's work (revisit page 83 and table 2.1 in Stigler).
+
+**Answer in your `hw-02.qmd`:** the derivations, the numerical two-draw comparison, and the
+count-versus-proportion explanation.
+
+## Part 1c — Probability as a fair price
+
+*Adapted from Hoff, Exercise 2.7.*
+
+You and a friend are betting on **one draw** from our urn: 30 red, 20 black.
+
+Here is the bet. A **red ticket** pays 100 cents if the ball is red and nothing if it is
+black. **You choose the ticket price.** Your friend then decides which of these two ways you
+will play:
+
+| Your friend's choice | What happens now | What happens after the draw |
+|---|---|---|
+| **You buy** | You pay your friend the price | If red, your friend pays you 100 cents |
+| **You sell** | Your friend pays you the price | If red, you pay your friend 100 cents |
+
+All of this is agreed **before** the ball is drawn. Count both payments when working out
+what you make or lose, and use cents throughout.
+
+1. **What would be a fair price?** Suppose you *buy* the ticket. What price would make your
+   expected profit zero? Show the calculation. Would that same price give you zero expected
+   profit if you *sold* instead? Could you still lose money on a single draw?
+
+2. **Can your friend make you lose either way the draw turns out?** Suppose you set the
+   price at **110 cents**. Would your friend choose to buy from you or sell to you? Work out
+   how much you lose if the ball is red and if it is black.
+
+   Now try a price of **−10 cents**. A negative price means the seller pays the buyer 10
+   cents to take the ticket, and still owes the buyer 100 cents if red comes up. What would
+   your friend choose this time?
+
+   **What range of prices avoids these guaranteed losses?**
+
+3. **What if you bet on both colors?** A **black ticket** pays 100 cents if the same draw is
+   black and nothing if it is red.
+
+   You price the red ticket at **60** cents and the black ticket at **50** cents. Your
+   friend sells you one of each. How much do you pay? How much do you receive after the
+   draw? How much do you make or lose?
+
+   Now lower the black ticket to **30** cents. Your friend buys both tickets from you
+   instead. Work out what you receive and what you must pay out.
+
+   **Why must the red and black prices add to 100 cents** to avoid giving your friend a way
+   to win every time? What does this example tell you about probability? 
+
+**Answer in your `hw-02.qmd`:** your calculations for each question, and a short explanation
+of what the betting example tells you about probability.
+
+::: render-commit-push
+Commit and push now: *"finished problem 1."*
+:::
+
+# Problem 2 — Reconstruct Bernoulli's question in R
+
+
+::: callout-important
+## The helpers summarize your experiments. They do not run them for you.
+
+`summarize_experiments()`, `simulate_grid()`, `plot_certainty()` and `check_indicators()`
+are **course-written functions**, in `homework_02_helpers.R`. They are not part of R and not
+in any package, so `?simulate_grid` will not work.
+Open the file — there is an index at the top and comments above each function.
+
+**You write the three simulators yourself:** `draw_urn()` in Part 2a, and `play_heads()` and
+`play_flush()` in Part 3b. The point of those parts is to practice writing functions.
+
+| Call | What it does for you |
+|---|---|
+| `summarize_experiments(counts, N, p0, epsilon, certainty_odds)` | Takes success counts from many experiments; reports how often the proportion landed inside the band |
+| `simulate_grid(N_values, p0, epsilon, certainty_odds, B, model_p)` | Runs a whole binomial study at each $N$ you name, and stacks the summaries |
+| `plot_certainty(results, certainty_odds)` | Plots estimated $q_N$ against $N$ with the target marked |
+| `check_indicators(x, N)` | Confirms a vector is exactly $N$ zeros and ones |
+
+You will also use **real base R**: `sample()`, `replicate()`, `cumsum()`, `seq_along()`,
+`choose()`, `rbinom()`, `pnorm()`, `pbinom()`. Those are documented — `?sample` works.
+:::
+
+
+Every helper table uses the same columns:
+
+| Field | Meaning |
+|---|---|
+| `N` | Trials in **one** experiment |
+| `B` | Number of independent experiments simulated |
+| `inside`, `outside` | How many experiments landed in / out of the band |
+| `q_hat` | Estimated probability of landing inside — `inside / B` |
+| `odds_hat` | Estimated inside/outside odds. `NA` means **no** outside cases were seen |
+| `lower95`, `upper95` | Monte Carlo uncertainty interval for $q_N$ |
+| `assessment` | That interval compared against your certainty target |
+
+## Part 2a — Build an urn and watch the proportions
+
+1. Write `draw_urn(N)` so that it returns a vector of `N` zeros and ones, with **one meaning
+red**. Represent the urn as 30 ones and 20 zeros, and use `sample()` to draw **with
+replacement**. Your template gives the function shell and a syntax example.
+
+```{r}
+#| label: sample-syntax-example
+sample(c("small", "medium", "large"), size = 8, replace = TRUE)
+```
+
+Then:
+
+2. Generate **three independent sequences**, each with 25,550 draws. Set a seed **once,
+   before** generating them — never inside the function, or all three sequences come out
+   identical.
+3. For each sequence, calculate all the running proportions with
+   `cumsum(draws) / seq_along(draws)`.
+4. Plot the three paths together. Add horizontal lines at $0.60$, $0.58$, and $0.62$. A
+   logarithmic horizontal axis (`log = "x"`) makes the early draws visible; the template
+   already does this.
+5. Identify the **independent unit** being simulated. What role does returning the ball
+   after each draw play in keeping the red probability fixed and the draws independent
+   under this model?
+6. Inspect the paths and answer two questions. **Must the distance from $0.60$ decrease at
+   every draw?** **Does first entering the band mean a path will stay there forever?**
+
+::: callout-tip
+## Read the plot before you answer
+
+Question 5 is asking about the *shape* of the paths, not about the endpoint. Look at where
+each path first crosses into the band, and then look at whether it is still inside a few
+hundred draws later.
+:::
+
+**Answer in your `hw-02.qmd`:** your simulator, the plot, and your answers to Questions 4
+and 5.
+
+## Part 2b — One long sequence is not a probability
+
+One sequence of 25,550 draws gives you **one** proportion. A probability is a statement
+about how often something happens across *repetitions of the whole experiment*, so we need
+two different counts:
+
+| Symbol | Meaning |
+|---|---|
+| $N$ | Draws in **one experiment**; its outcome is one proportion $\widehat p_N$ |
+| $B$ | Independent repetitions of **the whole experiment**; these estimate how often the proportion falls inside the band |
+
+Let
+
+$$q_N = P\left(\left|\widehat p_N - p_0\right| \leq \epsilon\right).$$
+
+Here $p_0 = 0.6$ and $\epsilon = 1/50$, and **the boundary is included** — a proportion of
+exactly $0.58$ counts as inside. Our operational version of Bernoulli's certainty
+requirement is
+
+$$\frac{q_N}{1 - q_N} \geq c \quad\Longleftrightarrow\quad q_N \geq \frac{c}{c+1}.$$
+
+::: callout-warning
+## What $c = 1000$ is and is not
+$c:1$ are **odds in favor of landing inside the band**, and the corresponding probability is $\frac{c}{c+1}$.
+$1000/1001 \approx 0.999001$ is a probability corresponding to odds of 1000:1. It is not a
+probability of 1000, it is not the ratio of red balls to black balls, and it is not the
+probability that the urn is honest. Do not round it to 0.999 — the whole exercise in Part 2c
+lives in the gap between those two numbers.
+:::
+
+1. Set $N = 100$ (sample size), $B = 2000$ (how many times we repeat the experiment), $p_0 = 0.6$ (true proportion of reds) and $\epsilon = 1/50$ ("grace" window).
+Use your `draw_urn()` to repeat the whole experiment, saving its red count each time — a loop or `replicate()`
+   will do it, and the template supplies the surrounding code. Recall, `draw_urn()` returns a vector of length $N$ of 1's (reds) and 0's (blacks), not a count. Your `counts` should have
+   **$B$ entries, each between 0 and $N$**; it is not one long vector of individual draws.
+2. Run `summarize_experiments()` and display its table. Report $N$, $B$, `inside`,
+   `outside`, and `q_hat`.
+3. Calculate the inside/outside ratio yourself from the two counts and compare it with
+   `odds_hat`. If the outside count is zero, report **zero observed failures** — say so in
+   those words, and do not read it as infinite certainty.
+4. Explain **why increasing $B$ answers a different question from increasing $N$.** Name
+   which one changes the size of each experiment, and which one gives you more repetitions
+   for estimating its chance of landing inside the band.
+
+**Answer in your `hw-02.qmd`:** your repetition code; $N$, $B$, the two counts, the estimated
+$q_N$, and the inside/outside ratio; and your explanation of $N$ versus $B$.
+
+## Part 2c — How large does N need to be?
+
+For large studies, `rbinom(B, size = N, prob = p0)` simulates $B$ red counts directly. Under
+the assumptions you checked in Part 2a this has exactly the same count distribution as your
+urn, and it avoids constructing billions of individual draws. `simulate_grid()` (in `homework_02_helpers.R`) uses this
+shortcut.
+
+Part 2b estimated $q_N$ at exactly one experiment size, $N = 100$. Now you repeat that
+study at several sizes and ask when the probability of landing in $[0.58, 0.62]$ reaches
+the target. **Keep the urn, the band and the target fixed; the only thing that changes is
+the number of draws in one experiment.** There are three stages — a **pilot** at widely
+spaced sizes, a **refinement** near the apparent transition, and a **confirmation** at two
+sizes you pick from the search. You are not expected to guess a good $N$ in advance.
+
+1. **Run the pilot** with $B = 10000$ at
+   `N_values = c(100, 500, 1000, 2500, 5000, 7500, 10000, 25550)`, using $p_0 = 0.6$,
+   $\epsilon = 1/50$, and $c = 1000$. Keep every row, including the sizes that fall short.
+2. **Read it.** Display the results and use `plot_certainty()` to plot $\widehat q_N$
+   against $N$ with the target marked. Going down the rows in increasing $N$, where do the
+   estimates move from below the target to above it? Check `assessment` too — a point above
+   the line can still be `unresolved` if its interval crosses the line (`lower95` is below target probability). **Do not round
+   `q_hat` to 1 before making that comparison**; the whole question lives in the fourth
+   decimal place.
+3. **Refine.** Add at least four values of $N$ between the last pilot value below the target
+   and the first one above it. If the pilot is unclear, cover the unresolved region instead.
+   **Keep every value you tried** — do not replace earlier results with whichever run looks
+   best.
+4. **Choose before you confirm.** Pick **one candidate $N$ and one smaller comparison $N$**
+   from your search, and write down why those two, before running anything else. A
+   promising candidate is one whose results suggest it could meet the target; the smaller
+   size is what shows you what your search has and has not ruled out.
+5. **Run one fresh confirmation** at those two values, with $B = 100000$ and a new recorded
+   seed. The extra repetitions buy precision at those two sizes; they do not change which
+   sizes you chose.
+6. **State what it supports.** Read each row's `assessment`. If the candidate is `meets`, it
+   is supported at that tested size; if the smaller one is `below`, it falls short; if
+   either is `unresolved`, say so. Then say whether more repetitions at the same sizes, or
+   more sizes, is what would resolve what is left.
+7. **Put it in context.** Compare your finding with 25,550, and answer: what is the
+   difference between a sufficient mathematical bound and a sample size supported by
+   simulation? Does testing a grid of sizes prove the **smallest possible** $N$? Does a
+   guarantee about the **endpoint** of an experiment guarantee that its entire **path**
+   stays inside the band? Use your Part 2a plot on that last one.
+
+::: callout-important
+## How to read the simulation uncertainty
+
+The helpers report `lower95` and `upper95`, a 95% Monte Carlo interval for $q_N$. It
+reflects the finite number $B$ of experiments you ran. **You do not need to derive it.** It
+describes the precision of your simulation estimate, and it is a separate thing from your
+chosen $1000:1$ requirement.
+
+| `assessment` | Interpretation at this tested $N$ |
+|---|---|
+| `meets` | The whole interval is at or above $c/(c+1)$ |
+| `below` | The whole interval is below $c/(c+1)$ |
+| `unresolved` | The interval straddles the target — this simulation is not precise enough to decide |
+
+**`unresolved` is an acceptable answer.** Report it and say what further simulation would be
+needed. What is *not* acceptable is rerunning with new seeds until a candidate passes: that
+turns a confirmation into a search, and the fresh study stops meaning anything.
+:::
+
+**Answer in your `hw-02.qmd`:** the pilot and refined tables, the probability plot, and the
+fresh confirmation table. Summarize the pilot and the refinement; name and justify your
+candidate and your comparison; state your conclusion from the confirmation; answer all
+three questions in Question 7.
+
+::: render-commit-push
+Commit and push now: *"finished problem 2."*
+:::
+
+# Problem 3 — Standards for two honest games
+
+## Part 3a — Define two events and standards
+
+You will study **both** games below. For each one, the honest model must specify the
+randomization and have a success chance $p_0$ **that you can calculate by counting**. A
+trial may contain several actions; different trials must start afresh and be independent.
+
+| Study | One trial | A success | Counting hint |
+|---|---|---|---|
+| **Heads** | Toss a fair coin four times | All four tosses are heads | Count equally likely ordered sequences |
+| **Flush** | Deal five cards from a freshly shuffled standard 52-card deck, no jokers | All five cards share a suit | Count five-card subsets with `choose()` |
+
+::: callout-warning
+## The trap in each one
+
+**Heads** — use separate four-toss blocks. Overlapping windows in one long sequence are
+**not** independent trials.
+
+**Flush** — draw without replacement *within* a hand, then return all five cards and
+reshuffle before the next hand. Count straight flushes and royal flushes as successes too:
+the event here is simply "all one suit."
+:::
+
+Before you run any large simulation, write down — **separately for each of the two
+studies**:
+
+1. Your event, what one trial means, your independence assumptions, and a **counting
+   derivation** of $p_0$.
+2. Your tolerance $\epsilon$ — the largest absolute difference between an observed success
+   proportion and $p_0$ that you would accept. Use $0 < \epsilon < p_0$. A useful starting
+   point is $\epsilon = p_0/5$, a 20% relative discrepancy.
+3. Your certainty odds $c:1$. Possible choices are $19:1$, $99:1$, or $1000:1$; any
+   $c \geq 9$ is fine if you justify it. State the required probability $c/(c+1)$.
+4. A **concrete setting** in which you would use this standard, and why that tolerance and
+   that certainty are reasonable there.
+
+
+
+5. Then: explain what would go wrong if the flush study automatically reused $\epsilon = 1/50$.
+Would seeing **no flushes at all** produce a proportion inside that band? How useful would
+that be as a check on a card dealer?
+
+**Answer in your `hw-02.qmd`:** both study specifications and the flush comparison. **Make
+these choices before you go looking for the $N$ values that work** — choosing the standard
+after seeing which $N$ passes is how a check stops being a check.
+
+## Part 3b — Code the mechanisms before using the shortcut
+
+Write `play_heads(N)` and `play_flush(N)`, each returning `N` success indicators. Use
+`sample()` to generate the actual tosses and cards. **Do not use `rbinom()` in this part** —
+the point is that you can build a mechanism from its description, and only then replace it
+with a shortcut you have earned.
+
+Your template gives a loop shell for each and syntax hints. Useful counting syntax:
+
+```{r}
+#| label: counting-syntax
+choose(52, 5)
+choose(13, 5)
+```
+
+Then, **for each study**:
+
+1. Check the length and the possible values of the output — `check_indicators()` does both.
+2. Simulate **50,000 trials** and compare their success proportion to your calculated $p_0$.
+3. Explain any discrepancy, **including why a rare event can have noticeable relative
+   simulation error** even when its absolute error is tiny.
+4. Identify the line of code that makes successive trials start afresh.
+
+::: callout-tip
+## Put the two discrepancies next to each other
+
+Question 3 is much easier to answer once both numbers are on the page. Run both simulators,
+then write the two differences side by side — as absolute differences *and* as percentages
+of their own $p_0$. One of those two columns will look like the simulators are equally good
+and the other will not, and explaining why is the whole question.
+:::
+
+**Answer in your `hw-02.qmd`:** both functions, the output checks, both numerical
+comparisons, and your explanation.
+
+## Part 3c — Find N for both studies
+
+Run the whole Part 2c workflow **twice, once per study**. Keep $p_0$, $\epsilon$ and $c$
+matched to the event you are studying — a good heads standard is not automatically a good
+flush standard, and mixing them is the easiest way to produce a table that means nothing.
+
+| Stage | $B$ |
+|---|---:|
+| Exploration and refinement | 10,000 |
+| Fresh confirmation | 100,000 |
+
+For **each** study, in this order:
+
+1. **Run the pilot grid** with `simulate_grid()` across at least six values of $N$. Start
+   with the supplied grid and extend it if every tested value comes back `below`, or every
+   one comes back `meets`.
+2. **Read the table and the plot.** Find where `q_hat` and `assessment` move toward
+   $c/(c+1)$. Keep the counts and the uncertainty bounds visible — **do not round `q_hat`
+   to 1** before comparing it to the target.
+3. **Refine near the transition.** Add at least four new values of $N$ around the promising
+   or unresolved region. **Keep every value you tried**; do not replace earlier results with
+   whichever run looks best.
+4. **Choose before you confirm.** Pick one `candidate_N` and one smaller `comparison_N`, and
+   record why those two.
+5. **Run one fresh confirmation** at those two values with a new recorded seed and
+   $B = 100000$.
+6. **Report the smallest tested value** your confirmation supports, or an unresolved range.
+
+**Do the heads study end to end first, then the flush study end to end.** Your submitted
+tables must show **both the inside/outside counts and the Monte Carlo uncertainty**, not
+just a rounded success percentage.
+
+::: callout-important
+## Do not claim an exact universal cutoff
+
+Simulations need not give a perfectly increasing curve, and the possible success counts are
+integers. For the flush in particular, check what whole numbers of successes your band
+actually admits at small $N$ before you conclude anything from a low `q_hat` there — the
+answer is occasionally *none*, and a band no outcome can land in is a property of your
+standard, not a fact about dealers.
+:::
+
+
+7. Finally, **put the two studies side by side** in the table your template provides: $p_0$,
+$\epsilon$, your confirmed $N$, and the expected number of successes at that $N$. Same rule,
+two events — **what did changing only the rarity of the event cost you?**
+
+
+**Answer in your `hw-02.qmd`:** the search and confirmation tables for both studies, a plot
+per study with the target marked, your recommendation for $N$ in each, and comparison of two experiments. 
+
+## Part 3d — What would make you trust it?
+
+::: callout-note
+**Discuss it — do not compute anything.** Everything you need is the $\epsilon$ you chose in
+Part 3a and what Part 2a showed about where an observed proportion settles.
+:::
+
+Part 3c took $p_0$ as known and asked how many trials make an honest mechanism's observed
+proportion land near it. Suppose instead the mechanism you are auditing was never at $p_0$
+— its true chance is a little higher, and nobody told you.
+
+Would your check object? Would running more trials make it **more** likely to object, or
+**less**? If the difference is small enough that your check will never object at any number
+of trials, is that a defect in the procedure or the thing you asked for in Part 3a? Would it
+matter in the setting you named there?
+
+**Answer in your `hw-02.qmd`:** one paragraph.
+
+::: render-commit-push
+Commit and push once all three problems are done, with a message describing what's in the
+commit.
+:::
+
+# Submission
+
+::: callout-warning
+Before you wrap up, make sure your Git pane is empty — everything committed and pushed.
+
+You must also **render your document to PDF and submit that PDF on Gradescope** before the
+deadline for full credit.
+:::
+
+Your submitted document must contain the probability work, all requested code and tables,
+the four main plots (the urn paths, the Bernoulli search, and the two game searches), and
+your Part 3d paragraph.
+**Record your seeds** and label $N$, $B$, $p_0$, $\epsilon$, and $c$ so that someone else
+can reproduce your study. No separate essay is required.
+
+To submit on Gradescope:
+
+- Access Gradescope through the menu on the
+  [STA 119FS Canvas site](https://canvas.duke.edu/courses/84980).
+- Click on the assignment, and you'll be prompted to submit it.
+- Mark the pages associated with each problem — every page of your submission should be
+  associated with at least one question.
