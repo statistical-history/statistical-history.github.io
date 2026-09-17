@@ -141,7 +141,9 @@ selected. After each draw, the ball is returned and the urn is mixed thoroughly.
 
 1. For independent $Y_1, Y_2$ with means $\mu_1, \mu_2$ and variances $\sigma_1^2, \sigma_2^2$, 
 derive the mean and variance of $aY_1 + bY_2$ and of $aY_1 - bY_2$. **State where
-independence is needed** — one of the two derivations needs it and the other does not.
+independence is needed** — one of the two derivations needs it and the other does not. 
+You can use linearity of expectation formula. For variance derivations, use the definition of variance.
+In class we have seen that for general $X, Y$, $Var(X+Y) = Var(X)+Var(Y)+2Cov(X,Y)$. Do not just apply this formula.
 
 Then apply your results to independent red-draw indicators with $p = 0.6$:
 
