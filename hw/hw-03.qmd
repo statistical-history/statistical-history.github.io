@@ -1,0 +1,450 @@
+---
+title: "HW 03: What do the observations let us conclude?"
+subtitle: "Instructions — read these; do the work in the `hw-03.qmd` in your own repo"
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Monday, October 5, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+In Homework 2, we specified a mechanism and asked what observations it would
+produce. Here we move in the other direction. We observe a ticket's color
+or a collection of births, then ask what those observations tell us about
+the mechanism. The answer depends on what we assumed before observing
+anything. We finish by exploring why averages can have a familiar shape
+even when the observations being averaged do not.
+
+## Learning goals
+
+In this assignment, you will...
+
+- distinguish joint and conditional probabilities, and explain how changing
+  source weights changes what an observation tells you about its source.
+- identify what must stay fixed for a proportionality factor to be constant.
+- interpret posterior means, intervals, and probabilities as statements about
+  an unknown parameter, given the observations, model, and prior.
+- assess how a prior's mean and concentration affect the conclusions, and
+  explain which assumptions remain untested when different priors agree.
+- compare the distributions of observations and their averages, distinguishing
+  sample size from the number of simulated experiments.
+- explain why independence matters for averaging and state the scope of the
+  central limit theorem explored here.
+
+**Reading connection:** Stigler, pp. 113–138, especially conditional
+probability, nonuniform prior distributions, and the central limit theorem.
+Problem 3 is a visual exploration; no integration, normal-probability
+calculations, or proof of the central limit theorem is required.
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-03`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 02's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps again.
+- Keep the supplied folder arrangement so `source("homework_03_helpers.R")` resolves.
+- Run the document top to bottom before you submit, and **keep the seeds you used** so your
+  results can be reproduced.
+
+# Materials and submission
+
+Work in `hw-03.qmd` in your homework repository, leaving
+`homework_03_helpers.R` beside it and the CSV files in `data/`. Use **base R only** for the analysis. Submit your rendered PDF on
+Gradescope and push your source and rendered work to your homework
+repository, following the previous homeworks' submission procedure.
+
+The template supplies most of the computation and all of the plotting
+machinery. Complete the marked calculations, run the experiments, and
+explain what the results mean. State the event, conditioning information,
+and model whenever you report a probability. Label plots and retain the
+seeds that make your simulations reproducible.
+
+Fill in each **Your answer**
+space or complete the indicated table or code. The
+`own-prior` chunk is deliberately unfinished: choose its mean and weight,
+then remove `#| eval: false` to run it. Keep the supplied seeds.
+
+# Problem 1 — The same conditional probabilities, different conclusions
+
+*Adapted from Task 2 of the in-class conditional-distributions handout.*
+There are 100 tickets. Each has a source label and a color:
+
+| Source | Red ticket | Blue ticket | Total |
+|---|---:|---:|---:|
+| A | 9 | 1 | 10 |
+| B | 27 | 63 | 90 |
+| Total | 36 | 64 | 100 |
+
+## Part 1a — Select one of the 100 tickets
+
+Every ticket is equally likely to be drawn. Let $A$ mean that the selected
+ticket came from source A and $R$ mean that it is red.
+
+1. Calculate $P(A)$, $P(R)$, $P(R\mid A)$, $P(R\mid B)$, and $P(A\mid R)$.
+   Show the numerator and denominator for each probability.
+
+2. Calculate $P(A\mid R)$ again using
+   $$P(A\mid R)=\frac{P(R\mid A)P(A)}
+   {P(R\mid A)P(A)+P(R\mid B)P(B)}.$$
+   Explain what each factor contributes.
+
+3. Source A has the higher fraction of red tickets. After seeing a red
+   ticket, which source is more probable? Explain how both statements can
+   be true.
+
+## Part 1b — Give the sources equal weight
+
+Now consider a **different drawing procedure**: choose source A or B with
+equal probability, then choose a ticket uniformly within that source.
+The color proportions within each source stay the same.
+
+1. Represent this procedure by a weighted table with 50 total units in
+   each source. Multiply every entry in row A by $50/10$ and every entry
+   in row B by $50/90$. Fill in the table below. These are weights used
+   to describe a probability model, not additional observed tickets.
+
+   | Source | Weighted red count | Weighted blue count | Total |
+   |---|---:|---:|---:|
+   | A | | | 50 |
+   | B | | | 50 |
+   | Combined | | | 100 |
+
+2. Recalculate $P(A)$, $P(R)$, $P(R\mid A)$, $P(R\mid B)$, and $P(A\mid R)$
+   under this procedure. Which probabilities changed? Which stayed fixed?
+
+3. Explain why dividing each row by its total and then giving the two rows
+   equal weight does not preserve the original joint probability model.
+   What information from the original table has been replaced?
+
+## Part 1c — What was hidden by a proportionality sign?
+
+For fixed $A$, $P(R\mid A)$ is proportional to $P(R,A)$ as the color
+varies. The proportionality factor is $1/P(A)$.
+
+1. Use your Part 1a probabilities to find the two multipliers $1/P(A)$ and
+   $1/P(B)$. Within one source, which variable can change while its multiplier
+   stays fixed? Explain why you cannot ignore these multipliers when comparing
+   source A with source B. Connect your explanation to the change in $P(A\mid R)$ between
+   Parts 1a and 1b and to Laplace's difficulty with a supposedly constant factor
+   that changed with the quantity under study.
+
+
+# Problem 2 — Reconstruct Laplace's calculation, then change his prior
+
+Laplace reported **251,527 boys and 241,945 girls born in Paris from 1745
+through 1770**. We will use the male/female categories as recorded in that
+historical account. Let $p$ be the unknown probability that a recorded birth
+is male, and let $Y$ count recorded male births out of $N=493{,}472$.
+
+Our model treats births as independent conditional on a common, fixed $p$:
+
+$$Y\mid p\sim\operatorname{Binomial}(N,p).$$
+
+This is an assumption about the records, not something established by their
+large number. We reconstruct Laplace's inverse-probability question using
+provided R functions. You supply a prior and the birth counts; the functions
+return summaries of the **posterior**, the distribution describing uncertainty
+about $p$ after using those observations. You do not need an updating formula
+or a new distribution family to complete this problem. We do not reproduce
+Laplace's hand-computed approximation term by term.
+
+## Part 2a — Begin with a uniform distribution
+
+Laplace's uniform prior on $0<p<1$ gives equal probability to ranges of
+equal length. The template selects it from `hw3_priors()`. Use these provided
+functions with that prior and the Paris counts:
+
+| Function | What it returns |
+|---|---|
+| `posterior_mean(prior, boys, girls)` | The mean of the posterior distribution of $p$ |
+| `posterior_interval(prior, boys, girls)` | Two endpoints, $a$ and $b$, with 95% posterior probability that $a<p<b$, as explained below |
+| `posterior_probability(prior, boys, girls)` | The posterior probability that $p$ is at most 0.5 |
+
+In class, we asked about $P(a<\theta<b\mid X)$: after seeing the data $X$,
+what is the probability that the unknown $\theta$ lies between $a$ and $b$?
+Here $p$ plays the role of $\theta$, and the data are the Paris birth counts.
+The function `posterior_interval()` finds two numbers $a$ and $b$ such that
+
+$$P(a<p<b\mid Y=y)=0.95,$$
+
+given our binomial model and chosen prior. An **interval** is simply the
+range of values between two endpoints. We call this a **95% posterior
+interval** because the posterior assigns 95% probability to $p$ lying in
+that range. **Central** means the remaining 5% is split equally: 2.5% below
+$a$ and 2.5% above $b$. This describes uncertainty about the unknown birth
+probability $p$. You do not need to calculate the endpoints yourself.
+
+The probability returned by `posterior_probability()` concerns one side
+of a cutoff, $P(p\leq 0.5\mid Y=y)$. We call it a **tail probability**:
+the posterior probability on that side of 0.5.
+
+The template supplies the calls. Your task is to explain the results.
+
+1. Compute the observed male fraction $y/N$. Explain the difference between
+   this fraction of recorded births and the unknown probability $p$ in our
+   model. Which prior and observations are we giving the functions?
+
+2. Report the posterior mean and the two endpoints of the central 95%
+   posterior interval. A mean describes a distribution's center; the
+   interval shows a range containing 95% of its probability. In one or two
+   sentences, explain what your endpoints tell us about $p$, given the
+   Paris records, binomial model, and uniform prior. Use the probability
+   statement above as a guide.
+
+3. Report $P(p\leq 0.5\mid Y=y)$ and compare it with Laplace's approximate
+   value, $1.1521\times 10^{-42}$. Explain in words what this probability
+   concerns. It is not the chance of observing this birth count when $p=0.5$.
+
+4. Report $P(p>0.5\mid Y=y)$ as **one minus the small tail**, rather than
+   rounding it to certainty. Does strong evidence that $p>0.5$ imply that
+   almost every birth will be male? Use your interval to explain.
+
+## Part 2b — How much work is the prior doing?
+
+Use the **same full Paris data** with each supplied prior below. We describe
+these priors by their **mean** and **weight**. The mean describes the center.
+A distribution is **more concentrated** when its probability is packed
+into a narrower range of values. Within this supplied family, increasing
+the weight while keeping the mean fixed packs the prior probability more
+tightly around that mean. Before seeing the records, such a prior gives
+less room to values of $p$ far from its mean.
+
+**Weight** also controls how much the prior influences the posterior:
+with a larger weight, the prior pulls the posterior mean more strongly
+toward its own mean. Weight is a
+setting for the prior, not a count of additional observed births. The
+labels "weak," "strong," and "extreme" below refer to increasing weights.
+
+| Name | Prior mean | Prior weight |
+|---|---:|---:|
+| Uniform | 0.5 | 2 |
+| Jeffreys | 0.5 | 1 |
+| Centered | 0.5 | 100 |
+| Low, weak | 0.1 | 100 |
+| Low, strong | 0.1 | 10,000 |
+| Low, extreme | 0.1 | 1,000,000 |
+| High, extreme | 0.9 | 1,000,000 |
+
+The last two are deliberately implausible stress tests, not recommended
+beliefs about births. Jeffreys' prior is a standard alternative whose curve
+is U-shaped. Its mean is 0.5 even though most of its probability lies toward
+the ends: a mean alone does not describe the whole shape. You do not need to
+derive any of these curves.
+
+**Very small probabilities:** the helper computes both tails directly and
+also reports their logarithms. If `log10_p_le_half` is $-42$, the probability
+is $10^{-42}$. A printed zero may mean the number is too small for ordinary
+computer arithmetic; a printed one may be rounded. Neither is a license to
+claim logical impossibility or certainty. The log columns help you describe
+these cases; you do not need to calculate logarithms yourself.
+
+1. Run `plot_priors(priors)` and inspect the shapes. Then try
+   `plot_priors(priors, zoom = TRUE)` to see the narrow priors clearly.
+   The zoomed panels have different horizontal scales; all panels have
+   separate vertical scales. Include either the full-view figure or the
+   zoomed figure, showing all supplied priors. Explain what your chosen
+   view helps you see about their shapes and how widely or narrowly their
+   probability is spread.
+   These curves show **density**: the area under a curve between two values
+   gives the probability that $p$ lies between them. A curve's height at
+   one exact value is not itself a probability. The full view draws
+   Jeffreys' curve only from 0.001 to 0.999 to make its U shape visible.
+   All probability calculations still use the full range from zero to one.
+
+2. Use `posterior_summary(priors, boys, girls)` and the supplied template
+   code to report prior means and weights, posterior means and intervals,
+   and the posterior probabilities on either side of 0.5. The template splits
+   the output into readable tables and includes logarithms for tiny tails.
+   Use `plot_posteriors(results)` to compare the means and intervals on one
+   scale; very narrow intervals may look like points.
+
+3. Compare the uniform and Jeffreys results. Then compare the three priors
+   with mean 0.1. Why does knowing a prior's mean alone fail to predict its
+   influence? Use the plotted shapes, reported summaries, and each prior's
+   weight relative to $N$. Explain in words; no updating formula is needed.
+
+4. **As we learned above, distributions can be described through their
+   means, although a mean does not tell us their whole shape.** Add a prior
+   of your own by choosing a mean between zero and one and a positive weight.
+   State both choices and predict their effect **before** running the code.
+   The template's `make_prior("My choice", mean = ..., weight = ...)` builds
+   the prior for you. Inspect its curve and posterior summaries, then explain
+   whether the result agrees with your prediction. Do not choose a prior
+   solely to manufacture a preferred conclusion.
+
+## Part 2c — What should we do with different conclusions?
+
+1. Write **250–350 words** addressing these questions with specific results:
+
+   - Which conclusions stay similar across the priors with smaller weights,
+     and which change when a prior packs its probability tightly around 0.1
+     or 0.9? Do the uniform and Jeffreys analyses tell substantially different
+     stories?
+   - What prior information would justify assigning enormous weight near
+     0.1 or 0.9? Does obtaining a mathematically valid posterior make the
+     underlying assumptions equally defensible?
+   - How would you report this **sensitivity**, meaning how the conclusions
+     change when the prior changes, without hiding inconvenient analyses or
+     treating every possible prior as equally credible?
+   - Name one assumption about the birth records that **all** these prior
+     comparisons leave unchanged. Could changing that assumption matter even
+     if several priors agree?
+
+# Problem 3 — Can averages look different from the things being averaged?
+
+You will use two real datasets:
+
+| Dataset and variable | One row represents | Rows |
+|---|---|---:|
+| Daily births: `births` | A U.S. calendar day's recorded births | 3,652 |
+| Diamonds: `price` | One diamond's price in U.S. dollars | 53,940 |
+
+The files are `data/us_daily_births_1994_2003.csv` and `data/diamonds.csv`.
+
+The birth counts were published by FiveThirtyEight from CDC/NCHS data.
+The diamond data are distributed with ggplot2; we provide a CSV copy so
+that no R package is needed. These are not random samples of every possible
+day or every diamond. For our experiment, treat each supplied list as a
+**fixed population**, with every row equally likely to be selected.
+
+## Part 3a — First look at the observations
+
+1. Plot a histogram of each variable. Describe its shape, center, and spread.
+   Does either look symmetric? Does either have separated clusters or a long
+   tail? Record a prediction: which will need larger samples before its
+   averages look approximately bell-shaped?
+
+2. For the births data, also compare average birth counts by day of the week
+   using the supplied code. Why might consecutive real calendar days behave
+   differently from independently chosen rows?
+
+## Part 3b — Repeat the act of averaging
+
+**Sampling procedure (provided).** For each dataset and each size $n=1,5,30,100$, the supplied helper will:
+
+- Select $n$ rows independently **with replacement** from the fixed list.
+- Compute the mean of those selected values.
+- Repeat the whole procedure $B=4{,}000$ times and save all $B$ means.
+
+Here $n$ counts observations in one average, while $B$ counts averages in
+one histogram. You are not plotting one average of the entire dataset.
+Sampling with replacement creates independent draws in this experiment;
+it does not establish that the original records were independent.
+
+Run the supplied code for both datasets. It produces a table of the means'
+centers and spreads and a four-panel histogram figure. The histogram helper
+puts the means on a common scale:
+
+$$Z=\frac{\text{sample mean}-\mu}{\sigma/\sqrt{n}},$$
+
+where $\mu$ and $\sigma$ are the mean and standard deviation of the fixed
+list. It overlays a normal curve centered at zero with standard deviation
+one. This rescaling lets you compare **shape** while the table shows how
+much the unscaled means narrow. The curve is a reference, not a fitted
+description guaranteed to be correct.
+
+1. Explain what one plotted value represents when $n=30$. What would
+   increasing $B$ change? What would increasing $n$ change?
+
+2. Compare the original histograms with the distributions of sample means.
+   Describe how center, spread, and shape change. Use the tables as well
+   as the plots, and revisit your prediction from Part 3a.
+
+3. Where is the normal curve a useful visual approximation? Describe one
+   visible discrepancy; there is no universal sample size at which every
+   distribution must look normal. If the fit remains poor, try $n=300$.
+
+4. Does a bell-shaped distribution of averages imply that the original
+   observations have become normal, or that the real process producing
+   the data has been explained?
+
+## Part 3c — Copying is not independent sampling
+
+Use the diamond prices. Compare two experiments at $n=100$:
+
+- **Independent:** draw 100 prices independently with replacement and
+  average them.
+- **Copied:** draw one price, make 100 identical copies of it, and average
+  those copies.
+
+1. Repeat each experiment 4,000 times with the supplied code. Compare their
+   histograms on the same price scale and their standard deviations. Why
+   does writing 100 numbers in the second experiment fail to produce the
+   same benefit as the first?
+
+2. Finish by correcting this claim in **three or four sentences**:
+
+   > Averaging enough observations from any source makes everything normal,
+   > so we do not need to worry about how the observations were obtained.
+
+   Your revision should distinguish the observations from their averages,
+   describe the independence built into our experiment, and state the scope
+   of the version of the central limit theorem we are exploring: independent
+   draws from the same distribution with finite, nonzero variance. Our finite
+   data lists satisfy that variance condition. Independence alone does not
+   make the claim true for every conceivable distribution.
+
+   This is an exploration of the normal shape; you do not need to calculate areas under the normal curve.
+
+# Sources
+
+- The local in-class handout, Task 2, supplies Problem 1's ticket counts.
+  The questions here are a self-contained adaptation.
+- Laplace, *Mémoire sur les probabilités*, section XIX, gives the Paris
+  counts and his approximate tail calculation. See
+  [Richard J. Pulskamp's translation](https://probabilityandfinance.com/pulskamp/Laplace/memoir_probabilities.pdf).
+- [FiveThirtyEight's births data](https://github.com/fivethirtyeight/data/tree/master/births)
+  and [ggplot2's diamond documentation](https://ggplot2.tidyverse.org/reference/diamonds.html)
+  describe the supplied empirical data. 
+- R's documentation describes the
+  [beta functions](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Beta.html)
+  and [normal functions](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Normal.html)
+  used by the supplied code.
+
+
+# Optional extra information — how the posterior helpers work
+
+<details>
+<summary>Reveal the updating rule (definitely extra; not required or graded)</summary>
+
+**This is extra information if you want to learn how the functions work.
+You can skip it completely. No homework answer requires these formulas,
+beta-distribution terminology, or direct calls to R's beta functions.**
+
+Behind the scenes, the supplied priors belong to the **beta family**. A
+choice of mean $m$ and weight $w$ corresponds to two positive parameters,
+$\alpha=mw$ and $\beta=(1-m)w$. A uniform prior has
+$\alpha=\beta=1$; Jeffreys' prior has $\alpha=\beta=0.5$.
+For the independent-birth model, the update is
+
+$$p\sim\operatorname{Beta}(\alpha,\beta),\qquad
+p\mid Y=y\sim\operatorname{Beta}(\alpha+y,\beta+N-y).$$
+
+The posterior mean is a weighted average of the prior mean and observed
+male fraction:
+
+$$\frac{w}{w+N}m+\frac{N}{w+N}\frac{y}{N}.$$
+
+This explains why comparing $w$ with $N$ helps interpret the prior's
+influence. It does not turn prior weight into births that anyone observed.
+Internally, `posterior_interval()` uses R's `qbeta()` for interval endpoints,
+and `posterior_probability()` uses `pbeta()` for tail probabilities.
+
+</details>
