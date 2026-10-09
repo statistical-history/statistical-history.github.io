@@ -1,0 +1,464 @@
+---
+title: "HW 04: Which observations, which average?"
+subtitle: "Instructions — read these; do the work in the `hw-04.qmd` in your own repo"
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Monday, October 19, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+This homework asks two related questions: **Which places should count in a
+sample? Which observations should count equally in an average?** Most code
+is supplied. Your work is to make choices, explain what the calculations
+estimate, and judge the evidence. Brief paragraphs are sufficient unless
+a longer response is requested. 
+
+## Learning goals
+
+In this assignment, you will...
+
+- estimate an unknown total from a sample using a ratio, and explain why a
+  ratio of totals and a mean of ratios answer different questions.
+- distinguish the error caused by how places were selected from the variation
+  that shrinks as more places are sampled.
+- explain what random selection from a complete list addresses, and what it
+  does not guarantee.
+- identify what receives equal weight in an equal-year average and in a pooled
+  rate, and choose the average that matches a stated question.
+
+**Reading connection:** Stigler, pp. 161-200: Keverberg's objection,
+Quetelet's social statistics, and Poisson's analysis of conviction records.
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-04`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 03's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps again.
+- Keep the supplied folder arrangement so `source("homework_04_helpers.R")` resolves.
+- Run the document top to bottom before you submit, and **keep the seeds you used** so your
+  results can be reproduced.
+
+# Materials and submission
+
+Work in `hw-04.qmd` in your homework repository. Keep
+`homework_04_helpers.R` beside it and the CSV files in `data/`. Push your
+source and rendered work to your homework repository and submit the same
+rendered document as a PDF on Gradescope, following the earlier homeworks.
+Include your code, the requested tables and figures, and your written
+answers. Keep the seeds. No additional R packages or data downloads are
+needed for the analysis.
+
+# Problem 1 — Keverberg's dilemma in North Carolina
+
+One historical approach to estimating a country's population was to count
+people carefully in a few areas, calculate their population-to-birth ratio,
+and multiply that ratio by the country's known total births. Keverberg's
+objection was that areas differ in many ways: how could we identify enough
+homogeneous groups without effectively conducting a census?
+
+We will explore that difficulty with **all 100 North Carolina counties**.
+The supplied Census Bureau snapshot contains each county's July 1, 2024
+population estimate, $P_i$, and births during July 1, 2023-June 30, 2024,
+$B_i$. These are official estimates, not an ancient census or exact ground
+truth. For this experiment we treat the complete table as a fixed population
+and its summed population as our benchmark.
+
+Imagine that total births $B_{\mathrm{NC}}$ are known, but population can be
+measured only in selected counties $S$. Use the **ratio-of-totals estimator**:
+
+$$\widehat P_{\mathrm{NC}}
+=B_{\mathrm{NC}}\frac{\sum_{i\in S}P_i}{\sum_{i\in S}B_i}.$$
+
+The template gives you the full table so you can check estimates after making
+them. In a real application, the unsampled population values would not be
+available. We are sampling **counties**, not individual North Carolinians.
+
+## Part 1a — See the heterogeneity
+
+1. Calculate $P_i/B_i$ for each county. Report the smallest and largest
+   ratios and their county names. Explain the units. Does a large value
+   mean more births per person or fewer?
+
+2. Calculate the statewide population and births totals and their ratio.
+   Give two plausible reasons county ratios might differ. The data do not
+   establish which explanation is responsible; distinguish possibilities
+   from conclusions.
+
+## Part 1b — Two ways to combine the same counties
+
+::: callout-tip
+## Helper functions in this part
+
+You do the calculation yourself with base R's `sum()`. One course-written helper, from `homework_04_helpers.R`, lets you check it:
+
+| Call | What it does for you |
+|---|---|
+| `ratio_estimate(nc, selected)` | Applies the ratio-of-totals formula to the counties you select. `selected` must be a vector of **row numbers** in `nc`, such as `c(1, 5, 12)` or `1:100` — not county names. Returns total births in all of `nc`, times the selected rows' summed population divided by their summed births. `ratio_estimate(nc, 1:100)` selects every county |
+:::
+
+Before sampling anything, apply the ratio-of-totals estimator from the start
+of this problem to **all 100 counties**: treat every county as selected, so
+both sums run over the whole table.
+
+1. Calculate the ratio-of-totals estimate,
+   $$\widehat P_{\mathrm{NC}}
+   =B_{\mathrm{NC}}\frac{\sum_{i=1}^{100}P_i}{\sum_{i=1}^{100}B_i},$$
+   and check it against `ratio_estimate(nc, 1:100)`. Report the estimate.
+
+2. Now calculate this alternative, which multiplies total births by the
+   ordinary mean of the 100 county ratios from Part 1a:
+   $$B_{\mathrm{NC}}\left(\frac{1}{100}
+      \sum_{i=1}^{100}\frac{P_i}{B_i}\right).$$
+   Report the estimate and how far it is from the population benchmark.
+   Which of the two estimates returns the benchmark exactly? Explain why
+   the two answers can differ even though neither uses a sample.
+
+The first estimator, the ratio of totals, can be rewritten as a
+**weighted** sum of the county ratios:
+
+$$B_{\mathrm{NC}}\frac{\sum_{i=1}^{100}P_i}{\sum_{i=1}^{100}B_i}
+=B_{\mathrm{NC}}\sum_{i=1}^{100}w_i\frac{P_i}{B_i},
+\qquad\text{where}\qquad
+w_i=\frac{B_i}{\sum_{j=1}^{100}B_j}.$$
+
+Each weight $w_i$ is county $i$'s share of the state's births, and the 100
+weights add up to 1.
+
+3. Verify this identity with the supplied code: confirm that the
+   rewritten, weighted version gives the same number as your estimate from
+   question 1.
+
+4. The second estimator, the mean of county ratios, can be written in the
+   same form, $B_{\mathrm{NC}}\sum_i(\text{weight}_i)\,P_i/B_i$. What are
+   its weights? How do the $w_i$ differ from them?
+
+5. Which estimator gives every county equal weight? In the other estimator,
+   which counties count the most, and why does that make it the one that
+   returns the population benchmark?
+
+## Part 1c — Selection versus sample size
+
+::: callout-tip
+## Helper functions in this part
+
+All four are course-written. `sample_estimates()` does the entire repeated experiment in one call. `ratio_estimate()` needs row numbers, not names, so the `my-counties` chunk first converts your five county names with base R's `match()`, and `stopifnot()` stops if a name is misspelled or repeated.
+
+| Call | What it does for you |
+|---|---|
+| `ratio_estimate(nc, selected)` | Same helper as Part 1b. `selected` holds the **row numbers** of your five counties, which `match()` has looked up from their names |
+| `sample_estimates(nc, sizes, B)` | For each of the three procedures and each sample size in `sizes`, draws that many distinct counties `B` times and computes the ratio-of-totals estimate each time. Returns one row per repetition, with the estimate and its percentage error |
+| `summarize_samples(samples)` | Reduces those results to one row per procedure and sample size: the mean percentage error, the 5th and 95th percentiles of the errors, and the percentage of estimates within 10% of the benchmark |
+| `plot_samples(samples)` | Draws the three-panel boxplot of percentage errors, with zero error marked by a dashed line |
+:::
+
+1. Choose **five different counties by name**. Explain your selection rule
+   before looking at its resulting estimate. Then calculate and report the
+   ratio-of-totals estimate from your five counties and its percentage
+   error:
+   $$100\frac{\widehat P_{\mathrm{NC}}-P_{\mathrm{NC}}}{P_{\mathrm{NC}}}.$$
+
+For the remaining questions, run the supplied experiment. It compares three procedures, always
+drawing distinct counties without replacement:
+
+- **All counties (SRS):** a **simple random sample (SRS)** of the 100 counties —
+  every subset of $n$ of the 100 counties is equally likely.
+- **Low-ratio half only:** draw only from the 50 counties with smaller $P_i/B_i$.
+- **High-ratio half only:** draw only from the other 50 counties.
+
+The last two are deliberately extreme **stress tests**, constructed using the
+complete table. They are not feasible selection rules when the population
+values are unknown. They show what can happen when chosen areas systematically
+miss part of the population. Within each restricted half the selection is
+random, but it is not an SRS from all 100 counties.
+
+For each procedure, take $n=10,25,50$ counties and repeat 2,000 times.
+Include the supplied three-panel figure and summary table. A box contains
+the middle half of estimates; its line is the median. The table's 5th and
+95th percentiles enclose the middle 90% of **repeated estimates**. They are
+not confidence intervals from a single sample.
+
+2. At $n=25$, compare average error and the percentage of estimates within
+   10% of the benchmark. Use numbers from the table.
+
+3. What happens as $n$ increases? Can taking more counties from a restricted
+   half make an estimate stable while leaving it wrong? Explain the result
+   at $n=50$ for each restricted procedure.
+
+4. Take an SRS of all 100 counties, drawn without replacement. What happens
+   to the ratio-of-totals estimate?
+   Why does increasing the number of repetitions at a fixed $n$ not have
+   the same effect as increasing the sample size?
+
+## Part 1d — Answer Keverberg
+
+In about 150 words, explain how sampling randomly from the full county list
+addresses Keverberg's selection problem without requiring identical county
+ratios or a separate group for every possible cause of variation. Explain
+also what it does **not** guarantee: consider one unlucky sample, missing
+counties in the sampling list, and errors in the recorded data. The ratio-of-totals
+estimator need not be exactly unbiased in a small sample. Does your
+simulation support a claim about this fixed table, or about every possible
+population?
+
+# Problem 2 — Quetelet's ratios and Poisson's counts
+
+The two supplied historical tables record **accused people and convicted
+people**, not all crimes committed or all residents. Multiple accused people
+could belong to one case. A conviction rate here is the fraction of accused
+people recorded as convicted.
+
+**Quetelet's table.** `quetelet_1825_1830.csv` transcribes the counts and
+published rates from Quetelet's *Treatise on Man* (1842 English edition,
+p. 103). Each row is one year: the number of people `accused`, the number
+`convicted`, and `published_rate`, the conviction rate exactly as Quetelet
+published it.
+
+| `year` | `accused` | `convicted` | `published_rate` |
+|---:|---:|---:|---:|
+| 1825 | 7234 | 4594 | 0.635 |
+| 1826 | 6988 | 4348 | 0.622 |
+| 1827 | 6929 | 4236 | 0.610 |
+| 1828 | 7396 | 4551 | 0.615 |
+| 1829 | 7373 | 4475 | 0.607 |
+| 1830 | 6962 | 4130 | 0.593 |
+
+**Poisson's table.** `poisson_1825_1833.csv` transcribes Poisson's
+*Recherches* (1837, pp. 371-374). It covers three more years and has the same
+`accused` and `convicted` counts, but no published rates. Two further columns
+record what Poisson reports about each year: `coverage` says whether
+political cases are included, and `minimum_jury_votes` is the number of
+votes, out of twelve, needed to convict.
+
+| `year` | `accused` | `convicted` | `coverage` | `minimum_jury_votes` |
+|---:|---:|---:|:---|---:|
+| 1825 | 6652 | 4037 | `all_reported` | 7 |
+| 1826 | 6988 | 4348 | `all_reported` | 7 |
+| 1827 | 6929 | 4236 | `all_reported` | 7 |
+| 1828 | 7396 | 4551 | `all_reported` | 7 |
+| 1829 | 7373 | 4475 | `all_reported` | 7 |
+| 1830 | 6962 | 4130 | `all_reported` | 7 |
+| 1831 | 7606 | 4098 | `all_reported` | 8 |
+| 1832 | 7555 | 4448 | `political_cases_excluded` | 8 |
+| 1833 | 6964 | 4105 | `political_cases_excluded` | 8 |
+
+The authors report **different 1825 counts**. Quetelet's published 1827 rate
+also does not equal the rate rounded from that row's counts. These source
+differences are preserved so you can separate a data change from a method
+change; do not replace one table with the other.
+
+For annual accused counts $N_t$, convictions $C_t$, and $T$ years, we will
+compare two ways of combining the annual records into one conviction rate:
+
+$$\text{Equal-year average}=\frac{1}{T}\sum_t\frac{C_t}{N_t},
+\qquad
+\text{Pooled rate}=\frac{\sum_t C_t}{\sum_t N_t}.$$
+
+## Part 2a — Reproduce the calculations and isolate the differences
+
+::: callout-tip
+## Helper functions in this part
+
+One course-written helper. `mean()` and `knitr::kable()` are ordinary R.
+
+| Call | What it does for you |
+|---|---|
+| `combine_rates(d, method)` | Combines a table of annual counts into one conviction rate. `"pooled"` (the default) divides total convicted by total accused; `"equal_year"` averages the annual rates |
+:::
+
+1. Average Quetelet's **published rates**. Reproduce his approximately
+   $0.6137$, then compare it with the average of the rates you compute from
+   his counts. Explain why those are not exactly the same calculation.
+
+2. On **each author's 1825-1830 counts**, calculate both the equal-year
+   average and the pooled rate. Present a two-row, two-column table, with
+   authors as rows and methods as columns. Reproduce Poisson's pooled
+   value of approximately $0.6094$.
+
+3. Use the table from question 2. Reading **across a row** keeps one author's
+   counts and changes the method: equal-year average versus pooled rate.
+   Reading **down a column** keeps one method and changes the counts:
+   Quetelet's versus Poisson's. Which change produces the larger difference in
+   the conviction rate, the method or the counts? Quetelet reported $0.6137$,
+   the average of his published rates from question 1, and Poisson reported
+   $0.6094$, his pooled rate. Those two numbers differ in both the method and
+   the counts. Would comparing only those two establish that averaging ratios
+   was the main reason the authors differed?
+
+## Part 2b — Which average answers which question?
+
+As in Part 1b, the pooled rate can be rewritten as
+
+$$\frac{\sum_t C_t}{\sum_t N_t}
+=\sum_t\frac{N_t}{\sum_s N_s}\times\frac{C_t}{N_t}.$$
+
+If we pick one accused person at random, the probability that the person was
+convicted is
+
+$$P(\text{convicted})
+=\sum_t P(\text{person is from year }t)\times\frac{C_t}{N_t}.$$
+
+1. Below are two ways to pick one accused person at random from the six
+   years of records. For each method, work out
+   $P(\text{person is from year }t)$, and then say which of the two
+   calculations, the **equal-year average** or the **pooled rate**, gives
+   $P(\text{convicted})$.
+
+   - **Method A:** choose one of the six years, each year equally likely.
+     Then choose one accused person from that year, each person in it
+     equally likely.
+   - **Method B:** choose one accused person from all six years' records
+     combined, each person equally likely.
+
+   Under which method does every **year** count the same? Under which does
+   every accused **person** have the same chance of being picked?
+
+2. As a **constructed sensitivity exercise**, multiply both the accused
+   and convicted counts in Quetelet's 1825 row by 10, leaving every other
+   row unchanged. Which annual rates change? Which combined estimate
+   changes, and why? These extra records are invented for this exercise;
+   they do not provide new historical evidence.
+
+3. Give a situation in which equal weighting of years is appropriate and
+   one in which pooling people is appropriate. Does pooling require the
+   annual rates to be identical just to describe the combined records?
+   How would that differ from claiming a single underlying conviction
+   probability applies in every year?
+
+## Part 2c — Describe the change around 1830
+
+::: callout-tip
+## Helper functions in this part
+
+Both are course-written.
+
+| Call | What it does for you |
+|---|---|
+| `plot_convictions(poisson)` | Plots each year's conviction rate, with the pooled 1825-1830 rate drawn as a dotted line and the boundary between 1830 and 1831 as a dashed line |
+| `change_summary(poisson, method)` | Returns the combined rate for 1825-1830, 1831-1833, 1831 only, and 1832-1833, and each one's change from the 1825-1830 rate in percentage points |
+:::
+
+For the rest of the problem, use **Poisson's counts only**. Define
+**before** as 1825-1830 inclusive and **after** as 1831-1833.
+
+Plot the nine annual conviction rates. Calculate the pooled before and
+after rates and their difference in **percentage points**,
+$100(p_{\mathrm{after}}-p_{\mathrm{before}})$. Then compare the before
+period separately with 1831 and with 1832-1833. Describe what the single
+pooled after-period rate hides.
+
+Here is relevant context from Poisson's account. In 1831, the minimum jury
+majority for conviction increased from seven votes to eight out of twelve.
+From 1832, juries considered mitigating circumstances that could reduce
+punishment. His 1832-1833 figures exclude political cases; in 1833 some
+types of cases moved to other courts. Use this context when assessing
+comparability. The data alone cannot isolate the effects of these changes.
+
+## Part 2d — Plan how to check whether the drop could be chance
+
+In Part 2c the conviction rate was lower after 1830 than before. Conviction
+rates also move a little from year to year for no particular reason, as the
+1825-1830 rates do. The rest of this problem asks:
+
+> **Is the drop after 1830 larger than chance variation alone would produce
+> if the probability of conviction had not changed?**
+
+One way to find out is to simulate a world in which nothing changed, see how
+large a before-and-after difference that world typically produces, and
+compare the observed difference with it. You will run such a simulation in
+Part 2e. First, plan it yourself. In about 100-150 words, describe:
+
+- **What you will measure.** Which before-and-after difference from
+  Part 2c will you look at? Will you combine years with the pooled rate
+  or the equal-year average, and why?
+- **The no-change world.** If the probability of conviction were the
+  same in all nine years, what single value would you use for it?
+- **How to simulate it.** Each year has a known number of accused. How
+  would you generate a number convicted for each year in the no-change
+  world? What would you then calculate from each simulated set of nine
+  years?
+- **How to compare.** After many repetitions you will have many
+  simulated differences. What would you look at to decide whether the
+  observed difference is ordinary or unusual for a no-change world?
+
+You are describing a comparison, not carrying out a formal hypothesis test.
+No formulas, significance levels, or p-values are needed.
+
+## Part 2e — Explore a reference world, then qualify the conclusion
+
+::: callout-tip
+## Helper functions in this part
+
+All three are course-written. `simulate_no_change()` does the entire repeated procedure in one call.
+
+| Call | What it does for you |
+|---|---|
+| `simulate_no_change(poisson, B, method)` | Builds the reference world `B` times: generates convictions for all nine years from the common probability `p0`, recomputes the before and after rates with your chosen `method`, and saves their differences. Returns `p0`, the simulated differences, and the observed differences |
+| `summarize_change(experiment)` | One row per after-period: the observed difference, then the mean and the 5th and 95th percentiles of the simulated differences, all in percentage points |
+| `plot_change(experiment)` | Draws one histogram of simulated differences per after-period, with the observed difference marked in red |
+:::
+
+The supplied helper gives one possible implementation of the plan in Part 2d.
+Each replication has two steps.
+
+**Step 1: generate the data.** This step is the same whichever method you
+choose. The helper uses the pooled **before-period** rate as a common
+probability $p_0$. For each of the nine years, it independently generates a
+number convicted from that year's observed $N_t$ using `rbinom(1, N_t, p0)`.
+
+**Step 2: summarize the data.** This is where `"pooled"` and `"equal_year"`
+differ. From the nine simulated counts, the helper recomputes **both** the
+before rate and the after rate, then their difference:
+
+- `"pooled"`: each period's rate is its total simulated convictions divided
+  by its total accused, so every accused person counts equally.
+- `"equal_year"`: each period's rate is the ordinary mean of that period's
+  annual rates, so every year counts equally.
+
+The observed differences are computed with the same method, so simulated and
+observed differences are compared like with like. This is an idealized model,
+not a claim that the historical records were randomly assigned or
+independent.
+
+1. Choose `"pooled"` or `"equal_year"` for the comparisons, consistent with
+   your plan. Run 4,000 replications. Include the reference histograms and
+   table. Where do the observed differences fall relative to the typical
+   simulated differences? Interpret the direction and size in percentage
+   points. Explain any difference between your proposal and this helper.
+
+2. Does the comparison make a constant-probability explanation convincing
+   under this model? Explain why this is not the probability that no change
+   occurred, and why a difference in conviction rates is not itself proof
+   of a change in criminal behavior or the effect of a particular law.
+
+3. Suggest **one concrete improvement** to the comparison and identify the
+   additional data it would require. Distinguish the source of randomness
+   here from the random selection of counties in Problem 1.
+
+# Data sources
+
+The local `data/SOURCES.md` documents variables, dates, and transcription
+checks. You do not need to download the original sources.
+
+- [U.S. Census Bureau, Vintage 2024 county data](https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/counties/totals/co-est2024-alldata.csv)
+  and [field definitions](https://www2.census.gov/programs-surveys/popest/technical-documentation/file-layouts/2020-2024/CO-EST2024-ALLDATA.pdf).
+- [Quetelet, *A Treatise on Man* (1842), p. 103](https://archive.org/details/b21987257/page/103/mode/1up).
+- [Poisson, *Recherches* (1837), pp. 371-374](https://fr.wikisource.org/wiki/Livre:Poisson_-_Recherches_sur_la_probabilit%C3%A9_des_jugements_en_mati%C3%A8re_criminelle_et_en_mati%C3%A8re_civile,_1837.djvu).
