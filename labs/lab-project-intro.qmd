@@ -1,0 +1,132 @@
+---
+title: "Lab: Project Intro"
+subtitle: "Final project introduction and mid-semester survey"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+editor:
+  markdown:
+    wrap: 72
+---
+
+::: callout-important
+## Due today
+
+The only thing to submit today is the **mid-semester survey**. Complete it before you
+leave. It is anonymous, and it **replaces today's exit ticket**.
+
+There is no Gradescope submission today.
+:::
+
+# Introduction
+
+Today we will get introduced to our final project. You will
+read the project description, talk it over with your group, and bring
+your questions to the whole class. In the last half hour, you will fill
+out the mid-semester survey.
+
+::: callout-note
+## The project description
+
+**[Final project: instructions and rubric](https://statistical-history.github.io/project/instructions.html)**
+:::
+
+
+# Part 1: Read (20 minutes)
+
+Read the whole project description on your own.
+
+As you read, write down:
+
+- anything that is **unclear**;
+- anything that **surprised** you;
+- the **date and contents of the first milestone**;
+- **one or two project ideas** that interest you.
+
+# Part 2: Discuss with your group
+
+Sit with your project group. Use these questions to guide the
+conversation:
+
+1. What is due at the first milestone? When is it due?
+2. Which project ideas interest each of you? Which **two** will your
+   group propose, and in what order?
+3. What did each of you find unclear? Can the group answer it, or does
+   it need to go to the whole class?
+4. **How will your group communicate?**
+
+## Before the group discussion ends
+
+- [ ] Your group has a **communication channel** that everyone has
+      joined: a group chat, a shared channel, or something similar. Make
+      sure every member is in it before you leave the room.
+- [ ] Everyone has the others' contact information.
+- [ ] You have picked a time to meet before the first milestone is due.
+- [ ] If your group would like to use **GitHub** to work together, let
+      Kat know.
+
+# Part 3: Whole-class discussion
+
+Bring your group's questions to the whole class. By the end of the
+discussion, everyone should be able to answer these questions:
+
+- What is the first milestone, and when is it due?
+- What does "everyone contributes to every part" mean in practice?
+- What is shared within the group, and what is individual?
+
+## What must be clear before you leave
+
+::: callout-important
+## Everyone contributes to every part
+
+Every group member contributes to **every part** of the project:
+design, collection, analysis, and checking. Do not divide the project so
+that one person only collects data and another person only writes code.
+Each person should understand the whole investigation and be able to
+explain any part of it.
+:::
+
+::: callout-important
+## Reports are individual
+
+Each person writes and submits their **own final report**. Your
+group may share data, code, tables, and figures, but you write all the
+narrative and figure captions yourself. Each report ends with a
+**contribution statement** describing the work you did. Keep a
+contribution log from the start, so that writing that statement later is
+easy.
+:::
+
+::: callout-important
+## First milestone: Thursday, October 29
+
+**Milestone 1 (two proposed project ideas)** is due **Thursday, October
+29, at 11:59 p.m.** Submit one file per group that covers
+both ideas. See the project description for what each proposal must
+include.
+:::
+
+::: callout-tip
+## Write down your two projects early
+
+Once your group has chosen its two projects, add them to the
+[project sign-up spreadsheet on Canvas](https://canvas.duke.edu/courses/84980/modules/items/1020735) **before you start
+writing Milestone 1**. Take a look at what other groups have entered
+first. That way you won't find out that another group has already
+claimed your project when you are almost done writing.
+:::
+
+# Part 4: Mid-semester survey
+
+Use the rest of class to complete the mid-semester survey:
+
+**[Mid-semester survey](https://forms.cloud.microsoft/r/mWmtnTWeqZ)**
+
+- The survey is **anonymous**. Please be honest. We read every response
+  and will use your answers to adjust the rest of the course.
+- It **replaces today's exit ticket**, so there is no paper exit ticket
+  today.
+
+Once you have submitted the survey, you are free to keep talking with
+your group about project ideas.
