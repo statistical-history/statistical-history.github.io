@@ -1,0 +1,337 @@
+---
+title: "Campus Data Collection"
+subtitle: "A companion for choosing your final project"
+date: "October 16, 2026"
+lang: en-US
+format:
+  html:
+    toc: true
+    toc-depth: 3
+---
+
+::: callout-note
+## Printable version
+
+[Download the companion as a PDF](campus_data_collection_companion_v3.pdf). Requirements and deadlines are in the [project instructions](instructions.qmd).
+:::
+
+# Start with a question
+
+This companion offers **16 starting points** for your group's campus data collection project. Bring **two ranked ideas** to the first check-in: at least one from this bank, and at most one original idea. Complete the first check-in requirements for **both**. Before writing your proposals, check the **project sign-up sheet**, linked from the [project module on Canvas](https://canvas.duke.edu/courses/84980/modules/items/1020735), and register your two options there; do not choose a project another group has already registered.
+
+Use the revised [Final Project Instructions](instructions.qmd) for requirements, deadlines, and grading. These ideas need your own collection rules and measurements. Compare your eventual findings with the original study, but do not aim to reproduce its result. An unexpected or inconclusive finding can support an excellent project.
+
+## Six places to start
+
+These six options provide a range of activities and ways of collecting data. All 16 ideas remain available; the shortlist is a starting point for discussion.
+
+| Option | What students do | What you can learn | Basic supplies |
+| --- | --- | --- | --- |
+| [1. Paper-airplane risk/reward](#project-01) | Choose a throwing distance, predict success, and try to hit a target | Active and entertaining; raises a serious question about what “risk taking” measures | Paper, tape, measuring tape; approximately $0-20, with rewards extra |
+| [5. Blind water tasting](#project-05) | Compare expectations, preferences, and discrimination between water samples | Combines a survey, a controlled comparison, and a probability question; has a Duke precedent | Water, identical cups, labels; approximately $10-30 |
+| [6. Crowd estimation](#project-06) | Collect guesses about objects with known answers | Connects averaging, error, disagreement, and confidence | Jars, objects, string, borrowed scale; approximately $5-20 |
+| [7. Campus preferences and perceived norms](#project-07) | Ask what people prefer and what they believe others prefer | Strong survey project with an entertaining reveal | Forms or paper; approximately $0-10 |
+| [11. Door holding](#project-11) | Observe when people hold doors and how followers respond | Everyday behavior becomes surprisingly difficult to define and measure | Recording sheets and stopwatch; almost no cost |
+| [12. Library seating](#project-12) | Map occupied, empty, and apparently claimed seats | Particularly strong for sampling, denominators, and conflicting accounts of one place | Floor sketch and recording sheets; almost no cost |
+
+Each group will have the same **fixed course budget of $50**; anything left over will go toward a larger donut haul in December. Submit an itemized budget with price sources by November 6; the proposed arrangement is for instructors to buy approved supplies. **Rewards must be nonmonetary** and approved, as must extra funds. These estimates assume borrowed equipment; they are not current quotations or original-study budgets.
+
+# Browse all 16 projects
+
+Select a project title to jump to its description. The three groups offer games and experiments; surveys, predictions, and beliefs; and observations and field measurements. Choose the activity and question that interest your group, then work through the measurement choices.
+
+| No. | Project | Proposed collection mode | Original setting |
+| --- | --- | --- | --- |
+| 1 | [Paper-airplane reward choices](#project-01) | Game and performance measurements | Universidad Loyola Andalucía, Córdoba and Seville campuses |
+| 2 | [Box-collection risk game](#project-02) | Small-stakes choice task, with optional survey | Jena laboratory; participants mainly from Friedrich Schiller University |
+| 3 | [Free versus almost-free snacks](#project-03) | Campus choice experiment | MIT Student Center and cafeteria |
+| 4 | [Ownership and exchange](#project-04) | Allocation and exchange experiment | University of Victoria |
+| 5 | [Blind water tasting](#project-05) | Survey and taste comparison | Duke West Campus Quad |
+| 6 | [Crowd estimation and social feedback](#project-06) | Estimation task | Laboratory study with ETH Zürich students |
+| 7 | [Campus preferences and perceived consensus](#project-07) | Survey | Stanford undergraduates |
+| 8 | [Trivia and confidence](#project-08) | Quiz with predictions | Carnegie Mellon students |
+| 9 | [Predicted versus actual completion time](#project-09) | Prospective predictions and timed outcomes | University of Waterloo thesis students |
+| 10 | [Walking and attention](#project-10) | Naturalistic observation, with optional questions | Western Washington University’s Red Square |
+| 11 | [Door holding](#project-11) | Naturalistic observation, with optional survey | Penn State’s Hetzel Union Building |
+| 12 | [Library seating](#project-12) | Repeated occupancy observations and survey | Five Canadian colleges and universities |
+| 13 | [Food waste](#project-13) | Voluntary before/after measurement | Two University of Illinois dining halls |
+| 14 | [Campus soundscapes](#project-14) | Physical measurements and ratings | Groningen’s Zernike campus |
+| 15 | [Unofficial shortcuts](#project-15) | Field inventory and pedestrian counts | University of North Texas |
+| 16 | [Squirrel behavior](#project-16) | Behavioral observation | University of Louisville and nearby parks; related Squirrel-Net teaching modules |
+
+Each entry distinguishes an **actual precedent** from a **possible student project**. The suggested adaptations are not claims about the original protocols. Campus activities and student theses are identified as such. Numbered citations link to the references and source notes at the end; the bibliography includes links to papers and other resources.
+
+# A. Games and small experiments
+
+## 1. How much extra reward makes you attempt a harder throw? {#project-01}
+
+**Actual precedent.** Antonio Alfonso’s 2024 paper describes an activity with 100 students at Universidad Loyola Andalucía’s Córdoba and Seville campuses. Students built paper airplanes and chose how far from a target to stand. A successful throw earned points based on distance; a miss earned zero. They had three attempts, with the best result determining their score. [\[1\]](#ref-01)
+
+**Possible student project.** Run a “How brave is your throw?” station. Participants choose a distance, predict success, and make three throws. One possible rule uses lines 2, 4, and 6 metres from a taped target: score a plane resting wholly inside as 2, 4, or 6 points, respectively; crossing the boundary earns half; outside earns zero. Record each throw. Sum the points; offer one sticker per two points, rounding down (at most nine stickers). Pilot the distances and get the reward plan approved.
+
+## 2. How many boxes will you take before the reward becomes too risky? {#project-02}
+
+**Actual precedent.** Crosetto and Filippin’s Bomb Risk Elicitation Task was published in 2013. The open 2012 working paper describes Jena experiments with participants drawn mainly from Friedrich Schiller University. Players choose how many of 100 boxes to collect. Each box adds to potential earnings, but one contains a hidden losing outcome that wipes out the payment. The paper also describes a paper-and-pencil version. [\[2\]](#ref-02)
+
+**Possible student project.** Give participants a printed grid. They choose k from 0 to 100, then draw a uniformly selected number b from 1 to 100. If b > k, they earn k points; otherwise zero. Use points alone or, with approval, exchange every 10 points for one sticker (round down; at most nine). Explain the rules before the choice and reveal b afterward. Ask participants about their willingness to take risks.
+
+## 3. Is “free” different from “almost free”? {#project-03}
+
+**Actual precedent.** Shampanier, Mazar, and Ariely’s 2007 paper included chocolate choices at the MIT Student Center and an MIT cafeteria. One comparison offered a Hershey’s Kiss and Lindt truffle at 1¢ and 15¢, versus 0¢ and 14¢. The price gap stayed the same, but choices shifted toward the cheaper chocolate when it became free. The earlier author manuscript provides detailed field methods. [\[3\]](#ref-03)
+
+**Possible student project.** Give each participant three tokens to spend on at most one snack. In one condition, snack A costs 1 token and B costs 3; in another, A costs 0 and B costs 2. Each leftover token buys one sticker; participants may choose neither snack. Fix the condition schedule and record everyone offered the choice. Get products and rules approved; participants need no cash.
+
+## 4. Will people trade something they have just been given? {#project-04}
+
+**Actual precedent.** In Jack Knetsch’s 1989 study, University of Victoria students received a mug, received chocolate, or simply chose between the two. About 90% of recipients kept whichever object they had received. Among people choosing without an initial allocation, preferences were much more evenly divided. [\[4\]](#ref-04)
+
+**Possible student project.** Use two similarly appealing inexpensive objects, such as a nice pen and a wrapped snack. Randomly assign participants to receive one, receive the other, or choose directly. After a brief unrelated task, offer recipients an immediate, convenient exchange.
+
+## 5. Can students distinguish bottled water from tap water - and which do they prefer? {#project-05}
+
+**Actual precedent at Duke.** Duke’s Environmental Alliance ran a blind water taste test on West Campus Quad in 2010. Duke Today reported that slightly more than 70% of approximately 100 respondents preferred tap water. This was a student campus activity reported by the university, not a peer-reviewed research article. [\[5\]](#ref-05)
+
+**Possible student project.** First collect expectations and usual drinking-water choices. Then offer samples in identical cups, standardizing temperature and varying serving order.
+
+A useful extension is a triangle test: three cups, two containing the same water and one different. Ask participants to identify the odd cup. Random guessing succeeds one-third of the time; the position of the odd cup should vary.
+
+# B. Surveys, predictions, and beliefs
+
+## 6. Can a crowd estimate something accurately - and does seeing others’ guesses help? {#project-06}
+
+**Actual precedent.** Lorenz and colleagues recruited 144 ETH Zürich students for numerical estimation questions. Participants revised estimates with or without information about others’ answers. Social feedback reduced disagreement and increased confidence without a corresponding improvement in collective accuracy. The original study used general-knowledge quantities, rather than jars of objects. [\[6\]](#ref-06)
+
+**Possible student project.** Create an estimation booth with several objects: a jar of beans, coiled string, or a backpack of known weight. Collect private guesses and confidence ratings. Some groups then see actual peer estimates and guess again; others get another opportunity to think without peer information.
+
+## 7. Do people think their own preferences are more common than they actually are? {#project-07}
+
+**Actual precedent.** Ross, Greene, and House’s 1977 false-consensus paper included 80 Stanford undergraduates who reported their own characteristics and preferences and estimated their prevalence among college students. Across most questions, people selecting an answer estimated it to be more common than people choosing the alternative did. [\[7\]](#ref-07)
+
+**Possible student project.** Run a “How well do you know Duke?” survey. Ask for respondents’ own answers and their estimates of the percentage of Duke undergraduates giving each answer. Possibilities include:
+
+- Studying alone versus with others.
+- An early-morning class versus an evening class.
+- Waiting for a favorite meal versus choosing an immediately available alternative.
+- Quiet versus sociable study spaces.
+
+## 8. Are students overconfident about their trivia knowledge? {#project-08}
+
+**Actual precedent.** Moore and Healy’s 2008 study involved 82 Carnegie Mellon students taking trivia quizzes. On easy quizzes, students slightly underestimated their own scores while overestimating their performance relative to someone else. On difficult quizzes, the pattern reversed. [\[8\]](#ref-08)
+
+**Possible student project.** Offer short campus, sports, music, or general-knowledge quizzes. Before revealing answers, ask participants how many they got right and how many a randomly selected other participant taking the same version got right. Use an easier and a harder version, with questions fixed before main collection.
+
+## 9. How accurately can people predict how long a task will take? {#project-09}
+
+**Actual precedent.** Buehler, Griffin, and Ross asked University of Waterloo thesis students to predict completion dates and obtained actual submission dates. Among students finishing during follow-up, the average prediction was 33.9 days and actual completion took 55.5 days. Predicted and actual times nevertheless correlated 0.77. Four unfinished theses were excluded from those averages. [\[9\]](#ref-09)
+
+**Possible student project.** Run a “Beat Your Estimate” challenge using a small puzzle, sorting task, or paper-folding task. Participants inspect it, predict completion time and a plausible range, then attempt it while being timed. A longer optional task with a recorded completion date would be closer to the original study.
+
+# C. Observing campus life and collecting field measurements
+
+## 10. Who takes longest to cross the quad - and what do they notice? {#project-10}
+
+**Actual precedent.** Hyman and colleagues observed pedestrians in Western Washington University’s Red Square. Phone users and people walking in pairs crossed more slowly than solo walkers without electronics and music-player users. Another part of the study put a clown on a unicycle in the square and asked passersby what they noticed. Phone use was observed rather than assigned. [\[10\]](#ref-10)
+
+**Possible student project.** Time pedestrians over a fixed segment, recording visible phone interaction, solo versus group walking, and whether classes are changing. An attention version could ask people leaving the area whether they noticed a distinctive feature.
+
+## 11. When does holding the door become awkward? {#project-11}
+
+**Actual precedent.** Santamaria and Rosenbaum observed 148 people at Penn State’s Hetzel Union Building. They recorded door holding, followers’ distance, number of followers, and approach time. Holding became less common with greater separation, and people generally held the door longer for two followers than for one. [\[11\]](#ref-11)
+
+**Possible student project.** Observe interactions at a few campus doors. Record distance bands using existing landmarks, whether the door is held, and whether the follower appears to hurry. A short survey could separately ask what distance people think warrants holding a door.
+
+## 12. Is the library full - or are only the good seats taken? {#project-12}
+
+**Actual precedent.** May and Swabey used repeated seating observations and questionnaires at five Canadian institutions: Grant MacEwan, Mount Royal, Lethbridge College, Red Deer College, and Southern Alberta Institute of Technology. The paper explicitly discusses how snapshots overrepresent activities that last longer. [\[12\]](#ref-12)
+
+**Possible student project.** Map a defined section of Perkins, Bostock, or another study space. At selected times, classify seats as empty, occupied by a person, or apparently claimed by belongings. Record seat type, proximity to outlets, and individual versus group tables. Ask a separate sample which features matter to them.
+
+## 13. What does an “empty plate” actually tell us about food waste? {#project-13}
+
+**Actual precedent.** Richardson, Pflugh Prescott, and Ellison studied plate shape and size in two University of Illinois dining halls. Researchers photographed and weighed plates before and after eating, comparing round plates with smaller oval ones under matched menus. They reported reductions in food selected, consumed, and left over. The university’s account describes the procedure and limitations. [\[13\]](#ref-13), [\[14\]](#ref-14)
+
+**Possible student project.** With dining staff cooperation, ask volunteer diners to predict their leftovers, then compare predictions with measured waste. Another version compares students’ visual estimates of leftover quantities with scale measurements.
+
+## 14. Where is campus actually quiet - and is quiet the same as pleasant? {#project-14}
+
+**Actual precedent.** Margaritis and van Kann’s 2022 study had students collect sound measurements and evaluations at 13 seating locations on Groningen’s Zernike campus, across different times of day. It combined physical measurements with perceptions of the places. [\[15\]](#ref-15)
+
+**Possible student project.** Create a campus sound map. At the same locations and scheduled periods, record sound levels, dominant sound sources, and brief ratings of pleasantness or suitability for studying.
+
+## 15. Why do people ignore the sidewalks? {#project-15}
+
+**Actual precedent.** Michael Shuey’s 2021 landscape-architecture thesis studied desire paths at the University of North Texas: informal routes worn into the landscape by pedestrians. The project used field observations, inventories, mapping, and descriptive classification. This is a student thesis rather than a published experiment. The degree was awarded by the University of Texas at Arlington; the study site was UNT. [\[16\]](#ref-16)
+
+**Possible student project.** Identify several unofficial shortcuts and observe route choices at the relevant junctions. Measure approximate distance saved and record travel direction, weather, pedestrian traffic, and whether people are alone or following others.
+
+## 16. Do campus squirrels behave differently around people? {#project-16}
+
+**Actual precedent.** Eason and colleagues studied squirrel escape decisions at the University of Louisville and nearby parks, examining the positions of approaching humans and potential refuge trees. Squirrel-Net also provides undergraduate modules for behavioral observation and population estimation. [\[17\]](#ref-17), [\[18\]](#ref-18)
+
+**Possible student project.** A simple observational adaptation would compare how squirrels spend their time - feeding, looking around, or moving - in campus areas with different pedestrian traffic. Students could also record distance from paths and trees.
+
+# Questions to ask when planning your project
+
+Use these questions to turn an appealing activity into a statistical investigation. They complement the requirements in the assignment handout.
+
+1. **Preserve the distinction between the question and the measurement.** Throwing distance, survey answers, occupied seats, leftover mass, and sightings are observations. Risk tolerance, campus opinion, preferred study space, wastefulness, and animal abundance require interpretation.
+2. **Make the observational unit visible.** A person, a choice, a throw, an encounter, a seat at a time, a plate, a location visit, and an animal sighting are different units. More rows need not mean more independent observations.
+3. **Ask what the denominator represents.** Examples include all offers versus snack takers, door-holding opportunities versus entrants, seats versus group tables, and all route-choice opportunities versus shortcut users.
+4. **Compare with the original study.** For a bank project, include a comparison in your presentation and slides: how do your findings relate to the original, and how might different participants, campus settings, measurements, or incentives explain differences? Cite the source. If the original results are inaccessible, say so and discuss plausible differences across campuses without inventing findings. An absent, reversed, or uncertain pattern remains informative.
+5. **Keep advance decisions and later exploration identifiable.** Students can fix a primary question, main measurement, and main summary while recording later questions as exploratory. The aim is transparent reasoning, not discouraging curiosity.
+6. **Make collection enjoyable without making analysis depend on a spectacle.** Paper planes, water samples, guesses, trivia, and everyday campus behaviors provide an engaging activity while leaving substantial questions about evidence.
+
+# References and source notes
+
+The bibliography includes all sources cited in the 16 options. Publisher records and open copies are listed separately where appropriate. Access conditions can change; DOI and institutional-record links provide alternatives to PDF mirrors.
+
+## Reference 1. Paper-airplane reward choices {#ref-01}
+
+Alfonso, Antonio. (2024). “Taking risks by flying paper airplanes.” *Frontiers in Education*, 9, Article 1301952.
+
+- DOI: [10.3389/feduc.2024.1301952](https://doi.org/10.3389/feduc.2024.1301952)
+- Open article: [Frontiers full text](https://www.frontiersin.org/journals/education/articles/10.3389/feduc.2024.1301952/full)
+- Source note: Sections 2 and 4 describe the outdoor activity, scoring, and Córdoba/Seville participants. The proposed collection of explicit success predictions is an adaptation.
+
+## Reference 2. Box-collection risk task {#ref-02}
+
+Crosetto, Paolo, and Antonio Filippin. (2013). “The ‘Bomb’ Risk Elicitation Task.” *Journal of Risk and Uncertainty*, 47(1), 31-65.
+
+- DOI: [10.1007/s11166-013-9170-z](https://doi.org/10.1007/s11166-013-9170-z)
+- Publisher: [Springer article record](https://link.springer.com/article/10.1007/s11166-013-9170-z)
+
+Open earlier version:
+
+Crosetto, Paolo, and Antonio Filippin. (2012). “The ‘Bomb’ Risk Elicitation Task.” *IZA Discussion Paper*, No. 6710, July.
+
+- Open PDF: [IZA Discussion Paper 6710](https://docs.iza.org/dp6710.pdf)
+- Source note: Detailed recruitment and implementation were checked in the 2012 working paper. It should not be labeled as the published 2013 PDF. Its static version explains the choice-before-revelation procedure and its paper-and-pencil implementation; the main experiments were computerized.
+
+## Reference 3. Free versus almost-free chocolate {#ref-03}
+
+Shampanier, Kristina, Nina Mazar, and Dan Ariely. (2007). “Zero as a Special Price: The True Value of Free Products.” *Marketing Science*, 26(6), 742-757.
+
+- DOI: [10.1287/mksc.1060.0254](https://doi.org/10.1287/mksc.1060.0254)
+- Publisher: [INFORMS article record](https://pubsonline.informs.org/doi/abs/10.1287/mksc.1060.0254)
+- Earlier author manuscript: [MIT-hosted PDF](https://web.mit.edu/ariely/www/MIT/Papers/zero.pdf)
+- Source note: The earlier manuscript has a different title page and author listing. Cite all three authors for the published article. The manuscript supplies the detailed student-center and cafeteria procedures, including the definition of choosing nothing and the limitations of alternating conditions over time.
+
+## Reference 4. Ownership and exchange {#ref-04}
+
+Knetsch, Jack L. (1989). “The Endowment Effect and Evidence of Nonreversible Indifference Curves.” *The American Economic Review*, 79(5), 1277-1284.
+
+- Stable publication record: [JSTOR 1831454](https://www.jstor.org/stable/1831454)
+- Published-paper PDF: [UC San Diego-hosted copy](https://econweb.ucsd.edu/~jandreon/Econ264/papers/Knetsch%20AER%201989.pdf)
+- Accessible excerpt used for the described experiment: [Harvard-hosted text](https://cyber.harvard.edu/bridge/LawEconomics/knetch1.txt.htm)
+- Source note: “Test 1: Exchanges of Two Goods” is the University of Victoria mug/chocolate study. The subsequent money/chocolate experiment was at Simon Fraser University.
+
+## Reference 5. Duke blind water tasting {#ref-05}
+
+Roth, Bryan. (2011, March 15). “Take Back the Tap.” *Duke Today*.
+
+- University report: [Take Back the Tap](https://today.duke.edu/2011/03/takebacktap.html)
+- Source note: The report describes a student-organized blind taste test on West Campus Quad in the preceding year, 2010. This establishes a local activity precedent; it is not a peer-reviewed study or a complete experimental protocol. The triangle-test extension in option 5 is proposed here.
+
+## Reference 6. Crowd estimation and social influence {#ref-06}
+
+Lorenz, Jan, Heiko Rauhut, Frank Schweitzer, and Dirk Helbing. (2011). “How social influence can undermine the wisdom of crowd effect.” *Proceedings of the National Academy of Sciences*, 108(22), 9020-9025.
+
+- DOI: [10.1073/pnas.1008636108](https://doi.org/10.1073/pnas.1008636108)
+- Open university-hosted PDF: [University of Zürich copy](https://suz.uzh.ch/dam/jcr:aaead4d7-6b9c-4a93-8301-2cf37be6e2b8/LorenzRauhutEtAl2011_WisdomCrowds.pdf)
+- Repository copy: [PubMed Central](https://pmc.ncbi.nlm.nih.gov/articles/PMC3107299/)
+- Source note: The original involved numerical general-knowledge questions, repeated estimates, and no-information, aggregate-information, and full-information conditions. Objects such as jars and coiled string are proposed substitutes. Avoid generalizing the results to a claim that feedback always worsens every aggregation rule or question.
+
+## Reference 7. Preferences and perceived consensus {#ref-07}
+
+Ross, Lee, David Greene, and Pamela House. (1977). “The ‘False Consensus Effect’: An Egocentric Bias in Social Perception and Attribution Processes.” *Journal of Experimental Social Psychology*, 13(3), 279-301.
+
+- DOI: [10.1016/0022-1031(77)90049-X](https://doi.org/10.1016/0022-1031(77)90049-X)
+- Original-paper PDF: [Accessible full-text copy](https://www.bulidomics.com/w/images/d/d8/4705-Ross-et-al-False-Consensus-Effect.pdf)
+- Source note: Study 2 is the 80-student Stanford questionnaire used as the main precedent here. The frequently retold campus sandwich-board activity appears elsewhere in the paper and is not the proposed protocol for this project.
+
+## Reference 8. Trivia and confidence {#ref-08}
+
+Moore, Don A., and Paul J. Healy. (2008). “The Trouble With Overconfidence.” *Psychological Review*, 115(2), 502-517.
+
+- DOI: [10.1037/0033-295X.115.2.502](https://doi.org/10.1037/0033-295X.115.2.502)
+- Author-hosted PDF: [Paul Healy’s copy](https://healy.econ.ohio-state.edu/papers/Moore_Healy-TroubleWithOverconfidence.pdf)
+- Source note: The illustrative study describes the Carnegie Mellon participants, trivia tasks, predictions, and difficulty comparisons. The paper distinguishes overestimation, overplacement, and overprecision.
+
+## Reference 9. Predicted completion times {#ref-09}
+
+Buehler, Roger, Dale Griffin, and Michael Ross. (1994). “Exploring the ‘Planning Fallacy’: Why People Underestimate Their Task Completion Times.” *Journal of Personality and Social Psychology*, 67(3), 366-381.
+
+- DOI: [10.1037/0022-3514.67.3.366](https://doi.org/10.1037/0022-3514.67.3.366)
+- Original-paper PDF: [University of Florida-hosted copy](https://bear.warrington.ufl.edu/brenner/mar7588/Papers/buehler-et-al-1994.pdf)
+- Source note: Study 1 describes the Waterloo thesis predictions and actual submissions. Its reported averages exclude four people whose theses remained unfinished when follow-up ended.
+
+## Reference 10. Walking and attention {#ref-10}
+
+Hyman, Ira E., Jr., S. Matthew Boss, Breanne M. Wise, Kira E. McKenzie, and Jenna M. Caggiano. (2010). “Did You See the Unicycling Clown? Inattentional Blindness while Walking and Talking on a Cell Phone.” *Applied Cognitive Psychology*, 24(5), 597-607.
+
+- DOI: [10.1002/acp.1638](https://doi.org/10.1002/acp.1638)
+- Original-paper PDF: [Accessible full-text copy](https://kastalia.medienhaus.udk-berlin.de/community/data/4358.Did-You-See-The-Unicycling-Clown.pdf)
+- Source note: Published online in 2009; the journal volume is dated 2010. Study 1 measures naturally occurring walking behavior in Red Square; Study 2 introduces the clown and asks about noticing it. Walking categories were not randomly assigned.
+
+## Reference 11. Door holding {#ref-11}
+
+Santamaria, Joseph P., and David A. Rosenbaum. (2011). “Etiquette and Effort: Holding Doors for Others.” *Psychological Science*, 22(5), 584-588.
+
+- DOI: [10.1177/0956797611406444](https://doi.org/10.1177/0956797611406444)
+- Publisher: [SAGE article record](https://journals.sagepub.com/doi/10.1177/0956797611406444)
+- Author-uploaded original article: [ResearchGate full-text page](https://www.researchgate.net/publication/51072774_Etiquette_and_Effort_Holding_Doors_for_Others)
+- Source note: The methods name the patio exit of Penn State’s Hetzel Union Building and describe independent coding. The study’s account of shared effort is an interpretation of observational results.
+
+## Reference 12. Library seating and use {#ref-12}
+
+May, Francine, and Alice Swabey. (2015). “Using and Experiencing the Academic Library: A Multisite Observational Study of Space and Place.” *College & Research Libraries*, 76(6), 771-795.
+
+- DOI: [10.5860/crl.76.6.771](https://doi.org/10.5860/crl.76.6.771)
+- Journal article: [College & Research Libraries record](https://crl.acrl.org/index.php/crl/article/view/16462)
+- Open PDF: [Full article](https://crl.acrl.org/index.php/crl/article/download/16462/17908)
+- Source note: The methods identify all five campuses and describe the seating sweeps. The “Practical Limitations” section explains how snapshots emphasize longer-duration activities. Appendices provide the original instruments.
+
+## Reference 13. Plate shape, size, and food waste {#ref-13}
+
+Richardson, Rachel, Melissa Pflugh Prescott, and Brenna Ellison. (2021). “Impact of plate shape and size on individual food waste in a university dining hall.” *Resources, Conservation and Recycling*, 168, Article 105293.
+
+- DOI: [10.1016/j.resconrec.2020.105293](https://doi.org/10.1016/j.resconrec.2020.105293)
+- Publisher: [ScienceDirect article](https://www.sciencedirect.com/science/article/pii/S092134492030608X)
+- Source note: Reference 14 provides an accessible account from the researchers’ university confirming the two campus dining halls and before/after measurement procedure. The journal article’s full text was not available through the retrieval route used for this collection; detailed procedural claims here are supported by that university account.
+
+## Reference 14. Accessible university account of the food-waste study {#ref-14}
+
+Stein, Marianne. (2021, February 24). “Smaller plates help reduce food waste in campus dining halls.” University of Illinois, College of Agricultural, Consumer & Environmental Sciences.
+
+- University report: [Illinois account](https://aces.illinois.edu/news/smaller-plates-help-reduce-food-waste-campus-dining-halls)
+- Source note: Describes the two University Housing dining halls, matched menus, photographs and weights before/after eating, and treatment of second servings. This is a university report on reference 13, not a separate experiment.
+
+## Reference 15. Campus soundscapes {#ref-15}
+
+Margaritis, Efstathios, and Ferry van Kann. (2022). “Combining mobile measurements on noise and soundscape evaluation in a University Campus after a renovation plan.” In *INTER-NOISE and NOISE-CON Congress and Conference Proceedings*, pp. 4882-4890. Institute of Noise Control Engineering of the USA.
+
+- DOI: [10.3397/IN_2022_0706](https://doi.org/10.3397/IN_2022_0706)
+- Institutional publication record and manuscript access: [University of Groningen](https://research.rug.nl/en/publications/combining-mobile-measurements-on-noise-and-soundscape-evaluation-/)
+- Source note: The institutional abstract explicitly names Zernike campus, the 13 seating locations, the course participants, and the phone-based collection methods. The student adaptation suggested here does not require the original GIS workflow.
+
+## Reference 16. Campus shortcuts and desire paths {#ref-16}
+
+Shuey, Michael. (2021). *Classifying Desire Paths Utilizing a Campus Master Plan Study: A Method for Recognizing Urban Design Flaws*. Master of Landscape Architecture thesis, University of Texas at Arlington. Landscape Architecture Masters & Design Theses - Archive, 286.
+
+- Institutional thesis record: [MavMatrix](https://mavmatrix.uta.edu/landscapearch_theses/286/)
+- Source note: The repository abstract identifies the University of North Texas as the study site and describes the field inventory and classification approach. The degree-granting institution is UT Arlington. The description here is based on the institutional abstract, not a full-thesis review.
+
+## Reference 17. Squirrel escape decisions {#ref-17}
+
+Eason, Perri K., Lindsay D. Nason, and James E. Alexander, Jr. (2019). “Squirrels Do the Math: Flight Trajectories in Eastern Gray Squirrels (Sciurus carolinensis).” *Frontiers in Ecology and Evolution*, 7, Article 66.
+
+- DOI: [10.3389/fevo.2019.00066](https://doi.org/10.3389/fevo.2019.00066)
+- Open article: [Frontiers full text](https://www.frontiersin.org/journals/ecology-and-evolution/articles/10.3389/fevo.2019.00066/full)
+- Source note: The methods identify University of Louisville campus observations and observations from nearby parks. The published experiment used an approaching human threat. The proposed passive behavior survey is a broader adaptation, not a direct replication.
+
+## Reference 18. Squirrel-Net teaching resources {#ref-18}
+
+Squirrel-Net. (n.d.). “Teaching Modules.” Accessed October 8, 2026.
+
+- Program resources: [Squirrel-Net teaching modules](https://www.squirrel-net.org/teaching-modules)
+- Source note: Includes Behavioral Observation, Flight Initiation Distance, Giving Up Density, and Population Estimation modules. The page links to open teaching materials and explains that some extended materials and national datasets require a separate access request. This collection does not depend on obtaining those datasets.

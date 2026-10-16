@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Quarto renders ONLY labs/ and hw/. The root HTML pages are hand-written or
+# Quarto renders ONLY labs/, hw/, and project/. The root HTML pages are hand-written or
 # pre-rendered static pages and are left completely alone -- Quarto copies
 # them into _site/ untouched because they aren't in the render list below.
 #
@@ -13,17 +13,19 @@ project:
   render:
     - "labs/*.qmd"
     - "hw/*.qmd"
+    - "project/*.qmd"
     - "!labs/*-key.qmd"
     - "!hw/*-key.qmd"
   # Quarto only auto-copies static files it finds referenced from documents it
   # renders (the labs/hw .qmd above). Root pages are plain passthrough HTML
   # that Quarto never parses, so assets/ (CSS, favicon) has
   # to be listed here explicitly or it silently gets left out of _site/.
-  # The syllabus files and lecture PDFs are copied as downloadable resources.
+  # The syllabus files, lecture PDFs, and project PDFs are copied as downloadable resources.
   resources:
     - "assets/**"
     - "lectures/**"
     - "syllabus/**"
+    - "project/*.pdf"
 
 # No website.navbar / website.page-footer here on purpose: Quarto's own
 # navbar+footer (Bootstrap/cosmo styled) looked nothing like the hand-written
