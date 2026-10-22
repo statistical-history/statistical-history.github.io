@@ -1,0 +1,612 @@
+---
+title: "HW 05: What can an average hide?"
+subtitle: "Instructions — read these; do the work in the `hw-05.qmd` in your own repo"
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Thursday, October 29, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+An average can summarize a set of observations while hiding patterns
+that matter for prediction. In this homework, you will first revisit
+U.S. birth counts, keeping more of their weekday and year information.
+Then you will examine Scottish militia measurements and build a
+prediction rule from group means and weights.
+
+## Learning goals
+
+In this assignment, you will...
+
+- explain what pooled summaries retain and what they hide.
+- compare prediction rules using the information and assumptions behind them.
+- construct a least-squares rule from group means and weights.
+- use residuals to assess a rule, and distinguish fit to existing records
+  from evidence about new observations.
+
+**Reading connection:** Stigler's discussion of social regularity,
+Quetelet, and the normal error curve, including Table 5.6.
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-05`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 04's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps again.
+- Keep the supplied folder arrangement so `source("homework_05_helpers.R")` resolves.
+- Run the document from a fresh R session, top to bottom, before you submit. This homework
+  uses no random simulation, so there are no seeds to keep.
+
+# Materials and submission
+
+Work in `hw-05.qmd` in your homework repository. Keep
+`homework_05_helpers.R` beside it and the CSV files in `data/`.
+Submit **one document covering both problems**. Push your Quarto source
+and rendered work to your homework repository, and submit the same
+rendered document as a PDF on Gradescope. Include your code, requested
+tables and figures, and written answers.
+
+All data are supplied. Base R is sufficient; familiar `dplyr`/`ggplot2`
+code from labs is also welcome. Load any packages you use. For
+`ggplot2`, the
+[data visualization cheatsheet](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
+is a handy two-page reference. No random
+simulation or additional data downloads are required. `knitr::kable()`
+is optional for displaying tables.
+
+## Writing your R code
+
+::: callout-warning
+## Filling in the template
+
+The template supplies data loading and checks, with extra code scaffolding
+in Problem 2. In the commented skeletons, replace each `___` with an R
+expression, then remove the leading `#` from the code lines to run them.
+Replace the remaining `YOUR CODE HERE` comments with your own code and
+write each response after **Your answer:**. Keep code and output visible.
+An untouched template can render, but is not a completed submission.
+Once you add code, the document will **not render if any chunk has an
+error**. Fix any R error rather than changing the document to hide it.
+:::
+
+Each problem includes a short R reference. The skeletons provide a
+starting point; you still choose the calculations, complete the formulas,
+and explain what the results mean.
+
+In Part 2c, **fit manually** means calculate the estimates from the
+given formulas. R may do the arithmetic, grouping, and plotting; do not
+use `lm()` or another model-fitting function for that fit. The helper
+only checks inputs and expands frequency counts. It does not compute
+your summaries, fit your rule, or draw your plots.
+
+Label axes and include units. Keep full precision while calculating and
+round only reported results.
+
+# Problem 1 — Birth counts at different levels of detail
+
+How much regularity can an average establish? This problem returns to the
+U.S. birth counts you encountered in HW 03. You will reconstruct the
+weekday comparison from coarser summaries, then investigate whether the
+weekday pattern stays the same over time. The same records can support
+some claims while giving reason to reconsider others.
+
+**Reading connection:** Stigler's discussion of apparent social regularity
+and the closer scrutiny that revealed hidden patterns and changes.
+
+Imagine that it is the end of 2003. A national planning office asks you to
+estimate **the average number of births per Tuesday and the average number
+per Sunday during 2004**. Keep that prediction question fixed throughout.
+The supplied data end in 2003; the last part asks you to design a future
+comparison, not report an observed 2004 result.
+
+Work through Parts 1a-1d in order. Record your reasoning before
+moving on and leave earlier answers visible when you revise them. You may
+remember weekday differences from HW 03. Distinguish that prior knowledge
+from what each displayed summary establishes on its own.
+
+## A short R reference for Problem 1
+
+| Task | Useful base R functions |
+|---|---|
+| Totals, means, and extremes | `sum()`, `mean()`, `min()`, `max()`, `which.min()`, `which.max()` |
+| Select rows and count days | `subset()`, `nrow()`, `table()` |
+| Summaries by weekday or by year and weekday | `aggregate()`, `tapply()` |
+| Plot means and reference lines | `plot()`, `lines()`, `barplot()`, `abline()`, `legend()` |
+
+For example, this unrelated toy table has nine rows, with two or three
+values for each combination of `team` and `size`:
+
+```{r}
+#| label: toy-data
+#| eval: true
+toy <- data.frame(team = c("A", "A", "A", "A", "A", "B", "B", "B", "B"),
+                  size = c("L", "L", "H", "H", "H", "L", "L", "H", "H"),
+                  value = c(2, 4, 5, 9, 10, 4, 6, 8, 10))
+toy
+```
+
+`tapply()` splits `value` into those four groups and applies `mean` to
+each one:
+
+```{r}
+#| label: toy-tapply
+#| eval: true
+tapply(toy$value, list(toy$team, toy$size), mean)
+```
+
+Team A's two L values, 2 and 4, average to 3; its three H values, 5, 9,
+and 10, average to 8. The result has teams in its rows and sizes in its
+columns. R orders the labels alphabetically, so `H` comes before `L`.
+Column names such as `"L"` are safer than guessing a column's position.
+Replacing `mean` with `sum` or `length` gives totals or counts for the
+same groups.
+
+For `group_by()` and `summarise()`, revisit
+[Lab 04](https://statistical-history.github.io/labs/lab-04.html), Part 2
+("Now summarize"); choose whether each question needs a total, a count,
+or a mean. For plots, revisit
+[Lab 05](https://statistical-history.github.io/labs/lab-05.html), §4.2
+(points and lines) and §§4.5–4.6 (boxplots by group). Either these familiar
+tools or base R is fine.
+
+## Part 1a — Start with annual totals
+
+For this part, use only `data/annual_births_1994_2003.csv`.
+It has one row for each of the ten years. `births` is the annual total and
+`days` is the number of calendar days in that year. This table was obtained
+by summing the daily file used in the later parts.
+
+Your initial prediction rule will use one common average for both
+weekdays. You may use it provisionally while explaining its limitations.
+
+1. Write R code to calculate the mean annual number of births and identify
+   the smallest and largest annual totals with their years. Calculate what
+   percentage above the mean the largest total lies. Would “roughly four
+   million births per year” be a useful description of this decade? Explain
+   what degree of accuracy you mean by “roughly.”
+
+2. Calculate each year's mean births per calendar day and plot these means
+   against year. Calculate the overall daily mean by dividing the total
+   births in all ten years by the total calendar days, and add it to your
+   plot as a horizontal reference line. Use that overall mean to give your
+   initial estimates for the Tuesday and Sunday averages in 2004. Explain
+   why the denominator is the actual number of days, rather than ten or
+   ten times 365.
+
+3. Does the annual table establish that Tuesday and Sunday have similar
+   means? State one claim it supports and one assumption needed to use your
+   initial estimates for 2004. Distinguish evidence in this table from what
+   you remember about weekdays in HW 03.
+
+## Part 1b — Retain the weekday labels
+
+Now use `data/us_daily_births_1994_2003.csv`, the same unmodified
+file used in HW 03. Each row is one U.S. calendar day's aggregate birth
+count, not an individual birth. `day_of_week` uses 1 for Monday through 7
+for Sunday. The other columns are `year`, `month`, `date_of_month`, and
+`births`. Grouping these rows differently adds no births or years.
+
+1. Write code to produce one row per weekday, showing its total births,
+   number of calendar days, and mean births per day. Order the table Monday
+   through Sunday and give readable weekday labels. Verify that your seven
+   birth totals and seven day counts add back to the totals from Part 1a.
+   Why should you compare the means per day rather than the raw weekday
+   totals?
+
+2. Make a bar plot of the weekday means and add the overall daily mean
+   from Part 1a as a horizontal line. For Tuesday and Sunday, calculate
+   observed mean minus the initial prediction. Which mean did the initial
+   rule underestimate and which did it overestimate? Record revised
+   estimates for the Tuesday and Sunday averages in 2004.
+
+3. An analyst proposes keeping one prediction for every day and adding a
+   normal error curve to describe the departures. Would this address the
+   weekday pattern in your table and plot? Explain without fitting a curve
+   or performing a normality test. State what useful information the annual
+   average still provides.
+
+## Part 1c — Keep both year and weekday
+
+Continue with the same daily records. In this part, investigate
+whether the weekday pattern itself stays the same over time.
+
+1. Calculate the mean births per day for every combination of year and
+   weekday. Display the Tuesday and Sunday means in a table, with years in
+   chronological order. Plot both sequences against year on the same axes,
+   with clear labels or a legend. What does this show that the table pooling
+   all ten years in Part 1b could not show? Describe the overall directions
+   and any departures from them.
+
+2. Calculate the percentage change from 1994 to 2003 in the annual birth
+   total, the Tuesday mean, and the Sunday mean. For each year, calculate the
+   Tuesday mean divided by the Sunday mean, and plot this ratio against
+   year. Report its values in 1994 and 2003. Could a common proportional
+   increase in births on every weekday explain these results? Why is the
+   ratio useful for this question?
+
+3. Compare two rules for estimating the Tuesday and Sunday averages in
+   2004: use each weekday's mean from all ten years, or use only its mean
+   from 2003. Write code to report both pairs of forecasts and the number of
+   daily observations used for each. Does using about ten times as many days
+   guarantee that the first rule is better? Explain one advantage and one
+   concern for each rule, then make a provisional choice.
+
+## Part 1d — Evaluate and reconsider
+
+1. Describe how you could compare the two forecast rules once the 2004
+   records become available. Specify what you would calculate, how you
+   would measure error, and which choices must be fixed before seeing those
+   records. Keep the target as the two weekday averages. Explain why a
+   closer fit to the same data used to calculate a mean would be insufficient
+   evidence that it forecasts better.
+
+2. In 120–180 words, look back at your answers to 1a.1 (the “roughly four
+   million” description), 1a.3 (the claim the annual table supports), and
+   your Tuesday and Sunday estimates in 1a.2, 1b.2, and 1c.3. Which of these
+   did later parts support, and which did they lead you to change? Use at
+   least two numerical findings. Connect your experience to the reading's
+   account of closer scrutiny revealing hidden patterns. Distinguish learning more about the same observations from
+   using more observations in a forecast. What useful role remains for
+   averages after these refinements?
+
+# Problem 2 — What can a normal curve hide?
+
+Problem 1 asked whether a useful average gives a useful prediction. Now examine the same question for a bell-shaped distribution of human measurements.
+
+A bell-shaped distribution can be an appealing summary. But what does
+that shape tell us about the people whose measurements produced it?
+You will first examine chest measurements together, then recover some
+of the group information that the pooled distribution hides. You will
+build a prediction rule from averages and arithmetic, and judge whether
+it was a useful way to analyze these records.
+
+**Reading connection:** Stigler's discussion of Quetelet, the normal error
+curve, and Table 5.6. The normal probability plot below uses modern normal
+quantiles to explore the historical move from cumulative frequencies to
+a straight line; it does not reproduce a nineteenth-century calculation
+step for step.
+
+## The data and setup
+
+The original 1817 publication contains frequency tables for **5,732
+Scottish militiamen in 11 militias**, classified by five height bands
+and 16 recorded chest sizes. Pooling the militias gives the table in
+Stigler. This is a more detailed version of the same records, with
+880 frequency cells, rather than an additional sample of people.
+
+The CSV `data/militia_1817_counts_long.csv` has these columns:
+
+| Column | Meaning |
+|---|---|
+| `regiment` | Militia label; a categorical variable |
+| `height_band_in` | Original height band: `64-65`, `66-67`, `68-69`, `70-71`, or `72-73` inches |
+| `height_lower_in`, `height_upper_in` | The band's two printed height labels |
+| `height_midpoint_in_derived` | A derived plotting coordinate, not an observed exact height |
+| `chest_in` | Recorded chest category in inches, from 33 through 48 |
+| `count` | Number of men in this combination of categories |
+| `source_page` | Page in the 1817 publication |
+
+The template's `militia-data` chunk is already written for you. It reads
+the CSV into `counts`, which keeps the frequency format, and then calls
+`expand_militia_counts(counts)` to create `militia`. That function is
+supplied in `homework_05_helpers.R`; you do not write or change it. It
+repeats each category combination exactly `count` times. One row of
+`militia` then represents one recorded man's **categories**.
+This is an exact expansion of the table, not a reconstruction of exact
+individual measurements. It adds no people or information. Zero-count
+cells produce no expanded rows. Do not add random jitter to create
+apparently more precise measurements.
+
+The source gives no individual identifiers, ages, or measurement dates.
+In this problem, a **trend** means a pattern across ordered height bands,
+not change over time. The records were collected for military uniforms;
+they should not be treated as a random sample of all Scottish adults.
+Source details and transcription notes are in `data/SOURCES.md`.
+
+### A short R reference
+
+These functions are available; choose the ones that suit your solution.
+The course's earlier code and R's help pages are also useful references.
+
+| Task | Useful base R functions or syntax |
+|---|---|
+| Totals, averages, and square roots | `sum()`, `mean()`, `sqrt()` |
+| Cumulative totals and normal quantities | `cumsum()`, `pnorm()`, `qnorm()`, `dnorm()` |
+| Select rows and create groups | Logical indexing, `ifelse()`, `subset()` |
+| Counts and summaries within groups | `table()`, `tapply()`, `aggregate()` |
+| Match labels between two tables | `match()`; a named vector can also be indexed by labels |
+| Display distributions and relationships | `hist()`, `plot()`, `curve()`, `abline()`, `qqnorm()`, `qqline()` |
+
+The `tapply()` example in Problem 1's R reference works the same way
+for the militia-by-height-group counts and means in Part 2c.
+
+For a standard normal variable $Z$ (mean 0, standard deviation 1),
+$\Phi(z)=P(Z\leq z)$ is the fraction of the curve to the left of $z$.
+Its inverse, $\Phi^{-1}(p)$, finds the cutoff with fraction $p$ to its
+left; it does not mean $1/\Phi(p)$. For example,
+$\Phi(1)\approx0.8413$, so $\Phi^{-1}(0.8413)\approx1$.
+In R, `pnorm(1)` gives about 0.8413 and `qnorm(0.8413)` gives about 1.
+In Part 2a.3, `qnorm()` converts each observed cumulative fraction $F_c$
+into the corresponding standard normal cutoff.
+
+## Part 2a — Chest measurements together
+
+1. Calculate the total frequency $N$, the mean recorded chest measurement,
+   and its descriptive standard deviation using the frequency table:
+
+   $$N=\sum_j f_j,\qquad
+   \bar c=\frac{\sum_j f_jc_j}{N},\qquad
+   s=\sqrt{\frac{\sum_j f_j(c_j-\bar c)^2}{N}}.$$
+
+   Here $j$ indexes frequency rows, $f_j$ is `count`, and $c_j$ is
+   `chest_in`. Save your results as `N`, `chest_mean`, and `chest_sd`.
+   Verify the mean using the expanded table. Why would taking an
+   unweighted mean of `counts$chest_in` answer a different question?
+   Explain the difference between `nrow(counts)` and `N`.
+
+   Use the denominator $N$ throughout this problem for descriptive
+   variances and mean squared errors. R's `sd()` uses $N-1$ instead.
+
+2. Draw a histogram of the recorded chest measurements using one-inch
+   bins with boundaries halfway between integer categories. Put density
+   on the vertical axis and overlay the normal density with your mean
+   and standard deviation. Label both axes. Briefly describe the center,
+   spread, symmetry, and any visible departures from the normal curve.
+
+3. Construct a **normal probability plot** from the chest frequencies.
+   First form a table with one row per chest category, in increasing
+   order. Let $F_c$ be the fraction of recorded men with chest size at
+   most $c$. Calculate $z_c=\Phi^{-1}(F_c)$, using `qnorm()`.
+   Omit any row with $F_c=0$ or $F_c=1$ **before** computing the quantile.
+
+   Plot $z_c$ on the horizontal axis and $c+0.5$ on the vertical axis.
+   Add the reference line $y=\bar c+s z$, using your Part 2a.1 values.
+   Report $F_c$ and $z_c$ for $c=35,39,43$. Explain why a normal
+   distribution would give an approximately straight line, why the
+   endpoints are omitted, and what the tails of your plot suggest.
+
+   Treat $c+0.5$ as a convenient upper category boundary. This is an
+   analytical convention for this comparison: the source does not state
+   exactly how chest measurements were rounded. The observations remain
+   integer categories even when a continuous curve approximates them.
+
+4. In three or four sentences, assess each claim separately:
+   (i) a normal curve is a useful approximation to the pooled chest
+   distribution; (ii) the measurements can therefore be treated as
+   independent errors around one common human body type. What evidence
+   does the plot provide, and what does it leave unresolved?
+
+## Part 2b — Recover some height information
+
+1. Create a column `height_group` in `militia`. Use **L** for the original
+   bands `64-65` and `66-67`, and **H** for `68-69`, `70-71`, and `72-73`.
+   Calculate the number of men and mean chest measurement in each
+   group. Report the H-minus-L difference in inches. Save a table called
+   `height_summary` with columns `height_group`, `n`, and `mean_chest`.
+
+2. Suppose we predict every man's chest measurement with `chest_mean`.
+   Compute the mean **observed minus predicted** measurement in each
+   height group. Which group is overpredicted, and which is
+   underpredicted? Why has the pooled histogram stayed exactly the same
+   even though our assessment of this prediction rule has changed?
+
+## Part 2c — A common height adjustment and a mean for each militia
+
+We will allow each militia its own average chest measurement, while
+using **one common H-minus-L adjustment** in all 11 militias. We need
+to construct this rule carefully because the group counts differ.
+
+Questions 1 and 2 build the rule; questions 3 and 4 check it.
+
+- In question 1, you will summarize each militia's L and H groups: their
+  counts, their mean chest measurements, and the gap between those means.
+  The template supplies the table-building code; you complete the gap.
+- In question 2, you will combine the 11 gaps into one weighted gap and
+  use it to calculate two predictions for each militia.
+- In question 3, you will verify two properties of those predictions.
+- In question 4, you will compare the predictions with the observed means
+  for two militias.
+
+The formulas below are for reference as you work; there is nothing to do
+before question 1.
+
+For militia $r$, let $n_{Lr},n_{Hr}$ be its L and H counts (`n_L`, `n_H`)
+and $m_{Lr},m_{Hr}$ its two mean chest measurements (`m_L`, `m_H`).
+The observed gap (`gap`) and its weight (`weight`) are
+
+$$d_r=m_{Hr}-m_{Lr},\qquad
+w_r=\frac{n_{Lr}n_{Hr}}{n_{Lr}+n_{Hr}}.$$
+
+The least-squares common adjustment (`common_gap`) is
+
+$$\widehat d=\frac{\sum_r w_r d_r}{\sum_r w_r}.$$
+
+This choice makes the sum of squared errors across the recorded men as
+small as possible among rules with a common adjustment and a separate
+mean for each militia. You may use this result without deriving it.
+It is generally different from giving the 11 observed gaps equal weight.
+
+Let $M_r$ be militia $r$'s overall mean (`militia_mean`) and $p_r$
+its proportion in H (`high_share`):
+
+$$M_r=\frac{n_{Lr}m_{Lr}+n_{Hr}m_{Hr}}{n_{Lr}+n_{Hr}},\qquad
+p_r=\frac{n_{Hr}}{n_{Lr}+n_{Hr}}.$$
+
+Predict a man's chest measurement using the appropriate militia and
+height group; store these predictions as `pred_L` and `pred_H`:
+
+$$\widehat c_{Lr}=M_r-p_r\widehat d,\qquad
+\widehat c_{Hr}=M_r+(1-p_r)\widehat d.$$
+
+1. Build an 11-row table called `cells`, with columns `regiment`,
+   `n_L`, `n_H`, `m_L`, `m_H`, and `gap`. Compute each gap from its two
+   means. Print the table and compare the observed height gaps in
+   **1st Argyll, Lanark Highland, and 6th Lanarkshire**. What might be
+   lost by imposing a common gap?
+
+2. Calculate **all 11** weights yourself and save them in `cells$weight`.
+   Compute `common_gap` from the weighted formula. Add columns
+   `militia_mean`, `high_share`, `pred_L`, and `pred_H` to `cells` using
+   the remaining formulas. Print this second table. Retain full
+   precision in calculations; round only the displayed results.
+
+   For **1st Argyll**, also write out the numerical substitution for
+   its weight, overall mean, and two predictions. You may use R as a
+   calculator, but show what goes into each formula. What happens to
+   $w_r$ if a militia has many men in one group but very few in the other?
+   Why is a militia with only a few observations on one side a weak
+   source of information about an H-minus-L difference?
+
+3. Verify in R, for **every militia**, that its predicted H-minus-L gap
+   equals `common_gap` and its count-weighted average prediction equals
+   its observed overall mean. Allow for floating-point rounding: check
+   that absolute discrepancies are smaller than $10^{-8}$ rather than
+   requiring exact equality with `==`. Then show the second identity algebraically
+   using $p_r$ and $1-p_r$. Are these identities evidence that every
+   subgroup mean is fitted well? Explain.
+
+4. For 1st Argyll and Lanark Highland, report the mean observed-minus-
+   predicted error separately for L and H. Which militia's observed
+   contrast is more compatible with the common-adjustment rule?
+   Explain why `common_gap` is **not** an increase in chest measurement
+   per one-inch increase in height.
+
+## Part 2d — Assess the rule, then look more closely
+
+1. Assign each row of `militia` the prediction for its militia and
+   height group; save it as `militia$pred_common`. Do not assume that
+   row orders in different tables match: join or match on the labels.
+   Define `militia$residual` as observed chest minus this prediction.
+   Draw a histogram and a normal Q-Q plot of these residuals. Include
+   all observations in the histogram and add a reference line to the
+   Q-Q plot. Briefly describe the pooled residual distribution.
+
+   You may use `qqnorm()` and `qqline()` here. The grouped probability
+   plot in Part 2a.3 must still be constructed from cumulative
+   frequencies as described there.
+
+2. Calculate the sum of squared errors (SSE) and root mean squared
+   error (RMSE) for each rule in the following list, using the **same
+   5,732 recorded men**. Let $c_i$ be man $i$'s recorded chest
+   measurement and $\widehat c_i$ the prediction a rule gives him. The
+   four rules differ only in $\widehat c_i$; for a man in militia $r$:
+
+   - **One overall mean for everyone:** $\widehat c_i=\bar c$ for every
+     man (`chest_mean`, Part 2a).
+   - **One mean for L and a different mean for H, ignoring militia:**
+     $$\widehat c_i=\begin{cases}\bar c_L & \text{if man } i \text{ is in L,}\\
+     \bar c_H & \text{if man } i \text{ is in H,}\end{cases}$$
+     where $\bar c_L$ and $\bar c_H$ are the mean chest measurements of
+     all L men and all H men, pooling the militias (the `mean_chest`
+     column of `height_summary`, Part 2b).
+   - **The common height adjustment plus militia means from Part 2c:**
+     $$\widehat c_i=\begin{cases}\widehat c_{Lr} & \text{if man } i \text{ is in L,}\\
+     \widehat c_{Hr} & \text{if man } i \text{ is in H}\end{cases}$$
+     (`pred_L` and `pred_H`; this is `militia$pred_common`).
+   - **A separate observed mean for each of the 22 militia-by-L/H groups:**
+     $$\widehat c_i=\begin{cases}m_{Lr} & \text{if man } i \text{ is in L,}\\
+     m_{Hr} & \text{if man } i \text{ is in H}\end{cases}$$
+     (`m_L` and `m_H` in `cells`).
+
+   The first two rules ignore militia. The last two differ only in
+   whether the H-minus-L gap must be the same in every militia. For
+   each rule,
+
+   $$\mathrm{SSE}=\sum_{i=1}^{N}(c_i-\widehat c_i)^2,\qquad
+   \mathrm{RMSE}=\sqrt{\mathrm{SSE}/N}.$$
+
+   Save a comparison table as `model_comparison`. Calculate the
+   percentage reduction in SSE from the overall mean to the common-
+   adjustment rule, and from that rule to the 22 separate means.
+   Why does the last rule have more freedom to reduce training error?
+   Does a smaller training SSE establish better predictions for new men?
+
+3. **Before making the next plot**, write a provisional two- or
+   three-sentence assessment of the common-adjustment rule. Use the
+   pooled residual plots and at least one error comparison.
+
+4. Now recover the **five original height bands**. Within each band,
+   calculate its count, mean chest measurement, and mean residual from
+   the **existing** common-adjustment fit. Save these in `band_summary`.
+   Keep each man's militia-specific prediction when calculating this
+   mean residual; do not replace it with the pooled height mean or
+   refit the rule at this step.
+
+   Print the table and plot the mean residual against the ordered
+   height-band labels, with a horizontal reference at zero. Which band
+   has the largest mean residual in absolute value, and is it
+   overpredicted or underpredicted? Compare this plot with the pooled
+   residual plot. How can both descriptions be correct?
+
+5. In **150-200 words**, revise your assessment. Was this a good idea
+   as a way to analyze these data? State what the rule captures, give
+   numerical evidence of what it misses across height and militia,
+   and propose one revision and one way to evaluate that revision.
+   Distinguish a useful descriptive summary from a claim about a
+   common human type, a causal effect of militia membership, or all
+   Scottish adults. Explain why the apparent normality of the pooled
+   residuals does not settle whether the conditional means are right,
+   or whether errors are independent and have constant variance.
+
+## A name for the rule — read after your assessment
+
+You have manually fitted a **two-way ANOVA model with main effects and
+no interaction**, with broad height group and militia as the two factors
+and chest measurement as the response. The common gap is the additive
+assumption: the H-minus-L difference is the same in every militia.
+The 22 separate means allow an interaction, so that this difference
+can vary by militia. The frequency table retains repeated observations
+within groups; it is not a design with one observation per cell.
+
+Least squares defines the fitted means without requiring normal errors.
+Classical uncertainty statements require additional assumptions; we
+have not performed an F test here. Naming the method does not answer
+whether its particular grouping and common-gap assumption were useful
+for these data. That judgment comes from the evidence you examined.
+
+# Data and sources
+
+## Problem 1: Birth counts
+
+The daily file is an unchanged copy of the CDC/NCHS data distributed by
+FiveThirtyEight and already used in HW 03. The annual file is an exact
+aggregation of that file. See `data/SOURCES.md` in your repository for the
+column definitions, provenance, and aggregation rule.
+
+- [FiveThirtyEight birth data and documentation](https://github.com/fivethirtyeight/data/tree/master/births).
+- [Original CDC daily birth table for 2003](https://archive.cdc.gov/www_cdc_gov/nchs/data/statab/natfinal2003.annvol1_16.pdf).
+
+The records describe counts per calendar day. They do not by themselves
+identify why delivery patterns differ or establish independence between
+days. Distinguish plausible explanations from conclusions supported by
+these particular data.
+
+## Problem 2: Scottish militia measurements
+
+- Anonymous (1817). “Statement of the Sizes of Men in different Counties
+  of Scotland, taken from the Local Militia.” *Edinburgh Medical and
+  Surgical Journal*, **13**, 260-264.
+  [Original scan](https://languagetesting.info/RLT/downloads/Quetelet%201817.pdf).
+- Stephen M. Stigler (2019). “Data Have a Limited Shelf Life.”
+  *Harvard Data Science Review*, **1**(2).
+  [Historical source investigation](https://hdsr.mitpress.mit.edu/pub/iu26pfw1/release/3).
+
+See `data/SOURCES.md` for the transcription, printed discrepancies,
+and limits of the available measurements.
