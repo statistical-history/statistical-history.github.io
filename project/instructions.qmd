@@ -29,7 +29,7 @@ All written submissions are due at **11:59 p.m. Eastern time** on the listed dat
 
 | Milestone | Deadline, 2026 | Submission | Points |
 | --- | --- | --- | ---: |
-| 1. Two proposed project ideas | Thursday, October 29 | One packet per group, covering both ideas | 10 |
+| 1. Two proposed project ideas | Saturday, October 31 | One packet per group, covering both ideas | 10 |
 | 2. Plan of action and timeline | Friday, November 6 | One per group | 15 |
 | 3. Account of collection and analysis | Monday, November 23 | One per group | 20 |
 | 4. Presentation | Thursday, December 3, in class | Group presentation; every person participates | 15 |
@@ -90,8 +90,8 @@ The following is a suggested working sequence. Adjust it in your plan while pres
 
 | Working period | Main task | Evidence of completion |
 | --- | --- | --- |
-| October 15-29 | Choose two options and register them on the sign-up sheet, then develop both proposals | [Milestone 1](#milestone-1-two-proposed-project-ideas) |
-| October 30-November 6 | Meet with the instructors, select one project after feedback, run its approved pilot, and revise the protocol and budget | [Milestone 2](#milestone-2-the-plan-of-action-and-timeline) and its appendices |
+| October 15-31 | Choose two options and register them on the sign-up sheet, then develop both proposals | [Milestone 1](#milestone-1-two-proposed-project-ideas) |
+| November 1-6 | Meet with the instructors, select one project after feedback, run its approved pilot, and revise the protocol and budget | [Milestone 2](#milestone-2-the-plan-of-action-and-timeline) and its appendices |
 | November 9-18, after plan approval | Collect main data and check recording quality | Collection log and original records |
 | November 19-23 | Clean data, analyze, and check results | [Milestone 3](#milestone-3-how-collection-and-analysis-went) |
 | November 30-December 2 | Address analysis feedback and rehearse | Slides and speaking plan |
@@ -110,7 +110,7 @@ Use course-level R for summaries and figures, with readable code or documented s
 
 # Milestone 1: Two proposed project ideas
 
-**Group submission | 10 points | Due date: October 29**
+**Group submission | 10 points | Due date: October 31**
 
 **There are two things to show us at this first check-in:**
 

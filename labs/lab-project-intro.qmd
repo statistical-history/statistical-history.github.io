@@ -99,10 +99,10 @@ easy.
 :::
 
 ::: callout-important
-## First milestone: Thursday, October 29
+## First milestone: Saturday, October 31
 
-**Milestone 1 (two proposed project ideas)** is due **Thursday, October
-29, at 11:59 p.m.** Submit one file per group that covers
+**Milestone 1 (two proposed project ideas)** is due **Saturday, October
+31, at 11:59 p.m.** Submit one file per group that covers
 both ideas. See the project description for what each proposal must
 include.
 :::
