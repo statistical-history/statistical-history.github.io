@@ -36,7 +36,13 @@ part the **personal equation**.
 To separate the two, we need a rule that predicts a recorded time from
 the actual duration **and** from who did the timing:
 
-$$\text{recorded time} = \text{a part that grows with the actual duration} + \text{an adjustment for the observer} + \text{error}.$$
+$$
+\begin{aligned}
+\text{recorded time} = {} & \text{a part that grows with the actual duration} \\
+& + \text{an adjustment for the observer} \\
+& + \text{error}.
+\end{aligned}
+$$
 
 R's `lm()` fits exactly this kind of rule. Today you will fit it to
 invented timings from A and B, and use the saved rule to answer: **when A
