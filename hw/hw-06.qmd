@@ -1,0 +1,636 @@
+---
+title: "HW 06: What are we comparing?"
+subtitle: "Instructions — read these; do the work in the `hw-06.qmd` in your own repo"
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Monday, November 9, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+Every analysis in this course has compared something: one group's
+average with another's, one rule's errors with another's, an observed
+difference with differences from a reference world. This homework asks
+what such a comparison actually compares, especially when the groups
+differ in more than one way at once.
+
+- **Problem 1** returns to the Scottish militia measurements from HW 05.
+  R's `lm()` function will now do the arithmetic you did by hand, so you
+  can ask a question HW 05 could only raise: when a rule with more
+  coefficients fits better, is the improvement larger than chance alone
+  would produce?
+- **Problem 2** is a simulated field experiment. You will see how a
+  design can have the same number of plots in every treatment
+  combination and still compare unlike plots, and how weighting can
+  repair the comparison.
+- **Problem 3** fits your first regression with two predictors to a
+  designed experiment on car emissions, and checks its predictions
+  against measurements it was not fitted to.
+
+## Learning goals
+
+In this assignment, you will...
+
+- fit least-squares rules with `lm()`, read each coefficient as a
+  comparison with a reference group, and connect the fit to the rule you
+  built by hand in HW 05.
+- explain why training error can only fall as coefficients are added,
+  and use a simulated reference world to judge whether a fall is
+  unusually large.
+- explain blocking and factorial balance, and why equal cell counts do not
+  guarantee a fair comparison.
+- use simulation to show the bias created by an unequal assignment, and
+  correct it with inverse-probability weights.
+- set up regression equations, interpret coefficients while holding the
+  other predictor fixed, make predictions at chosen settings, and check
+  a model on held-out data.
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-06`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 05's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps again.
+- Keep the supplied folder arrangement so `source("homework_06_helpers.R")` resolves.
+- Run the document from a fresh R session, top to bottom, before you submit. Problems 1
+  and 2 use random simulation: **keep `set.seed(606)` where the template places it** so
+  your results can be reproduced.
+
+# Materials and submission
+
+Work in `hw-06.qmd` in your homework repository. Keep
+`homework_06_helpers.R` beside it and the CSV files in `data/`.
+Submit **one document covering all three problems**. Push your Quarto
+source and rendered work to your homework repository, and submit the same
+rendered document as a PDF on Gradescope. Include your code, requested
+tables and figures, and written answers.
+
+All data are supplied. Base R is sufficient; familiar `dplyr`/`ggplot2`
+code from labs is also welcome. Load any packages you use. For
+`ggplot2`, the
+[data visualization cheatsheet](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf)
+is a handy two-page reference. `knitr::kable()` is optional for
+displaying tables. No additional data downloads are required.
+
+## Writing your R code
+
+::: callout-warning
+## Filling in the template
+
+The template supplies data loading and checks, and commented code
+skeletons for the longer calculations. In each skeleton, replace every
+`___` with an R expression, then remove the leading `#` from the code
+lines to run them. Replace the remaining `YOUR CODE HERE` comments with
+your own code and write each response after **Your answer:**. Keep code
+and output visible. Once you add code, the document will **not render
+if any chunk has an error**. 
+:::
+
+Each problem begins with a short R reference. Several functions are new
+in this homework. The skeletons give you a starting point; you still choose
+the calculations, complete the formulas, and explain what the results
+mean.
+
+Do **not** use `anova()`, and do not use the standard errors, t values,
+p-values, or F statistic that `summary()` prints. This homework asks you
+to interpret coefficients, errors, and simulations, not those
+classical test results.
+
+Label axes and include units. Keep full precision while calculating and
+round only reported results.
+
+# Problem 1 — The militia rule, refitted
+
+In HW 05 Part 2c, you built a rule by hand: a separate average chest
+measurement for each of the 11 militias, plus **one common H-minus-L
+adjustment** shared by all of them. At the end you learned its name, a
+two-way ANOVA model with main effects and no interaction. R's `lm()`
+function fits the same rule, using the same least-squares criterion.
+
+**Reading connection:** Stigler's discussion of Quetelet, the normal
+error curve, and Table 5.6, as in HW 05.
+
+## The data and setup
+
+This is the same file as HW 05, `data/militia_1817_counts_long.csv`:
+the frequency table for **5,732 Scottish militiamen in 11 militias**,
+with one row per militia (`regiment`), original height band
+(`height_band_in`, with lower label `height_lower_in`), and chest
+category (`chest_in`), and the number of men in `count`. See HW 05 and
+`data/SOURCES.md` for the source and its limits.
+
+The template's `militia-data` chunk is already written for you. As in
+HW 05, it reads the CSV into `counts` and calls `expand_militia_counts()`
+from `homework_06_helpers.R` to create `militia`, with one row per
+recorded man. It then creates `height_group`, with **L** for heights below
+68 inches (bands `64-65` and `66-67`) and **H** otherwise, exactly the
+groups from HW 05 Part 2b.
+
+This time `height_group` is a **factor**: R's type for a categorical
+variable. A factor stores its categories, called **levels**, in a fixed
+order. The chunk sets the order to L, then H:
+
+```{r}
+militia$height_group <- factor(ifelse(militia$height_lower_in < 68, "L", "H"),
+                               levels = c("L", "H"))
+```
+
+The order matters because `lm()` treats the **first level as the
+reference group**. `regiment` is stored as text; `lm()` converts it to a
+factor with levels in alphabetical order, so **1st Argyll** is its
+reference militia.
+
+## A short R reference for Problem 1
+
+| Task | Useful base R functions or syntax |
+|---|---|
+| Fit a least-squares rule | `lm(response ~ predictor1 + predictor2, data = ...)` |
+| Allow one predictor's effect to differ by the other | `lm(response ~ predictor1 * predictor2, data = ...)` |
+| Fit a single overall mean | `lm(response ~ 1, data = ...)` |
+| Coefficients and how many there are | `coef(fit)`, `length(coef(fit))` |
+| Each row's fitted value and residual | `fitted(fit)`, `resid(fit)` |
+| Sum of squared errors (SSE) | `sum(resid(fit)^2)` |
+| Predictions for chosen groups | `predict(fit, newdata = ...)` |
+| Shuffle a vector | `sample(x)` |
+| Repeat a calculation | a `for` loop, storing results in `numeric(n)` |
+| Plots | `hist()`, `plot()`, `abline()`, `axis()` |
+
+You have used `lm()` before: in
+[HW 01](https://statistical-history.github.io/hw/hw-01.html), to fit a
+line to Mayer's equations, and in
+[Lab 07](https://statistical-history.github.io/labs/lab-07.html), where
+you fitted rules with `lm()`, used `predict()` with `newdata`, and read
+each coefficient by comparing predictions for rows that **differ in one
+thing only**. Use Lab 07 as your reference for those steps; this
+homework applies them to the militia data.
+
+**More generally**, `lm()` fits a rule of the form
+
+$$y = \beta_0 + \beta_1 x + \varepsilon,$$
+
+where $\varepsilon$ is the error: the part of $y$ the rule does not
+explain. $\beta_0$ is the predicted $y$ when $x = 0$, and $\beta_1$ is
+the change in the predicted $y$ when $x$ increases by 1 unit. With two
+predictors, $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \varepsilon$, and
+each slope is the change in the predicted $y$ when its predictor
+increases by 1 unit and the other stays the same. A categorical predictor
+enters as a 0/1 indicator: for `height_group`, $x = 1$ for H and $x = 0$
+for the reference level, L, so "increases by 1 unit" means "changes
+from L to H". Lab 07's additive observer rule, for example, was
+
+$$\widehat{\text{recorded}} = 0.20 + 1.08 \times \text{actual} + 0.60 \times (\text{observer is B}),$$
+
+in seconds.
+
+Replacing `+` with `*` adds an **interaction**: one predictor's effect
+may differ by the other. With `height_group * regiment`, each militia gets
+its own H-minus-L gap instead of one common gap. The interaction rule has
+more coefficients; you will not need to interpret them.
+
+## Part 1a — Reproduce the HW 05 rule with `lm()`
+
+In HW 05 you calculated two numbers for this rule: `common_gap`, the
+H-minus-L adjustment shared by every militia (1.545315 inches), and the
+rule's SSE, the sum of squared observed-minus-predicted errors over all
+5,732 men (18,778.760 squared inches). In `lm()`'s output, the
+H-minus-L adjustment is the coefficient named `height_groupH`.
+
+1. Fit `lm(chest_in ~ height_group + regiment, data = militia)`, save it
+   as `fit_additive`, and print its coefficients. Find the same two
+   numbers for `fit_additive`: its `height_groupH` coefficient and its
+   SSE (refer to the short R reference above). Compare them with your HW 05
+   results.
+
+## Part 1b — More coefficients, smaller training error
+
+Three of the rules from HW 05 Part 2d are `lm()` fits:
+
+| HW 05 rule | `lm()` formula |
+|---|---|
+| One mean for L and a different mean for H (height only) | `chest_in ~ height_group` |
+| Common height adjustment plus militia means (additive) | `chest_in ~ height_group + regiment` |
+| A separate mean for each of the 22 militia-by-L/H groups (interaction) | `chest_in ~ height_group * regiment` |
+
+1. Fit the height-only, additive, and height-by-militia interaction
+   models. Make a table of their SSEs and coefficient counts (how many coefficients).  Do not use `anova()`.
+   Explain why training SSE decreases with more coefficients.
+
+## Part 1c — Is the interaction's improvement unusually large?
+
+The interaction rule has 10 more coefficients than the additive rule,
+so its SSE is smaller. We will now explore **how much smaller would it be if the additive
+rule were exactly right?** Even then, the interaction model's SSE
+would be somewhat smaller.
+
+We can build a reference world in which the additive rule is true by
+construction, as you did for Poisson's conviction rates in HW 04 Part 2e.
+Here is one repetition:
+
+- **Step 1.** Start from the additive fit's fitted values, which follow
+  the common-gap rule exactly.
+- **Step 2.** Shuffle the additive fit's residuals with `sample()`, so
+  each man receives a residual chosen at random from the 5,732 observed
+  ones.
+- **Step 3.** Add the two to make an **artificial chest measurement**
+  for every man. In this artificial data set, the H-minus-L gap is the
+  same in every militia, apart from chance.
+- **Step 4.** Refit both the additive and the interaction models to the
+  artificial measurements, and record the SSE decrease: additive SSE
+  minus interaction SSE.
+
+Repeating this 199 times shows the range of SSE decreases that chance
+alone produces when the common gap is true. Then we see where the
+observed decrease falls.
+
+This is a **residual permutation under the additive model**. The
+reference distribution requires the additive residuals to be approximately **exchangeable**: any rearrangement of
+them among the men would have been just as plausible as the arrangement
+we observed. No F test is needed.
+
+1. Calculate the observed SSE decrease from the additive to the
+   interaction model. With `set.seed(606)`, conduct 199 residual
+   permutations under the additive model, as described above. Plot the
+   simulated decreases, mark the actual decrease, and calculate
+   $$\frac{1 + \text{number of simulated decreases at least as large as the observed one}}{200}.$$
+   Explain what the comparison suggests.
+
+2. Give a reason the exchangeable-residuals assumption might fail.
+
+## Part 1d — What the rule says, and what it misses
+
+1. Use `predict()` with `fit_additive` to predict the chest measurement
+   of L and H men in **1st Argyll** and in **Lanark Highland**.
+
+2. Use your four predictions to interpret three coefficients of
+   `fit_additive`: the intercept, the H coefficient (`height_groupH`),
+   and the Lanark Highland coefficient. As in Lab 07, compare
+   predictions for men who differ in one thing only; an L man in
+   1st Argyll is the reference group. Why is the intercept not the grand
+   mean, the mean chest measurement of all 5,732 men?
+
+3. Plot the mean residual of `fit_additive` within each of the **five
+   original height bands**, as in HW 05 Part 2d.4, with a horizontal
+   reference line at zero.
+
+4. Explain what the additive assumption misses and why these
+   observations do not identify **causal** militia effects.
+
+# Problem 2 — A balanced design that compares unlike plots
+
+Problem 1 compared groups that were already formed: no one decided who
+served in which militia or how tall each man would be. In an
+**experiment**, the investigator decides which units receive which
+treatment, and that decision determines what a comparison means.
+
+Here you will study a simulated agricultural field trial. Field trials
+became the classic setting for the ideas of blocking and factorial
+designs in the 1920s, after the period of our reading, but the problem
+they address is old: making sure that a comparison of treatments is not
+also a comparison of something else.
+
+**Reading connection:** Fechner's weight-lifting experiments, and why
+order, hand, and container effects had to be accounted for when
+comparing his judgments (Lecture 17; Stigler, pp. 239–253).
+
+## The field trial
+
+There are **400 plots**: 200 with poor soil (`soil = 0`) and 200 with
+rich soil (`soil = 1`). Two treatments can be applied to each plot:
+
+- fertilizer `A` (`A = 1` applied, `A = 0` not), and
+- irrigation `B` (`B = 1` applied, `B = 0` not).
+
+The question is: **how much does fertilizer change the yield?**
+
+Because this is a simulation, we decide how each plot responds. Imagine
+that every plot has four possible yields, one for each treatment
+combination it could receive. These are called its **potential
+outcomes**. The average yield (in kg) for a plot with
+soil value `soil` under fertilizer value $a$ and irrigation value $b$ is
+
+$$Y(a,b) = 30 + 12\,\text{soil} + 4a + 2b + 3ab.$$
+
+Each simulated plot's measured yield adds independent measurement error,
+drawn from a normal distribution with mean 0 and standard deviation 4 kg.
+A real field trial reveals only **one** of each plot's four possible
+yields, the one for the treatments it actually received. An honest
+estimator may therefore use only the observed yields and the recorded
+assignments. **Never use the formula above inside an estimator**; it is
+known only because we are simulating.
+
+The **target** is the fertilizer effect averaged over all 400 plots,
+with irrigation applied to half of them:
+
+$$\text{target} = \text{average over all plots of }
+\tfrac12\big[Y(1,0)-Y(0,0)\big] + \tfrac12\big[Y(1,1)-Y(0,1)\big].$$
+
+Two design ideas appear in this problem:
+
+- A **factorial** design applies every combination of the levels of two
+  or more treatments. Here there are four combinations of A and B.
+- **Blocking** divides the units into groups of similar units, called
+  **blocks**, and assigns treatments separately within each block. Here
+  the blocks are the two soil classes.
+
+In the **planned design**, the plots in each soil class are divided at
+random into four groups of 50, one for each treatment combination.
+
+## A short R reference for Problem 2
+
+| Task | Useful base R functions or syntax |
+|---|---|
+| Write and use a small function | `function(...) { ... }`, as in Lab 03 and HW 02 |
+| Find the rows that meet a condition | `which(plots$soil == 0)` gives the row numbers of the poor plots |
+| Build a vector of 0s and 1s | `rep(1, 40)`; `rep(c(0, 1), each = 3)` gives `0 0 0 1 1 1` |
+| Shuffle a vector | `sample(x)` |
+| Normal measurement error | `rnorm(n, mean = 0, sd = 4)` gives `n` independent draws |
+| Means within groups | logical indexing, such as `mean(y[A == 1])` |
+| A different value for each group | `ifelse()` |
+| Weighted mean | `sum(w * y) / sum(w)`, or `weighted.mean(y, w)` |
+| Repeat a calculation | a `for` loop, storing results in `numeric(n)` |
+| Side-by-side plots | `par(mfrow = c(1, 2))` before two `hist()` calls |
+
+An **exact-count allocation** fixes how many plots receive each
+treatment and randomizes only which plots they are. With `sample()`
+and no other arguments, R returns its input in a random order. So to
+give fertilizer to exactly 40 of 200 plots, shuffle a vector containing
+forty 1s and one hundred sixty 0s:
+
+```{r}
+#| label: exact-count-example
+#| eval: true
+set.seed(1)
+A_poor <- sample(c(rep(1, 40), rep(0, 160)))
+sum(A_poor)
+```
+
+`rnorm()` is new. It draws random numbers from a normal distribution
+with the mean and standard deviation you give; `rnorm(400, mean = 0, sd = 4)`
+draws one measurement error for each of 400 plots. Like `sample()`, it
+follows `set.seed()`.
+
+::: callout-tip
+## Helper function in this part
+
+`design_counts()` is course-written, in `homework_06_helpers.R`. You
+write the allocation, the yields, and the estimators yourself.
+
+| Call | What it does for you |
+|---|---|
+| `design_counts(plots)` | Counts the plots in each soil class for each of the four treatment combinations, with a `Sum` row of totals. `plots` must be a data frame with columns `soil`, `A`, and `B`. Use it to check an allocation |
+:::
+
+## Part 2a — The design and its target
+
+1. List the four treatment combinations and explain blocking and
+   factorial balance.
+
+2. Compute the true target from the given potential outcomes and
+   interpret the interaction term, $3ab$.
+
+::: callout-note
+## Note
+
+You can compute the true target here **only because this is a
+simulation**. We wrote the yield formula, so we know all four potential
+yields, $Y(0,0)$, $Y(0,1)$, $Y(1,0)$, and $Y(1,1)$, for every plot. In a
+real field trial, each plot reveals only **one** of them: the yield for
+the treatments it actually received. The other three are never observed,
+so the true target cannot be calculated from real data. It can only be
+estimated from the observed yields and the recorded assignments.
+:::
+
+## Part 2b — The technician's change
+
+A technician instead gives fertilizer to **80% of the rich plots** (160)
+and **20% of the poor plots** (40). Within each soil-by-fertilizer group,
+irrigation is still balanced 50/50. Every A/B combination still has
+**100 plots** overall: the **marginal** cell sizes, totaled over both
+soil classes, are balanced.
+
+1. Calculate all eight conditional assignment probabilities
+   $P(A=a, B=b \mid \text{soil})$.
+
+2. Why do balanced marginal cell sizes not imply an unbiased
+   comparison?
+
+## Part 2c — Simulate both designs
+
+The estimator here is the **difference in observed mean yields**: the
+mean yield of the plots with `A = 1` minus the mean yield of the plots
+with `A = 0`. Each repetition of the simulation:
+
+- creates a new random allocation of A and B to the 400 plots, with
+  exact counts;
+- generates each plot's measured yield from the yield formula, using
+  the treatments it received, plus new measurement error from `rnorm()`;
+- calculates the difference in mean yields.
+
+The template supplies the structure in three small functions. The
+allocation function, `allocate(n_A_poor, n_A_rich)`, depends only on
+**how many plots in each soil class receive fertilizer**: it gives
+`A = 1` to exactly `n_A_poor` of the 200 poor plots and exactly
+`n_A_rich` of the 200 rich plots, and then gives `B = 1` to exactly half
+of the plots in each soil-by-fertilizer group. The two designs differ
+only in those two counts. You complete the `sample()` calls in the
+allocation, the yield formula, the estimator, and the loop.
+
+1. Implement both exact-count allocations using `sample()`:
+   - the **planned design**, fertilizer to 100 of the 200 poor plots and
+     100 of the 200 rich plots (complete balance, 50 plots per treatment
+     combination in each soil class); and
+   - the **altered design** from Part 2b, fertilizer to 40 poor plots and
+     160 rich plots.
+
+   In both, irrigation goes to exactly half of each soil-by-fertilizer
+   group. Repeat each design 1,000 times with `set.seed(606)`, and
+   compare the distributions of the difference in observed mean yields
+   for `A = 1` and `A = 0`. Add the true target to your plots. Explain
+   the direction of the bias.
+
+## Part 2d — Reweight the altered design
+
+The altered design over-represents rich soil among the fertilized plots
+and poor soil among the unfertilized ones. **Inverse-probability
+weighting** corrects this. Each plot receives weight
+
+$$w_i = \frac{1}{P(A = a_i \mid \text{soil}_i)},$$
+
+one over the probability that a plot with its soil received the
+fertilizer value it actually received. A plot whose assignment was
+unlikely for its soil gets a large weight. For example, a
+poor plot with fertilizer had probability 0.2 of receiving it, so its
+weight is 1/0.2 = 5.
+
+The **weighted difference** compares the two weighted means, each divided
+by its own sum of weights:
+
+$$\frac{\sum_{i:\,A_i=1} w_i y_i}{\sum_{i:\,A_i=1} w_i}
+\;-\;
+\frac{\sum_{i:\,A_i=0} w_i y_i}{\sum_{i:\,A_i=0} w_i}.$$
+
+The weights use only the assignment probabilities, which the design
+determines, and not the unobserved yields. Do not use matching or
+regression in this part.
+
+1. For the altered design, assign each observed plot the weight
+   $1/P(A=a \mid \text{soil})$ and compute the weighted difference
+   above. Repeat 1,000 times, and compare the centers of the planned,
+   biased, and weighted estimates.
+
+2. Explain why weighting works and why nonzero assignment probabilities
+   matter.
+
+# Problem 3 — A first regression with two predictors
+
+Lectures 19 and 20 follow Galton from heredity to the word
+**regression**. Modern regression rests on the least-squares fitting you
+have used since HW 01, extended to several predictors.
+
+**Reading connection:** Galton's reversion and regression (Lectures 19
+and 20; Stigler, pp. 263–299).
+
+## The data
+
+An experiment measured the carbon monoxide (CO) emitted by an engine at
+three levels of **ethanol concentration** and three levels of
+**air-to-fuel ratio**, giving all 3 × 3 = 9 combinations. Each combination
+was run twice. The file `data/automobile_emissions.csv` has 18 rows:
+
+| Column | Meaning |
+|---|---|
+| `x1` | Ethanol concentration, coded −1, 0, 1 for low, middle, high |
+| `x2` | Air-to-fuel ratio, coded −1, 0, 1 for low, middle, high |
+| `run` | 1 or 2: which of the two measurements at that combination |
+| `y` | CO concentration, in micrograms per cubic meter |
+
+The settings are **coded**: −1, 0, and 1 stand for three equally spaced
+experimental settings, not physical units. A one-unit change in `x1` is
+one step between ethanol levels.
+
+You will fit using only the nine `run == 1` rows and keep the nine
+`run == 2` rows **held out** for checking. Because the held-out rows
+played no part in the fit, their errors tell you more about how the
+rule predicts new measurements than its training residuals do. The
+template's `emissions-data` chunk reads the file and creates `train` and
+`check`.
+
+## A short R reference for Problem 3
+
+| Task | Useful base R functions or syntax |
+|---|---|
+| Fit a regression with two predictors | `lm(y ~ x1 + x2, data = train)` |
+| Read a coefficient | `predict()` at two settings that differ in one predictor only, as in Problem 1 |
+| Predictions at chosen settings | `predict(fit, newdata = ...)` |
+| Every combination of settings | `expand.grid(x1 = c(-1, 0, 1), x2 = c(-1, 0, 1))` |
+| A 3 × 3 table of values | `tapply(values, list(x1 = ..., x2 = ...), mean)` |
+| Lines on a plot | `plot(..., type = "l")`, `lines()` |
+| Optional heat map | `image()` |
+
+`expand.grid()` is new; it makes a data frame with one row for every
+combination of the values you give it:
+
+```{r}
+#| label: expand-grid-example
+#| eval: true
+expand.grid(x1 = c(-1, 1), x2 = c(0, 5))
+```
+
+## Part 3a — Equations and unknowns
+
+The model is
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2,$$
+with three unknown coefficients. Each row of the data gives one
+equation in those unknowns, just as each of Mayer's observations gave
+one equation in HW 01. In Lab 01 you used `solve()` to find three
+unknowns from three equations.
+
+1. Write the numerical equations for the **first three observations**
+   (the first three rows of the file: both runs at $x_1=-1, x_2=-1$, then
+   run 1 at $x_1=0, x_2=-1$). Are these sufficient to determine all three
+   coefficients? Explain with equations and unknowns, not matrices.
+
+2. Generalize to $p$ predictors plus an intercept with $n=p$
+   observations. Why can even $n=p+1$ observations fail when equations
+   repeat?
+
+## Part 3b — Fit the regression
+
+1. Fit `lm(y ~ x1 + x2)` using only the run 1 rows (`train`) and save
+   it as `fit_co`; keep run 2 for checking. Interpret each coefficient
+   while holding the other predictor fixed, and interpret the intercept.
+   As in Problem 1, use `predict()` at settings that differ in one thing
+   only: for example $(x_1, x_2) = (0, 0)$, $(1, 0)$, and $(0, 1)$.
+
+## Part 3c — Predictions
+
+1. Use `predict(fit_co, newdata = ...)` to visualize predictions as
+   `x1` moves with `x2 = 0`, and as `x2` moves with `x1 = 0`. The
+   template draws the first plot for you.
+
+2. Then predict all nine combinations. What does the additive model
+   imply about the `x1` effect at $x_2=-1$ versus $x_2=1$?
+
+## Part 3d — Check the predictions on held-out runs
+
+Two kinds of departure from the model are possible. With an
+**interaction**, the effect of `x1` depends on the value of `x2`, as the
+H-minus-L gap could differ by militia in Problem 1. With **curvature**,
+the response bends as a setting changes, instead of changing by the same
+amount at each step.
+
+1. For the nine held-out run 2 observations, calculate observed-minus-
+   predicted residuals. Display them in a 3 × 3 table or heat map.
+   Compare the `x1` patterns at $x_2=-1$ and $x_2=1$.
+
+2. Is there evidence for interaction, curvature, or both? Propose one
+   new model term, without fitting it, and explain why the data motivate
+   it.
+
+# Data and sources
+
+## Problem 1: Scottish militia measurements
+
+- Anonymous (1817). “Statement of the Sizes of Men in different Counties
+  of Scotland, taken from the Local Militia.” *Edinburgh Medical and
+  Surgical Journal*, **13**, 260-264.
+  [Original scan](https://languagetesting.info/RLT/downloads/Quetelet%201817.pdf).
+- Stephen M. Stigler (2019). “Data Have a Limited Shelf Life.”
+  *Harvard Data Science Review*, **1**(2).
+  [Historical source investigation](https://hdsr.mitpress.mit.edu/pub/iu26pfw1/release/3).
+
+The file is the same transcription used in HW 05. See `data/SOURCES.md`
+for the transcription, printed discrepancies, and limits of the
+available measurements.
+
+## Problem 2: The field trial
+
+The field trial is simulated; no data file is used. The yield formula
+and the designs are invented for this problem.
+
+## Problem 3: Automobile emissions
+
+- G. E. P. Box, J. S. Hunter, and W. G. Hunter (2005). *Statistics for
+  Experimenters: Design, Innovation, and Discovery*, 2nd ed., Wiley,
+  Table 10.17. Distributed as the `codata` data set in the R package
+  [rsm](https://CRAN.R-project.org/package=rsm).
+
+See `data/SOURCES.md` for the coding of the settings and the meaning of
+the `run` column.
