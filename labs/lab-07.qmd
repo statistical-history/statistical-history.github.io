@@ -1,0 +1,324 @@
+---
+title: "Lab 07: What did lm() save?"
+subtitle: "Fit a model, predict, and change one thing at a time"
+execute:
+  eval: false
+  echo: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-copy: true
+editor:
+  markdown:
+    wrap: 72
+---
+
+::: callout-important
+## Due date
+
+This lab is due **today, by the end of class**. Commit and push your
+`lab-07.qmd` and rendered PDF to your own lab repo, and submit that PDF
+on Gradescope.
+:::
+
+# Introduction
+
+Suppose we want to know how well people measure time. An accurate
+reference timer runs an event for a few seconds, and two people, A and B,
+each time it by hand. Their recorded times never match the actual duration
+exactly. Part of the difference is just noise: a press a little early
+here, a little late there. But part of it may belong to the person. If B
+always presses a little late, B's times will run long by about the same
+amount every time. In lecture, the astronomers called that steady personal
+part the **personal equation**.
+
+To separate the two, we need a rule that predicts a recorded time from
+the actual duration **and** from who did the timing:
+
+$$\text{recorded time} = \text{a part that grows with the actual duration} + \text{an adjustment for the observer} + \text{error}.$$
+
+R's `lm()` fits exactly this kind of rule. Today you will fit it to
+invented timings from A and B, and use the saved rule to answer: **when A
+and B time an event of the same length, how much later does B record
+than A?**
+
+## Learning goals
+
+In this lab, you will...
+
+- write an `lm()` formula and save its model object;
+- tell the model apart from its coefficient vector;
+- use `predict()` to interpret a slope, an intercept, and a reference
+  category, by changing one predictor and keeping the other fixed;
+- plot the saved predictions and retrieve fitted values, residuals, and
+  the SSE;
+- check an AI tool's explanation of coefficients against your own
+  predictions, following the course AI policy.
+
+# Part 1 — Homework presentations
+
+There is no separate written submission for Part 1. After the presentations,
+everyone works individually on the coding below.
+
+## Get ready to code
+
+Find your repo beginning with `lab-07` in the
+[statistical-history organization](https://github.com/statistical-history).
+Clone it in RStudio using **File → New Project → Version Control → Git**
+and its SSH address. If you have already cloned it, open that project
+and **Pull**.
+
+Open `lab-07.qmd`, enter your name, and render once. Keep the `data/`
+folder beside the document. The practice chunks are in that document, not
+on this page. In skeletons, replace each `___` and uncomment those code
+lines. Where a chunk has only a `YOUR CODE HERE` comment, write your own
+code below it and leave the comment as a comment. Change `#| eval: false`
+to `#| eval: true` when a chunk is ready. Keep all code and output visible. Answers can be
+short: name what changes, what stays fixed, and the units.
+
+Use your earlier chunks as references, but type and run your own code.
+
+# Part 2 — Fit a model and find out what you saved
+
+## The practice data
+
+An accurate reference timer gives an event's actual duration. Two imagined
+observers, A and B, record it. These **invented data** are the timing
+experiment from the Introduction: a recorded measurement may depend on who
+observes it. They are not historical records or measurements from this
+class.
+
+There are 20 rows, each one a single timing. Each observer records each of
+five durations twice. `actual_s` and `recorded_s` are in seconds; `reading`
+is a row identifier. A factor stores categories. Setting its levels to
+`c("A", "B")` makes A the reference category under R's default coding.
+
+```{r}
+#| label: setup
+#| eval: true
+#| message: false
+#| warning: false
+library(tidyverse)
+timing <- read_csv("data/observer_timing.csv", show_col_types = FALSE)
+timing <- timing |>
+  mutate(observer = factor(observer, levels = c("A", "B")))
+head(timing)
+```
+
+## Write the fit
+
+The pattern is `model_name <- lm(response ~ predictor, data = table_name)`.
+The response goes left of `~`; predictors go right. `<-` saves the returned
+object. `lm()` includes an intercept by default and chooses coefficients to
+minimize the sum of squared observed-minus-fitted differences.
+
+Our first rule predicts recorded time using actual duration alone.
+`coef(model_name)` retrieves its coefficients; typing the model's name
+prints a short display of the fit.
+
+**2.1** Fit `recorded_s ~ actual_s` using `timing`, save the model as
+`fit_time`, and print both the model and `coef(fit_time)`. Write the fitted
+equation using the two printed coefficients, in the form
+
+predicted `recorded_s` = ___ + ___ × `actual_s`;
+
+we will interpret them by making predictions in Part 3.
+
+## The printed display is not the whole object
+
+The saved model is a **list**, a container of named components, and
+`names()` lists them. You can ignore most of them; notice `coefficients`,
+`fitted.values`, and `residuals`. You already used `$` to extract a column
+from a table; it also extracts a component of a list. For example,
+`fit_time$coefficients` retrieves the same numbers as `coef(fit_time)`.
+Use `coef()` for your calculations.
+
+Do not overwrite the model with its coefficients. A coefficient vector does
+not retain everything `predict()` needs, such as the model formula and
+information about factor levels.
+
+**2.2** Save `coef(fit_time)` as `b` and print it, then run
+`names(fit_time)`. How does `b` differ from `fit_time`?
+
+# Part 3 — Interpret a slope by changing one thing
+
+`predict(fit_time, newdata = new_rows)` applies the **saved** rule to
+the rows of a new table. It does not fit another model. The table must have
+a predictor column named `actual_s`; it does not need `recorded_s`, because
+that is what you want to predict.
+
+`predict()` returns a numeric vector, one prediction per new row, in the
+same order. For a vector `p`, `p[1]` selects its first value;
+`p[2] - p[1]` calculates the second prediction minus the first.
+
+**3.1** Create rows at 4 and 5 actual seconds. Save their predictions
+as `p_time`, print them, and calculate the second minus the first. Between
+the two rows, how much did the actual time, `actual_s`, change? How much
+did the predicted recorded time change? Compare that change with
+`b["actual_s"]`. What does the slope tell you happens to the predicted
+recorded time when the actual time goes up by one second?
+
+**3.2** Use `predict()` at `actual_s = 0` and compare the prediction with
+`b["(Intercept)"]`. What does the intercept predict, and is zero inside the
+observed range of 2–10 seconds?
+
+# Part 4 — Add an observer, then change one predictor at a time
+
+The formula `recorded_s ~ actual_s + observer` is the rule from the
+Introduction: a part that grows with actual duration, plus an adjustment
+for the observer. Its rule is:
+
+```text
+predicted recorded time = intercept + duration slope × actual duration
+                         + B adjustment (only when observer is B)
+```
+
+The `+` gives an additive rule: the same duration slope for both observers,
+plus a constant B-minus-A adjustment. The first factor level, A, is the
+reference. We will use predictions to find out what each coefficient means.
+Do not refit the model between comparisons.
+
+Replacing `+` with `*`, as in `recorded_s ~ actual_s * observer`, adds an
+**interaction**: each observer gets their own duration slope, so the
+B-minus-A gap can change with duration. Today we use only the additive
+rule.
+
+**4.1** Fit `recorded_s ~ actual_s + observer` using `timing`, save it
+as `fit_observer`, and save its coefficients as `b_observer`. Print the
+coefficients. How many are there, and which coefficient name is new?
+
+## Make pairs that differ in one column
+
+This model needs **both** predictor columns in `newdata`: `actual_s` and
+`observer`. You may supply the known observer labels as text; R checks them
+against the factor levels used in the fit. Use the same column names and
+labels as in the fitting data.
+
+Compare rows before subtracting their predictions. To interpret a duration
+coefficient, keep observer fixed. To interpret an observer coefficient,
+keep duration fixed.
+
+**4.2** Predict for the four rows below and save the vector as
+`p_observer`. Calculate all four differences in your document's
+skeleton. For each, name what changed and what stayed fixed. Compare the
+duration differences with `b_observer["actual_s"]` and the observer
+differences with `b_observer["observerB"]`. Interpret both coefficients
+with units.
+(The duration slope is in recorded seconds per actual second; the B
+adjustment is in seconds.)
+
+```{r}
+#| label: paired-predictions
+#| eval: false
+comparison_rows <- tibble(
+  actual_s = c(4, 5, 4, 5),
+  observer = c("A", "A", "B", "B")
+)
+```
+
+**4.3** Make two rows at actual duration zero, one for A and one for B,
+and predict for both. Which prediction equals `b_observer["(Intercept)"]`,
+and why does the intercept refer to A?
+
+# Part 5 — Plot the predictions and retrieve the residuals
+
+## Plot the saved rule
+
+`expand.grid()` makes every combination of the supplied values. Here it
+makes ten rows: five durations for each of two observers. Add predictions
+from the saved model, then draw the lines with `geom_line()`. This displays
+the model you already fitted; the plotting code does not fit a new one.
+
+In the plot, the point layer uses `timing`. The line layer uses
+`prediction_grid`, keeps the x mapping, and replaces the y mapping with
+the prediction column. Color and line type group the predictions by observer.
+
+**5.1** In your document, fill in the prediction call and the line
+layer, then run the plot. How do the slope and vertical separation of the
+two lines show the two comparisons you made in 4.2?
+
+```{r}
+#| label: plot-predictions
+#| eval: false
+prediction_grid <- expand.grid(
+  actual_s = seq(2, 10, by = 2),
+  observer = c("A", "B")
+)
+```
+
+## Retrieve results for the fitting rows
+
+`fitted(fit_observer)` returns predictions for the original fitting rows.
+`resid(fit_observer)` returns observed minus fitted for those same rows.
+Both are numeric vectors in fitting-row order. Here the data have no missing
+values and have not been reordered or filtered, so we can attach the vectors
+to `timing`. Do not attach them to a different table of new rows.
+
+**5.2** Create `timing_results` by adding `fitted_s` and `residual_s`
+from `fit_observer` to `timing`, and print the first four rows. Check that
+the first residual is observed minus fitted, then calculate the training
+SSE with `sum(resid(fit_observer)^2)`. How do `fitted()` and
+`predict(..., newdata = ...)` differ in which rows they describe?
+
+# Part 6 — AI explains; you check
+
+The course
+[syllabus](https://statistical-history.github.io/syllabus.html) lets you
+use AI to ask coding questions or debug code. **First make a genuine
+attempt yourself**, then verify and revise what the tool gives you. You
+have made that attempt: in Part 4 you interpreted all three coefficients
+of `fit_observer` from your own predictions. Now see whether an AI tool
+reads them the same way.
+
+**Do not copy and paste a prompt** from these instructions; formulate your
+own question.
+
+**6.1** In your own words, ask an AI tool of your choice to explain what
+each of the three coefficients of `fit_observer` means. Give it what it
+needs: the formula, the printed coefficients, what each column means and
+its units, and that A is the reference observer. In your document, record
+your request, the tool and model, the date, and a link to the
+conversation, and quote the AI's explanation of each coefficient.
+
+**6.2** Check each explanation against the predictions you made in 4.2
+and 4.3. For each coefficient, does the AI's explanation match your
+predictions: the difference between two predictions for the slope and the
+B adjustment, and the prediction for A at 0 seconds for the intercept?
+Quote any sentence that is wrong, or that
+claims more than the predictions show, for example a reason *why* B
+records later, or calling the intercept an average. Answer in your own
+words, not with AI.
+
+# Wrap-up
+
+## Render, commit, push, and submit
+
+Restart R and render. Check that every chunk in Parts 2–5 is enabled and
+that the code, output, figure, and short answers appear, along with your
+Part 6 record. Commit and push your `lab-07.qmd` and PDF to your own lab
+repo, then submit the PDF on Gradescope.
+
+**Exit ticket (on paper, with your name):**
+
+1. Muddiest point.
+2. One thing you learned today.
+3. Favorite movie or show right now.
+
+# R reference
+
+| Task | Pattern |
+|---|---|
+| Fit and save | `fit <- lm(y ~ x + group, data = dat)` |
+| List a model's components | `names(fit)` |
+| Extract coefficients | `b <- coef(fit)` |
+| Select a coefficient by name | `b["x"]` |
+| Predict chosen rows | `p <- predict(fit, newdata = new_rows)` |
+| Compare two rows | `p[2] - p[1]` |
+| Retrieve fitting-row results | `fitted(fit)`; `resid(fit)` |
+| Calculate training SSE | `sum(resid(fit)^2)` |
+
+Use `?lm` and `?predict.lm` in RStudio, or the official help pages for
+[`lm()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/lm.html)
+and
+[`predict.lm()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/predict.lm.html).
