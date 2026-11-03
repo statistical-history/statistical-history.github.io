@@ -30,7 +30,7 @@ All written submissions are due at **11:59 p.m. Eastern time** on the listed dat
 | Milestone | Deadline, 2026 | Submission | Points |
 | --- | --- | --- | ---: |
 | 1. Two proposed project ideas | Saturday, October 31 | One packet per group, covering both ideas | 10 |
-| 2. Plan of action and timeline | Friday, November 6 | One per group | 15 |
+| 2. Plan of action and timeline | Monday, November 9 | One per group | 15 |
 | 3. Account of collection and analysis | Monday, November 23 | One per group | 20 |
 | 4. Presentation | Thursday, December 3, in class | Group presentation; every person participates | 15 |
 | 5. Final written report | Thursday, December 10 | One per person; shared files once per group | 40 |
@@ -78,7 +78,7 @@ Each option should have one main question that can be investigated with modest r
 
 Each group will have the same fixed supply budget of **$50**. Anything left over will go toward a larger donut haul in December. Include an itemized budget with Milestone 2, even if your project costs nothing. List each item, quantity, unit price, total cost, and a product link or other basis for the estimate. Separate items you can borrow from those you need purchased. Include any nonmonetary rewards in the total.
 
-Submit purchase requests to the instructors before spending; the proposed arrangement is for instructors to buy approved supplies so students do not need to pay out of pocket. Obtain approval before exceeding the group cap. Do not assume reimbursement for unapproved purchases. If your pilot needs purchased supplies before November 6, request them with the pilot approval.
+Submit purchase requests to the instructors before spending; the proposed arrangement is for instructors to buy approved supplies so students do not need to pay out of pocket. Obtain approval before exceeding the group cap. Do not assume reimbursement for unapproved purchases. If your pilot needs purchased supplies before November 9, request them with the pilot approval.
 
 **Rewards must be nonmonetary.** Points, stickers, or small approved items are possible; cash and cash-equivalent rewards are not. State in advance whether a reward is for participating or for a particular outcome, and describe the exact rule. For an airplane task, for example, specify what counts as hitting the target, how points vary with distance, what a miss earns, and whether any partial credit is possible. The companion gives examples to adapt.
 
@@ -91,8 +91,8 @@ The following is a suggested working sequence. Adjust it in your plan while pres
 | Working period | Main task | Evidence of completion |
 | --- | --- | --- |
 | October 15-31 | Choose two options and register them on the sign-up sheet, then develop both proposals | [Milestone 1](#milestone-1-two-proposed-project-ideas) |
-| November 1-6 | Meet with the instructors, select one project after feedback, run its approved pilot, and revise the protocol and budget | [Milestone 2](#milestone-2-the-plan-of-action-and-timeline) and its appendices |
-| November 9-18, after plan approval | Collect main data and check recording quality | Collection log and original records |
+| November 1-9 | Meet with the instructors, select one project after feedback, run its approved pilot, and revise the protocol and budget | [Milestone 2](#milestone-2-the-plan-of-action-and-timeline) and its appendices |
+| November 10-18, after plan approval | Collect main data and check recording quality | Collection log and original records |
 | November 19-23 | Clean data, analyze, and check results | [Milestone 3](#milestone-3-how-collection-and-analysis-went) |
 | November 30-December 2 | Address analysis feedback and rehearse | Slides and speaking plan |
 | December 3 | Present, discuss the evidence, and record feedback | [Milestone 4](#milestone-4-the-presentation) |
@@ -134,7 +134,7 @@ The two proposals are alternatives: **you will carry out only one approved proje
 
 # Milestone 2: The plan of action and timeline
 
-**Group submission | 15 points | Due date: November 6**
+**Group submission | 15 points | Due date: November 9**
 
 Submit **one PDF containing a 2-3 page plan for the one project selected after feedback, followed by appendices**. The 2-3 page limit applies to the main plan only. Explain which idea you selected and why, incorporate instructor feedback, and report what you learned from the approved pilot. Address the seven components below in the main plan, placing the complete collection instrument and participant notice, itemized budget, draft data dictionary, and other detailed supporting materials in the appendices. The plan should be specific enough that another student could follow it.
 
