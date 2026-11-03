@@ -1,7 +1,7 @@
 ---
 title: "Final Project: Learning from Data You Collect"
 subtitle: "STA 119FS: Statistics as a Way of Thinking | Fall 2026"
-date: "October 16, 2026"
+date: "November 2, 2026"
 lang: en-US
 format:
   html:
@@ -12,7 +12,7 @@ format:
 ::: callout-note
 ## Printable version
 
-[Download the instructions as a PDF](final_project_instructions_v3.pdf). Project ideas are in the [Campus Data Collection companion](companion.qmd).
+[Download the instructions as a PDF](final_project_instructions_v4.pdf). Project ideas are in the [Campus Data Collection companion](companion.qmd).
 :::
 
 # The project
@@ -70,9 +70,9 @@ Each option should have one main question that can be investigated with modest r
 3. **Pilot the procedure.** After the instructors approve the idea and pilot activity, try a small rehearsal before main collection. Check the wording, timing, recording form, equipment, and consistency between observers. Mark pilot records separately and explain whether they will be included in the analysis.
 4. **Choose a defensible scope.** Propose a collection target and a rule for when to stop, based on feasibility and the variation you need to observe. There is no universal minimum sample size. Forty people making three guesses produce 120 guesses, not 120 independent people. Do not keep collecting solely until a preferred result appears.
 5. **Keep a record of what happened.** Preserve original observations, log collection sessions and departures from the plan, and document corrections or exclusions. Retain valid observations even when they are surprising. Explain any shortfall relative to your target.
-6. **Treat people and spaces respectfully.** Participation in surveys or activities must be voluntary, with a brief explanation and an easy way to decline. Collect only information needed for the question; use anonymous labels rather than names or contact details. For passive observation, record events without identifying people. Discuss site access, food, rewards, or other special arrangements with the instructors before starting. Keep participant records in the course's private submission space.
+6. **Treat people and spaces respectfully.** Participation in surveys or activities must be voluntary, with a brief explanation and an easy way to decline. Collect only information needed for the question; use anonymous labels rather than names or contact details. For passive observation, record events without identifying people. Discuss site access, food, rewards, or other special arrangements with the instructors before starting. Keep non-identifying participant records in your group's assigned private GitHub repository.
 
-Get instructor approval of the action plan before main collection. If approval or a practical obstacle delays the schedule, contact the instructors promptly to revise the scope and timeline.
+**Class project and participant notice.** These projects are educational activities for STA 119FS, intended to develop your skills rather than contribute to a field of knowledge. Data and results will stay within the course and will not be made public. Under Duke's [IRB Review of Student Research and Class Projects policy](https://research.duke.edu/policy/irb-review-student-research-and-class-projects/), projects meeting these conditions do not constitute research with human subjects and do not require IRB approval. Instructor approval is still required before piloting or collecting data.
 
 ## Supplies, budgets, and rewards
 
@@ -136,7 +136,13 @@ The two proposals are alternatives: **you will carry out only one approved proje
 
 **Group submission | 15 points | Due date: November 6**
 
-Submit a **2-3 page plan for the one project selected after feedback**, with the complete collection instrument, itemized budget, and other working materials as appendices. Explain which idea you selected and why, incorporate instructor feedback, and report what you learned from the approved pilot. The plan should be specific enough that another student could follow it.
+Submit **one PDF containing a 2-3 page plan for the one project selected after feedback, followed by appendices**. The 2-3 page limit applies to the main plan only. Explain which idea you selected and why, incorporate instructor feedback, and report what you learned from the approved pilot. Address the seven components below in the main plan, placing the complete collection instrument and participant notice, itemized budget, draft data dictionary, and other detailed supporting materials in the appendices. The plan should be specific enough that another student could follow it.
+
+**Participant notice for the pilot and main collection.** Include the exact notice below in your collection protocol and explain when and how you will display or read it:
+
+> We are students completing a class project for STA 119FS at Duke. Participation is voluntary; you may decline or stop at any time. The data are for class use only and will not be made public. Please do not provide your name or contact information.
+
+Use this notice during the pilot. In your plan, explain any changes after the pilot to when or how you provide it. **Use this participant notice whenever recruiting or interacting with participants during main data collection.** Explain how your records will prevent identification, including through combinations of details. For passive observation, explain how you will provide notice where appropriate; consult the instructors if you are unsure how to handle your setting.
 
 Include these seven components:
 
@@ -147,8 +153,23 @@ Include these seven components:
 4. **Analysis choices made in advance.** Specify the main outcome, comparison, summary, and plot. State initial rules for missing values, incomplete attempts, duplicate records, and exclusions. Plan at least one meaningful sensitivity check: repeat an analysis using another reasonable choice and see whether the conclusion changes. For example, compare mean and median guesses, or count belongings-claimed seats in two defensible ways. Explain why your check matters for your question.
 
 5. **Responsibilities and calendar.** Give dated tasks, a named lead and checker for each, and the files or results each task will produce. Include a backup for low recruitment, weather, equipment failure, or unavailable space. Everyone should do substantive work and check work beyond their own assigned piece.
-6. **Data organization.** Provide a draft data dictionary explaining each variable, its units or categories, and how missing values are represented. Explain where original and cleaned data, code, and logs will be kept and how group members will use consistent versions.
+6. **Data organization.** Provide a draft data dictionary explaining each variable, its units or categories, and how missing values are represented. Explain how group members will organize files in the assigned private GitHub repository and use consistent versions.
+
+<!-- page-break -->
+
 7. **Itemized budget and reward rules.** Provide quantities, unit prices, totals, and product links or other price estimates for requested supplies and nonmonetary rewards. Note borrowed items, confirm whether the total fits the announced cap, and identify any additional funding request. If no purchases or rewards are needed, say so. Explain any scoring or reward rule in the collection protocol and request instructor approval before purchases.
+
+## Required private GitHub repository
+
+The instructors have created a **PRIVATE GitHub repository** for each group in the course organization. **You are required to use your assigned repository for all project files and submissions from Milestone 2 onward.**
+
+By Milestone 2, upload:
+
+- **Your group's Milestone 1 submission:** a copy of the packet you already submitted.
+- **Your Milestone 2 plan PDF:** the 2-3 page plan and all appendices together in one file. The collection instrument, participant notice, budget, and draft data dictionary belong in this PDF; they do not need separate PDF uploads.
+- **Data and working files, separately:** any non-identifying pilot data, collection or decision logs, and code you have created. Upload data in usable files such as CSVs or spreadsheets, and code as scripts or analysis documents. Also include any editable forms or spreadsheets you will use for collection or recordkeeping, even if a copy appears in the appendices.
+
+As the project progresses, keep all project files in this repository, including non-identifying original and cleaned data, code, figures, tables, logs, slides, and later milestone submissions. Each student must upload their own final report as a separate PDF labeled with their name.
 
 <!-- page-break -->
 
@@ -168,9 +189,11 @@ Organize the account around these questions:
 6. **What surprised you, and what remains uncertain?** Compare findings with your initial reasoning. A result can reflect a real pattern, chance variation, selection, measurement, or several of these together. Discuss plausible explanations without claiming to have established one. If nothing was surprising, explain why the findings fit your expectations and what remains unresolved.
 7. **What will you do before the presentation and final report?** List a few concrete remaining tasks with owners and dates. These might include checking a plot, resolving a coding discrepancy, or narrowing a claim. Additional collection requires an explicit reason and a documented plan; do not extend collection just to obtain a preferred result.
 
+Confirm how you provided the participant notice during main collection and how you kept participants from being identified. Explain any departures from the approved procedure and how you addressed them with the instructors.
+
 ## Working files to include
 
-Provide the current cleaned dataset, data dictionary, R script or analysis document, collection log, and cleaning/decision log. Include the original non-identifying records in the private course submission. Files may be simple: a short script and a clearly labeled spreadsheet can be sufficient. The goal is that a reader can follow what happened and reproduce the main numbers.
+Provide the current cleaned dataset, data dictionary, R script or analysis document, collection log, and cleaning/decision log. Include the original non-identifying records in your group's assigned private GitHub repository along with the account and all working files. Files may be simple: a short script and a clearly labeled spreadsheet can be sufficient. The goal is that a reader can follow what happened and reproduce the main numbers.
 
 Feedback on this milestone should help you improve the presentation and final reports. Finding and explaining a genuine problem is evidence of good judgment. What matters is how you investigate it and adjust your conclusion.
 
@@ -221,11 +244,13 @@ Include a **100-150 word individual contribution statement** after the report. R
 
 # Submission and collaboration details
 
-Submit milestone PDFs through the corresponding Gradescope assignment. For group submissions, designate one uploader and put every member's name on the submission. Each student uploads their own final report. Upload presentation slides as a PDF by 9:00 a.m. on presentation day.
+**From Milestone 2 onward, submit all project work through your group's assigned PRIVATE GitHub repository in the course organization.** Upload milestone PDFs and every associated file by the listed deadlines. Also upload a copy of your Milestone 1 submission by Milestone 2. For group submissions, designate one uploader and put every member's name on the submission. Each student uploads their own final report as a separate PDF labeled with their name. Upload presentation slides as a PDF to the same repository by 9:00 a.m. on presentation day. Check that submitted files are visible on GitHub; saving them only on your computer does not submit them.
 
-For Milestone 3, submit a **folder or ZIP** with the required supplementary files.
+Keep project data, results, slides, and reports in private course spaces. Do not post them in public repositories, on websites, or on social media.
 
-At Milestone 5, submit a **final folder or ZIP** containing the non-identifying original records, cleaned data, data dictionary, final code, collection and decision logs, and a brief README explaining which file to run to reproduce the main results. Include the final shared figures and tables. Use relative file paths where practical. Check that the code works from the submitted files and that final numbers agree across the report, figures, and shared files. Preserve the submitted slides and earlier file versions. Date any changes after the presentation and explain how they affect the final results; do not replace earlier findings.
+For Milestone 3, upload the account and all required supplementary files to clearly labeled folders in the repository.
+
+At Milestone 5, organize the final shared files in a clearly labeled folder in the repository containing the non-identifying original records, cleaned data, data dictionary, final code, collection and decision logs, and a brief README explaining which file to run to reproduce the main results. Include the final shared figures and tables. Use relative file paths where practical. Check that the code works from the submitted files and that final numbers agree across the report, figures, and shared files. Preserve the submitted slides and earlier file versions. Date any changes after the presentation and explain how they affect the final results; do not replace earlier findings.
 
 Page and word targets guide scope; prioritize clarity and completeness. Put instruments and detailed logs in appendices. Advanced programming and elaborate document design are not required.
 
@@ -234,6 +259,8 @@ Raise unequal workloads or missed responsibilities with your group early; contac
 The syllabus's academic-integrity and AI rules apply. AI may support learning and code debugging after your own attempt; verify and understand the code. Do not paste the assignment into AI or ask it to complete the work. Submitted narrative cannot include AI-generated prose, even after editing. Disclose material AI assistance with the tool, model, date, and complete relevant transcript link. Cite borrowed ideas, language, and code.
 
 The syllabus's two late allowances apply to labs and homework. **Project extensions require an arrangement with an instructor.** Contact the instructors promptly if a problem affects a milestone or the group's collection schedule. Approved accommodations and university-authorized absences continue to apply.
+
+<!-- page-break -->
 
 ## Shared material and independent authorship
 
@@ -249,5 +276,5 @@ Group members may share the dataset, code, numerical results, tables, figures, a
 - A bank-based project's slides and talk compare with its original study, or discuss possible across-campus differences when original results are inaccessible.
 - Each person has written their own report and captions and accounted for completed, uncompleted, and additional work in a contribution statement.
 - Sources, shared material, and permitted tool assistance are acknowledged.
-- Final data, dictionary, code, logs, displays, and README are included.
+- All milestone submissions, including a copy of Milestone 1, individual final reports, slides, data, dictionary, code, logs, displays, and README are in the assigned private GitHub repository.
 - Each student presented substantively and addressed feedback in their report.
