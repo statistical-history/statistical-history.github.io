@@ -1,0 +1,718 @@
+---
+title: "Lab 08: Starting from an empty file"
+subtitle: "Build a Quarto document from scratch: vectors, data frames, if/else, and for loops, then watch an AI agent tidy a project"
+execute:
+  echo: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-copy: true
+editor:
+  markdown:
+    wrap: 72
+---
+
+::: callout-important
+## Due date
+
+This lab is due **today, by the end of class**. Commit and push the
+`lab-08.qmd` you build today, along with its rendered PDF, to your own
+lab repo, and submit that PDF on Gradescope.
+:::
+
+# Introduction
+
+Today you will practice more R skills. You will start from an empty
+Quarto file and build it up with a header, text, code chunks, and data,
+working with vectors, data frames, if/else, and for loops along the
+way.
+
+## Learning goals
+
+In this lab, you will...
+
+- create a Quarto document from an empty file, with a header, headings,
+  text, and code chunks;
+- make vectors, pick out values by position and by condition, and
+  count with `TRUE`/`FALSE`;
+- build a data frame from vectors, load one from a CSV file, and add a
+  column;
+- make a decision with `if`/`else` for one value, `ifelse()` for a
+  whole column, and `case_when()` for more than two groups;
+- repeat a step with a `for` loop and store the results;
+- see how an AI agent works on files, and why you check its work
+  yourself.
+
+## Get ready
+
+Find your repo beginning with `lab-08` in the
+[statistical-history organization](https://github.com/statistical-history)
+and clone it in RStudio using **File → New Project → Version Control →
+Git** and its SSH address. The repo contains only a `data/` folder and
+a `messy-project/` folder. There is no document yet, because you are
+about to make it.
+
+# Part 1 — Start from an empty file
+
+1. **Create the file.** Choose **File → New File → Quarto Document…**,
+   then click **Create Empty Document** in the bottom-left corner of the
+   dialog.
+2. **Switch to Source view.** At the top left of the editor, click
+   **Source** (not **Visual**), so that you see exactly what you type.
+3. **Save it.** Choose **File → Save** and name it `lab-08.qmd`. Save it
+   in the **top folder of your repo**, the same folder that contains
+   `data/`. Where you save it matters: your code will look for data
+   relative to this file.
+4. **Add a header.** The YAML header goes at the very top, between two
+   lines of three dashes. It holds the document's settings:
+
+    ```yaml
+    ---
+    title: "Lab 08"
+    author: "Your name"
+    format: pdf
+    ---
+    ```
+
+5. **Render.** Click **Render**. You get a PDF with a title and nothing
+   else. That is your first working document.
+6. **Add a heading and a sentence.** Below the header, leave a blank
+   line, then type a level-1 heading such as `# Vectors`. Under it,
+   write a sentence in plain text. In Markdown, `#` makes a heading,
+   `**bold**` makes **bold**, and `*italic*` makes *italic*.
+7. **Add a code chunk.** Use the **+C** button at the top of the editor,
+   **Code → Insert Chunk**, or the keyboard shortcut **Cmd + Option + I**
+   (Mac) or **Ctrl + Alt + I** (Windows). If the shortcut opens your
+   browser's developer tools instead, close them and use **+C**. A chunk starts with ```` ```{r} ```` and
+   ends with ```` ``` ````. Everything between those lines is R code.
+   Run a chunk with its green ▶ button, and render to see the code and
+   its output in the PDF.
+
+From now on, use one level-1 heading (`#`) for each part of the lab.
+Put each **Your turn** answer under its part, with the question number
+in bold (for example, `**2.1**`). Code goes in chunks, and written
+answers go in plain text below them.
+
+**1.1** Put your name in the `author:` line. Add the heading `# Part 2:
+Vectors`, a sentence of your own, and an empty chunk below it. Render,
+and check that the PDF shows all three.
+
+# Part 2 — Vectors
+
+A **vector** is an ordered set of values of the same type: all
+numbers, all text (*character*), or all `TRUE`/`FALSE` (*logical*).
+
+Type each chunk below into your document under `# Part 2: Vectors`.
+Run it with the green ▶ button, and check that your output matches the
+output shown here.
+
+**Make a vector.** `c()` combines values into one vector. `length()`
+counts the values, and `class()` tells you their type.
+
+```{r}
+#| label: demo-vectors
+scores <- c(88, 92, 75, 64, 99)
+scores
+length(scores)
+mean(scores)
+class(scores)
+```
+
+**Pick values by position.** Square brackets pick values out of a
+vector. Positions start at 1, so `scores[2]` is the second score, and
+`scores[c(1, 3)]` gives the first and third.
+
+```{r}
+#| label: demo-positions
+scores[2]
+scores[c(1, 3)]
+```
+
+**Pick values by a condition.** `scores > 80` asks "is this score above
+80?" once for each value, so you get one `TRUE` or `FALSE` per score.
+Put that condition inside the square brackets to keep only the values
+where it is `TRUE`. `sum()` counts the `TRUE`s, because R treats `TRUE`
+as 1 and `FALSE` as 0. The other comparisons work the same way: `<`,
+`>=`, `<=`, `==` (equal), and `!=` (not equal).
+
+```{r}
+#| label: demo-conditions
+scores > 80
+scores[scores > 80]
+sum(scores > 80)
+```
+
+**Use one vector to pick from another.** The names in `students` line
+up with `scores` position by position, so a condition on `scores` picks
+out the matching names. Part 3 builds on this idea: a data frame is
+vectors lined up side by side.
+
+```{r}
+#| label: demo-two-vectors
+students <- c("Ana", "Ben", "Cy", "Dee", "Eli")
+class(students)
+students[scores > 80]
+```
+
+**One type per vector.** If you mix types, R turns every value into
+text. Notice the quotes in the output:
+
+```{r}
+#| label: demo-one-type
+c(1, "a", TRUE)
+```
+
+## Your turn 2 (5 minutes)
+
+Below are invented daily high temperatures (°F) for one week. Type both
+vectors into a chunk.
+
+| Day | Mon | Tue | Wed | Thu | Fri | Sat | Sun |
+|---|---|---|---|---|---|---|---|
+| High (°F) | 61 | 58 | 66 | 71 | 69 | 55 | 63 |
+
+**2.1** Save the days as `days` and the temperatures as `temps`. What
+is the mean high, and what type (`class()`) is each vector?
+
+**2.2** Which days were warmer than 65°F, and how many were there? Use a
+condition inside square brackets, and `sum()`.
+
+**2.3** Which day was coldest? Look up `which.min()` with
+`?which.min`, and use it inside square brackets on `days`.
+
+# Part 3 — Data frames
+
+A **data frame** is a table whose columns are vectors of the same
+length. Each row is one observation. Add the heading
+`# Part 3: Data frames`, and type these chunks below it.
+
+**Build a data frame from vectors.** `data.frame()` puts `students` and
+`scores` side by side and gives each column a name. `$` pulls one
+column back out. A column is just a vector, so everything from Part 2
+works on it.
+
+```{r}
+#| label: demo-data-frame
+class_scores <- data.frame(student = students, score = scores)
+class_scores
+class_scores$score
+mean(class_scores$score)
+```
+
+**Choose rows and columns.** Square brackets on a data frame take two
+parts, `[rows, columns]`. Leaving a part empty means "all," so
+`class_scores[2, ]` is row 2 with every column. A condition in the rows
+part keeps the rows where it is `TRUE`.
+
+```{r}
+#| label: demo-rows
+class_scores[2, ]
+class_scores[class_scores$score > 80, ]
+```
+
+**Add a column.** Assign to a new column name with `$` and `<-`.
+
+```{r}
+#| label: demo-add-column
+class_scores$passed <- class_scores$score >= 70
+class_scores
+```
+
+**Load data.** The file `data/penguins.csv` records 344 penguins from
+three islands near Palmer Station, Antarctica, measured by Dr. Kristen
+Gorman between 2007 and 2009. `read.csv()` reads it into a data frame.
+Then `head()` shows the first six rows, `nrow()` counts the rows, and
+`names()` lists the columns. Put this in its own chunk.
+
+The path `"data/penguins.csv"` is **relative**: it means "the `data`
+folder next to this document." That is why you saved `lab-08.qmd`
+beside `data/`. If R says it `cannot open file`, check where your
+document is saved.
+
+```{r}
+#| label: demo-load-data
+penguins <- read.csv("data/penguins.csv")
+head(penguins)
+nrow(penguins)
+names(penguins)
+```
+
+**Missing values.** Two penguins have no recorded body mass, and R
+stores each missing value as `NA`. `summary()` counts them. A single
+`NA` makes the whole mean `NA`, because a mean that includes an unknown
+value is unknown. `na.rm = TRUE` leaves the missing values out. That is
+a choice, so say so when you report a result.
+
+```{r}
+#| label: demo-na
+summary(penguins$body_mass_g)
+mean(penguins$body_mass_g)
+mean(penguins$body_mass_g, na.rm = TRUE)
+```
+
+**Inline code.** Inline code puts a number from R into a sentence, so
+you never type the number yourself. Below the chunk, in plain text (not
+inside a chunk), type:
+
+The data contain `` `r knitr::inline_expr("nrow(penguins)")` `` penguins.
+
+When you render, R runs the code and the PDF reads: "The data contain
+`r nrow(penguins)` penguins." Inline code only works **after** the
+chunk that loads the data.
+
+## Your turn 3 (5 minutes)
+
+**3.1** Combine `days` and `temps` into a data frame called `week`. Add
+a column `temp_c` with the temperature in Celsius,
+$(\text{°F} - 32) \times 5/9$, rounded to one decimal place with
+`round()`. Print `week`.
+
+**3.2** How many penguins weigh more than 5000 g? Remember that two
+penguins have no recorded mass. What does `sum()` give without
+`na.rm = TRUE`, and why?
+
+**3.3** Write a sentence in your text (not in a chunk) that reports how
+many penguins live on Biscoe island, **using inline code** so that you
+never type the number yourself. Render and check the sentence.
+
+# Part 4 — If and else
+
+`if` lets your code make a decision. If a condition is `TRUE`, R runs
+one block of code. Otherwise, it runs the `else` block. Add the heading
+`# Part 4: If and else`, and type these chunks below it.
+
+**Decide for one value.** The condition in parentheses must be a single
+`TRUE` or `FALSE`. If it is `TRUE`, R runs the code in the first pair of
+braces `{ }`. Otherwise, it runs the code after `else`. `print()` shows the result
+(you will need it inside loops in Part 5). Run the chunk, then change
+`score` to 65 and run it again.
+
+```{r}
+#| label: demo-if
+score <- 75
+if (score >= 70) {
+  print("pass")
+} else {
+  print("fail")
+}
+```
+
+**More than two cases.** `else if` adds another case. R checks the
+conditions in order and stops at the first `TRUE`. That is why this
+chain checks 90 before 80: a score of 95 is also at least 80.
+
+```{r}
+#| label: demo-else-if
+if (score >= 90) {
+  print("A")
+} else if (score >= 80) {
+  print("B")
+} else if (score >= 70) {
+  print("C")
+} else {
+  print("below C")
+}
+```
+
+**The error you get with a whole vector.** `scores` has five values, so
+`scores >= 70` gives five `TRUE`/`FALSE` answers, but `if` needs exactly
+one. R stops with the error "the condition has length > 1." An error
+normally stops the render too. To show an error in the PDF on purpose,
+make `#| error: true` the first line of the chunk, as below. Use it only
+when the error is the point.
+
+```{r}
+#| label: demo-if-error
+#| echo: fenced
+#| error: true
+if (scores >= 70) print("pass") else print("fail")
+```
+
+**Decide for every value.** `ifelse(condition, value if TRUE, value if
+FALSE)` makes the same decision for every value of a vector and gives
+one answer per value. That makes it the tool for creating a new column.
+
+```{r}
+#| label: demo-ifelse
+ifelse(scores >= 70, "pass", "fail")
+class_scores$result <- ifelse(class_scores$score >= 70, "pass", "fail")
+class_scores
+```
+
+The same idea works on the penguins. A penguin with no recorded mass
+gets `NA` as its size: `NA` in, `NA` out. Compare the two tables below.
+By default, `table()` quietly leaves out the `NA`s, so its counts add
+up to 342, not 344. `useNA = "ifany"` adds a column for the missing
+values whenever there are any.
+
+```{r}
+#| label: demo-ifelse-penguins
+penguins$size <- ifelse(penguins$body_mass_g > 4000, "large", "small")
+table(penguins$size)
+table(penguins$size, useNA = "ifany")
+```
+
+**More than two groups for every value.** `ifelse()` splits values two
+ways. For more groups, use `case_when()` from the dplyr package, which
+loads with the tidyverse, as in Labs 06 and 07. Loading it prints a
+list of packages and "conflicts"; that is normal. Each line is
+`condition ~ value`; read `~` as "then." Like an `else if` chain,
+`case_when()` checks the conditions in order and uses the first one
+that is `TRUE`, so a 6000 g penguin is "very large," not "large."
+
+**With a catch-all.** `.default = "small"` means "everything else is
+small," like a final `else`. (Older code writes the same thing as
+`TRUE ~ "small"`.)
+
+```{r}
+#| label: demo-case-when-default
+#| message: false
+#| warning: false
+library(tidyverse)
+penguins$size_catchall <- case_when(
+  penguins$body_mass_g >= 5500 ~ "very large",
+  penguins$body_mass_g >= 4500 ~ "large",
+  penguins$body_mass_g >= 3500 ~ "medium",
+  .default = "small"
+)
+table(penguins$size_catchall, useNA = "ifany")
+```
+
+Look at the table: 73 small penguins and no `NA`. The catch-all also
+caught the two penguins with no recorded mass and called them small.
+
+**Without a catch-all.** Name the last group with its own condition
+instead. A penguin that matches no condition gets `NA`, so the two
+penguins with no mass stay missing, and the small count drops to 71.
+
+```{r}
+#| label: demo-case-when
+penguins$size_group <- case_when(
+  penguins$body_mass_g >= 5500 ~ "very large",
+  penguins$body_mass_g >= 4500 ~ "large",
+  penguins$body_mass_g >= 3500 ~ "medium",
+  penguins$body_mass_g < 3500 ~ "small"
+)
+table(penguins$size_group, useNA = "ifany")
+```
+
+Use a catch-all only when you are sure every value that reaches it
+belongs in that group.
+
+## Your turn 4 (5 minutes)
+
+**4.1** Use `if`/`else` on Tuesday's temperature: print `"Wear a
+jacket"` if it is below 60°F and `"No jacket"` otherwise. Then try it
+on Thursday.
+
+**4.2** Use `ifelse()` to add a column `jacket` to `week`, with the
+value `"yes"` for days below 60°F and `"no"` otherwise. How many jacket
+days were there?
+
+# Part 5 — For loops
+
+A **for loop** repeats a block of code once for each value of a
+vector. Add the heading `# Part 5: For loops`, and type these chunks
+below it.
+
+**Loop over numbers.** Read `for (i in 1:3)` as "for each `i` in 1, 2,
+3, run the code in the braces." Each time through the loop, `i` takes
+the next value. Inside a loop, R does **not** show values
+automatically, so use `print()`.
+
+```{r}
+#| label: demo-for
+for (i in 1:3) {
+  print(i)
+}
+```
+
+**Loop over text.** You can loop over any vector, including text.
+`paste()` joins pieces of text with a space between them.
+
+```{r}
+#| label: demo-for-text
+for (s in students) {
+  print(paste("Hello,", s))
+}
+```
+
+**Store the results.** To keep what a loop computes, make an empty
+vector **before** the loop. `numeric(5)` is five zeros. Each time
+through the loop, fill position `i`.
+
+```{r}
+#| label: demo-for-store
+squares <- numeric(5)
+for (i in 1:5) {
+  squares[i] <- i^2
+}
+squares
+```
+
+**Put an `if` inside a loop.** The loop visits each student, and the
+`if` decides whether to print anything for that student.
+
+```{r}
+#| label: demo-for-if
+for (i in 1:5) {
+  if (scores[i] >= 90) {
+    print(paste(students[i], "got an A"))
+  }
+}
+```
+
+**Put it all together.** This loop finds the mean body mass of each
+penguin species. Each time through, `rows` is a `TRUE`/`FALSE` vector
+that marks the penguins of one species. The mean of their masses, with
+`na.rm = TRUE`, goes into position `i` of `mean_mass`. R has shortcuts
+that do this in one line, such as `tapply()`, but the loop shows the
+steps.
+
+```{r}
+#| label: demo-for-species
+species <- c("Adelie", "Chinstrap", "Gentoo")
+mean_mass <- numeric(3)
+for (i in 1:3) {
+  rows <- penguins$species == species[i]
+  mean_mass[i] <- mean(penguins$body_mass_g[rows], na.rm = TRUE)
+}
+data.frame(species = species, mean_mass = round(mean_mass))
+```
+
+## Your turn 5 (5 minutes)
+
+**5.1** Write a loop over `1:7` that prints a line like `"Mon: 61 F"`
+for each day. Then add an `if`/`else` inside the loop so that each line
+ends with the jacket advice from 4.1.
+
+**5.2** Make a vector `islands` of the three island names. Write a loop
+that stores the number of penguins on each island in a vector called
+`island_counts`. Check your answer against
+`table(penguins$island)`.
+
+# Part 6 — An AI agent tidies a messy project
+
+In class, Kat runs this part on the projector. Your RStudio work happens
+on a Duke server, but Codex runs on **your own laptop**, so to do it
+yourself you need Codex installed there.
+
+::: callout-tip
+## Set up Codex on your laptop (optional)
+
+1. Request ChatGPT Edu in Duke's [Software
+   Manager](https://software-manager.oit.duke.edu/).
+2. Install the ChatGPT desktop app from
+   [chatgpt.com/download](https://chatgpt.com/download/), sign in with
+   your NetID email, and choose **Codex** from the ChatGPT drop-down.
+3. Download the folder: on GitHub, open your `lab-08` repo, choose
+   **Code → Download ZIP**, and unzip it.
+4. In Codex, open **only** the unzipped `messy-project` folder, not the
+   whole repo or your Downloads folder. Choose **Work in: This computer** and the
+   permission mode **Ask for approval**.
+
+**If you don't have Codex installed, that's fine.** Watch, and join the
+discussion. There is nothing to submit from your own Codex session.
+:::
+
+## Chat versus agent
+
+So far you have used AI in a **chat**: you ask, it answers, and you
+decide what to do. **Codex** is an **agent**. You point it at a folder,
+and it reads the files there, runs commands, and creates, moves, and
+edits files itself.
+
+| | Chat (ChatGPT, DukeGPT) | Agent (Codex) |
+|---|---|---|
+| What it sees | What you paste in | Every file in the folder you open |
+| What it does | Writes an answer | Runs commands and changes files |
+| What you check | The answer | The answer **and** every change it made |
+
+The course AI policy applies, and it matters more when the tool acts.
+From the [syllabus](https://statistical-history.github.io/syllabus.html):
+**first make a genuine attempt yourself**; **verify the output and
+revise anything you use**; and **you must be able to explain every line
+of code that you submit.** For any work materially informed by AI,
+record the tool and model, the date, and a link to the complete
+transcript.
+
+Duke OIT's [Codex best
+practices](https://codex-best-practices-d67bea.pages.oit.duke.edu/best-practices/security.html)
+add four habits. Follow them whenever you use Codex:
+
+| Habit | Why |
+|---|---|
+| Open the **narrowest folder** that holds the work, never your home folder or Desktop | Codex can only change what it can see |
+| Choose **Work in: This computer** and the permission mode **Ask for approval** | Codex has to ask before it goes beyond that folder or uses the internet |
+| Read every command before approving it | You are responsible for what runs |
+| Never put passwords, keys, or identifying participant data in the folder or the prompt | The agent may read anything in the folder |
+
+## The messy project
+
+`messy-project/` belongs to a pretend group. They timed coffee lines at
+three spots on campus, and their notes say the median waits were
+**library cafe 5 min, union cart 3 min, gym smoothie bar 7 min**. The
+data are invented. You can open every file in it from RStudio's
+**Files** pane.
+
+**6.1** *(Before Codex sees the folder: your genuine attempt.)* Look through
+`messy-project/` with your group. In your document, under `# Part 6:
+AI agent`, list the problems that would stop someone else from
+reproducing the three medians. Which clean file is the current one?
+Which script runs first? What would break on another computer?
+
+## The prompts
+
+Send these four prompts one at a time, in order. Read each answer
+before you send the next one, and compare it with your list from 6.1.
+When Codex asks to run a command, read the command and make sure you
+know what it does before you approve it.
+
+**Prompt 1: look and plan, without changing anything.**
+
+> This folder is a small R project. A group timed waits at three coffee
+> spots, and `notes.txt` gives their results: median wait 5 minutes at
+> the library cafe, 3 at the union cart, and 7 at the gym smoothie bar.
+> Don't change any files yet. Read every file and tell me (1) which
+> files actually produce those results, (2) the order the scripts have
+> to run in, and (3) anything that would stop a classmate from
+> reproducing the results on a different computer. Then propose a
+> clearer folder structure.
+
+**Prompt 2: reorganize, with rules.**
+
+> Go ahead with the reorganization, following these rules. Don't delete
+> anything: move files that are no longer used into an `archive/`
+> folder. Keep the raw data separate from the cleaned data. Remove the
+> `setwd()` line and make every file path relative to this project
+> folder. Update the paths inside the scripts so they still work after
+> the move. Don't change any calculations.
+
+**Prompt 3: write the README.**
+
+> Write a `README.md` for this folder that lets a classmate reproduce
+> the three median wait times from scratch in RStudio. Include a
+> one-paragraph description of the project; numbered steps in the order
+> to run them, including how to set the working directory; a short
+> description of each file; the data-cleaning decisions from
+> `notes.txt`; and the expected results, so the reader can check them.
+
+**Prompt 4: report and check.**
+
+> List every file you moved, created, or edited, and what you changed
+> in each one. Did you run the R code to confirm the medians are still
+> 5, 3, and 7? If you didn't, say so.
+
+## Check the README by following it
+
+An AI agent's README is a claim. Test it the only way that counts:
+follow it **exactly as written** on a computer that has never seen the
+folder.
+
+1. On your laptop, compress the reorganized `messy-project` folder into
+   a zip file.
+2. In RStudio's **Files** pane, click **Home** so that you are outside
+   your `lab-08` repo. Then use **Upload** to upload the zip. RStudio
+   unzips it.
+3. Follow the README step by step, doing exactly what it says and
+   nothing more.
+
+Do you get 5, 3, and 7? Where was the README wrong, unclear, or missing
+a step? In class, Kat does this on the projector while one of you reads
+the steps out loud.
+
+**6.2** *(Individually, in your own words, not with AI.)* Which of
+Codex's changes would you keep for your own project folder, and which
+would you have made differently or checked more carefully? Explain why.
+
+## Taking this to your project
+
+Milestone 3 asks that "a reader can follow what happened and reproduce
+the main numbers." If you use Codex on your group's project repository:
+
+- Work in your own clone of the repo, and **commit and push first**.
+  Then git shows every change Codex makes, and you can undo any of
+  them.
+- Open only the project folder, and use **Ask for approval**.
+- Keep participant data non-identifying, as the project instructions
+  already require.
+- Test the README the way we did today: have someone who did not write
+  it follow it from a fresh copy.
+- Follow the syllabus. Record the tool, model, date, and transcript.
+- If Codex or another AI agent helped write your README, **disclose
+  that in the README itself**: name the agent and say what it did.
+
+# Wrap-up
+
+## Render, commit, push, and submit
+
+Render your document. Check that every part
+appears in the PDF: your code, its output, your inline-code sentence,
+and your answers to 6.1 and 6.2.
+
+`lab-08.qmd` is a **new file**, so git isn't tracking it yet. In the
+**Git** pane it appears with a yellow `?`. Tick its **Staged** box (and
+the PDF's), then commit and push. Submit the PDF on Gradescope.
+
+## Exit ticket
+
+On paper, with your name, hand in your answers to:
+
+1. Muddiest point.
+2. One thing you learned today.
+3. Your favorite place on campus to study.
+
+# Syntax you saw today
+
+| Task | Pattern |
+|---|---|
+| Make a vector | `x <- c(4, 8, 15)`; `1:7` |
+| Values by position | `x[2]`; `x[c(1, 3)]` |
+| Values by condition | `x[x > 5]` |
+| Count `TRUE`s | `sum(x > 5)` |
+| Data frame from vectors | `dat <- data.frame(a = x, b = y)` |
+| One column; add a column | `dat$a`; `dat$new <- dat$a * 2` |
+| Rows and columns | `dat[dat$a > 5, ]`; `dat[ , "b"]` |
+| Read a CSV | `dat <- read.csv("data/file.csv")` |
+| Ignore missing values | `mean(x, na.rm = TRUE)` |
+| Decide for one value | `if (condition) { ... } else { ... }` |
+| Decide for every value | `ifelse(condition, value_if_true, value_if_false)` |
+| Decide among several groups | `case_when(condition1 ~ value1, condition2 ~ value2)` |
+| Repeat | `for (i in 1:n) { ... }` |
+| Store loop results | `out <- numeric(n)`, then `out[i] <- ...` inside the loop |
+| Inline code | `` `r knitr::inline_expr("nrow(dat)")` `` |
+| Show an error without stopping the render | `#| error: true` at the top of the chunk |
+
+## Keep learning
+
+- [*Hands-On Programming with
+  R*](https://rstudio-education.github.io/hopr/): its dice, cards, and
+  slot-machine projects build R from zero.
+- [*R for Data Science* (2e)](https://r4ds.hadley.nz/), chapters 2
+  ("Workflow: basics") and 28 ("Quarto").
+- [Markdown Tutorial](https://www.markdowntutorial.com/): short
+  Markdown lessons with exercises.
+- [Quarto: Code Cells:
+  Knitr](https://quarto.org/docs/reference/cells/cells-knitr.html):
+  every chunk option.
+
+# References
+
+- Garrett Grolemund, [*Hands-On Programming with
+  R*](https://rstudio-education.github.io/hopr/), chapters 2 and 5–7
+  (objects, vectors, data frames), chapter 9 ("Programs": `if` and
+  `else`), and chapter 11 ("Loops").
+- Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund, [*R for
+  Data Science* (2e)](https://r4ds.hadley.nz/), chapter 2 ("Workflow:
+  basics") and chapter 28 ("Quarto").
+- Quarto, [Tutorial: Hello,
+  Quarto](https://quarto.org/docs/get-started/hello/rstudio.html) and
+  [Markdown
+  Basics](https://quarto.org/docs/authoring/markdown-basics.html).
+- Allison Horst, Alison Hill, and Kristen Gorman,
+  [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/), for
+  the penguin data.
+- Duke OIT, [Codex Starter Best
+  Practices](https://codex-best-practices-d67bea.pages.oit.duke.edu/best-practices/overview.html),
+  for the safety settings in Part 6.
