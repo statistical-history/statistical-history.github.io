@@ -1,0 +1,439 @@
+---
+title: "HW 07: Resemblance and uncertainty"
+subtitle: "Instructions — read these; do the work in the `hw-07.qmd` in your own repo"
+execute:
+  eval: false
+  echo: true
+  warning: false
+  message: false
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+::: callout-important
+## Due date
+
+This assignment is due **Thursday, November 19, at 11:59pm**. To be considered on time:
+
+- Your final rendered document (with all code, output, and answers) pushed to your GitHub
+  repo
+- That same document, as a PDF, submitted on Gradescope
+:::
+
+# Introduction
+
+A regression describes how one measurement helps us predict another.
+What happens when we combine two such descriptions? Galton used the
+resemblance between close relatives to predict resemblance between more
+distant relatives. In Problem 1, you will reconstruct his calculation,
+give it a defense, and test the same reasoning on his family-height
+records. You will then ask what changes when a regression retains more
+of the available family information.
+
+Problem 2 returns to the quincunx to ask when an observed difference
+is surprising. You will compare average landing positions, compare
+spreads, and propose how to compare entire distributions.
+
+## Learning goals
+
+In this homework, you will...
+
+- reconstruct a historical prediction argument and identify its assumption.
+- fit and interpret regressions in both directions, using the same
+  observations and weights throughout.
+- compare a prediction made through an intermediate measurement with
+  a prediction made directly.
+- interpret a coefficient while holding other predictors fixed, and
+  explain why additional predictive information need not be a causal effect.
+- distinguish individual variation from the sampling uncertainty of an average.
+- construct a standardized mean comparison and interpret a supplied
+  reference distribution for a variance comparison.
+- explain what comparisons of means and variances leave out about a
+  distribution.
+
+# Getting started
+
+- Go to the [statistical-history](https://github.com/statistical-history) organization on
+  GitHub. Click on the repo with the prefix `hw-07`. It contains the starter documents you
+  need.
+- Clone it the same way you cloned HW 06's repo — see
+  [Lab 01](https://statistical-history.github.io/labs/lab-01.html) if you need the steps again.
+- Keep `homework_07_helpers.R` beside your `.qmd` and the CSV files in `data/`.
+- Run the document from a fresh R session, top to bottom, before you submit.
+  You do not need to run any random simulation. Problem 2 supplies its
+  reference repetitions; there is no student seed to keep.
+
+# Materials and submission
+
+Work in `hw-07.qmd` in your homework repository. Submit **one document
+covering both problems**. Push your Quarto source
+and rendered work to that repository, and submit the same rendered
+document as a PDF on Gradescope. Include your code, requested tables and
+figures, and written answers.
+
+All data are supplied. Base R is sufficient; familiar `dplyr`/`ggplot2`
+code from labs is also welcome. Load any packages you use.
+`knitr::kable()` is optional for displaying tables. No additional data
+downloads are required.
+
+## Writing your R code
+
+::: callout-warning
+## Filling in the template
+
+The template supplies data loading, checks, and centering. In the
+commented skeletons, replace each `___` with an R expression, then remove
+the leading `#` from those code lines to run them. Replace the remaining
+`YOUR CODE HERE` comments with your own code and write each response after
+**Your answer:**. Keep code and output visible. An untouched template can
+render, but is not a completed submission. Once you add code, the document
+will **not render if any chunk has an error**.
+:::
+
+For Problem 1, use `coef()` to read coefficients. As in HW 06, do not use `anova()` or
+the standard errors, t values, p-values, or F statistic printed by
+`summary()`. Problem 1 concerns predictions and their interpretation;
+Problem 2 develops testing through the quincunx without those R outputs.
+Label axes and include units. Keep full precision while calculating and
+round only reported results.
+
+# Problem 1 — Can regression coefficients be multiplied?
+
+Galton wanted to quantify family resemblance. He estimated how a man's
+height predicted his brother's height and how a father's height predicted
+his son's height. A nephew is the son of a brother, so Galton combined
+the two rules to predict a nephew from his uncle. Pearson admired the
+attempt to measure resemblance between relatives but questioned this
+step: could a regression be carried through a chain of relatives this way?
+
+**Reading connection:** Stigler, *The History of Statistics*, the
+discussion of Galton's multiplication of regression coefficients on
+p. 296; Galton, *Natural Inheritance* (1889), pp. 132–134, especially
+p. 133; Pearson, *The Life, Letters and Labours of Francis Galton*,
+vol. IIIA (1930), p. 24. Links are in `data/SOURCES.md`.
+
+Work through Parts 1a–1d in order. Record your explanation in Part 1a
+before fitting the models, and leave it visible when you reconsider it.
+
+## The data and setup
+
+The standard transcription of Galton's records contains parents and
+children, but does not identify the extended-family links needed for
+an uncle–father–nephew analysis. Our empirical comparison therefore uses
+**two brothers and their father**: predict the father from one brother,
+then predict the other brother from the father. This tests the same
+multiplication argument on a relationship the available data can measure.
+
+`data/galton_brother_pairs.csv` contains 1,210 ordered pairs of distinct
+recorded adult sons from 137 families. Every pair appears in both orders.
+The labels `brother1` and `brother2` do not indicate age or height order,
+and two different sons can have the same recorded height. The original
+transcription, `data/GaltonFamilies.csv`, is supplied for reference; use
+the prepared pair file for the calculations below.
+
+| Column | Meaning |
+|---|---|
+| `family` | Family identifier |
+| `brother1`, `brother2` | Heights of the two selected sons, in inches |
+| `father`, `mother` | Their parents' recorded heights, in inches |
+| `weight` | The row's share of its family's total weight |
+
+A family with $k$ recorded sons contributes $k(k-1)$ ordered pairs.
+Each pair has weight $1/[k(k-1)]$, so every family has total weight one.
+Our comparison gives each family equal importance, then considers every
+possible ordered brother pair within it. These weights prevent a family
+with many sons from dominating merely because it supplies many pairs.
+**Use `weights = weight` in every `lm()` fit.** The pair rows share people;
+they are not 1,210 independent families. We will use the fitted rules
+descriptively, without independent-row significance tests.
+
+The template reads the pair file into `brothers`, checks it with
+`check_galton_pairs()`, and creates four centered columns:
+
+| Column | Height minus its weighted sample mean |
+|---|---|
+| `x` | First brother |
+| `y` | Second brother |
+| `f` | Father |
+| `m` | Mother |
+
+For example, `x = 4` means a first brother four inches above the relevant
+mean, not a four-inch-tall person. The first and second brothers have the
+same weighted mean because every pair appears in both orders. The
+parents have their own means. Centering changes the intercepts, not the
+slopes. Keep the usual intercept in every `lm()` call; it should be zero
+up to numerical rounding for these centered fits.
+
+The helper only checks the supplied data. It does not fit the models,
+calculate their coefficients, or produce the requested comparisons.
+
+## A short R reference for Problem 1
+
+For `lm()` and `predict()`, revisit
+[Lab 07](https://statistical-history.github.io/labs/lab-07.html) and
+HW 06 Problem 3. The new argument is `weights`: it tells least squares
+how much each row counts. With weights $w_i$, `lm()` minimizes
+$\sum_i w_i(y_i-\widehat y_i)^2$.
+
+| Task | Useful base R functions or syntax |
+|---|---|
+| Fit a weighted rule | `lm(response ~ predictor, data = d, weights = w)` |
+| Retain a second predictor | `lm(response ~ predictor1 + predictor2, data = d, weights = w)` |
+| Read coefficients | `coef(fit)` |
+| Select a named coefficient | `coef(fit)[["predictor_name"]]` |
+| Predict for a chosen value | `predict(fit, newdata = data.frame(predictor_name = 4))` |
+| Weighted average | `weighted.mean(values, weights)` |
+| Make a comparison table | `data.frame()` |
+| Plot observations and fitted lines | `plot()`, `abline()`, `legend()` |
+
+The names in a `newdata` table must match the predictors in the model.
+For a model fitted using `f`, for example, the new table needs a column
+named `f`. A `predict()` call can use another model's prediction as that
+column's value.
+
+## Part 1a — Try Galton's argument, then defend it
+
+Let $U$, $F$, and $N$ denote the uncle's, father's, and nephew's height
+deviations from their respective averages, in inches. The uncle and
+father are brothers. Galton used the rules
+
+$$\widehat F=\frac23U,\qquad \widehat N=\frac13F.$$
+
+1. If the uncle is three inches above average, use the first rule to
+   predict the father's deviation, then use that prediction in the
+   second rule. What uncle-to-nephew slope does this imply? Interpret it
+   in one sentence using the phrase **on average**.
+2. Give the strongest explanation you can for why this substitution
+   might be reasonable. Consider fathers of the same height whose
+   brothers differ in height: what must be true about their sons'
+   average heights for father height to contain all the relevant
+   information supplied by uncle height?
+3. Give one concrete reason the uncle might still help predict the son
+   after the father's height is known. Do you expect the product and
+   direct prediction to agree in the brother–father–brother comparison?
+   Record your prediction before calculating it.
+
+## Part 1b — Compare the two routes through the data
+
+1. Using `brothers` and the supplied weights, fit the father from the
+   first brother (`f` from `x`), then the second brother from the father
+   (`y` from `f`). Save the fits as `fit_f_x` and `fit_y_f`. Print their
+   coefficients, write the two fitted equations, and multiply their
+   slopes to obtain a predicted brother-to-brother slope.
+2. Fit `y` directly from `x`, saving the result as `fit_y_x`. Make a
+   table containing the multiplied slope and the direct slope. Use
+   `predict()` to compare the two routes for `x = 4`: first predict
+   `f` and pass that value to `fit_y_f`, then predict directly with
+   `fit_y_x`. Report the difference in predicted inches.
+3. Plot `y` against `x` and add the direct fitted line and the line
+   implied by multiplication. Label both axes as height deviations in
+   inches and distinguish the two lines in a legend. What does the
+   comparison tell you about your explanation in Part 1a? If the
+   predictions differ, does that establish that either of the first
+   two regressions was fitted incorrectly?
+
+## Part 1c — Keep the first brother in the regression
+
+1. Fit `y` using both `f` and `x`, with the same weights, and save the
+   result as `fit_y_fx`. Print its coefficients and write the fitted
+   equation. Compare predictions for `f = 0, x = 0` and `f = 0, x = 1`.
+   Use that comparison to interpret the coefficient of `x` while
+   specifying what is held fixed.
+2. Write the centered rules as $\widehat f=\widehat\delta x$ and
+   $\widehat y=\widehat\beta_F f+\widehat\beta_X x$. Substitute the
+   first into the second and calculate
+   $\widehat\beta_F\widehat\delta+\widehat\beta_X$. Compare it with
+   the direct slope from Part 1b. The intercepts are zero up to
+   numerical rounding.
+3. The revised calculation in Part 1c.2 uses the father coefficient
+   from `fit_y_fx` rather than the father slope from `fit_y_f`. Why?
+   To see what would go wrong otherwise, consider a shortcut: keep the
+   original multiplied slope from Part 1b.1 (the `fit_y_f` father
+   slope times $\widehat\delta$) and simply add the new brother
+   coefficient $\widehat\beta_X$ from `fit_y_fx`. Calculate this sum
+   and compare it with the direct slope from Part 1b. Explain why the
+   shortcut does not recover the direct slope. What feature of the
+   joint fitted rule would make the original multiplication work?
+
+## Part 1d — Add the mother and reconsider the argument
+
+1. Fit `y` using `f`, `m`, and `x`, with the same weights. Save this as
+   `fit_y_fmx` and print its coefficients. Compare the coefficient of
+   `x` with its value in `fit_y_fx`. Interpret it using predictions
+   for two families whose parents have the same heights but whose
+   first brothers differ by one inch. Does adding the mother make the
+   first brother redundant in this fitted rule?
+2. Give one explanation for why a brother could remain useful when
+   both parents' heights are known. Would a positive coefficient of
+   `x` establish that making one brother taller would make the other
+   brother taller? Explain.
+3. Return to Pearson's objection. In 4–6 sentences, explain what was
+   reasonable about Galton's proposal, what assumption would justify
+   its multiplication, and what these data add to your original
+   assessment. Distinguish what you have learned about the
+   brother–father–brother calculation from what would require actual
+   uncle–father–nephew observations.
+
+# Problem 2 — When is a difference more than chance?
+
+Return to the quincunx. We will compare two batches of balls and ask
+three different questions: do their average landing positions differ,
+do their spreads differ, and do their entire landing distributions
+differ? All numerical examples in this problem are constructed for
+teaching; they are separate from Galton's family records in Problem 1.
+
+**Use arithmetic, equations, and written explanations. You do not need
+to fit a model, write R code, or run a simulation for this problem.**
+Sketches are welcome but optional. A calculator is fine. Reference
+results from repeated drops are supplied where needed.
+
+## Part 2a — How surprising is a gap between averages?
+
+Imagine two independent batches, A and B, each passing through 16 rows
+of pegs. At each row, a ball moves one unit left or one unit right with
+equal probability. All turns and all balls are independent. A ball's
+landing position is its entry position plus the sum of its 16 moves.
+The two entry positions might differ; call the population landing
+means $\mu_A$ and $\mu_B$.
+
+The **null hypothesis**, written $H_0$, is our equal-means reference
+claim: $H_0:\mu_A=\mu_B$. The alternative allows either group to have
+the larger population mean. The individual-ball variance is
+known from the mechanism, rather than estimated from the batches.
+
+Recall the results about averaging from **HW 02 Part 1b** and the
+standardized sample means in **HW 03 Problem 3**. Use those results
+here without rederiving them:
+
+- One ball's landing variance after these 16 independent unit moves
+  is 16, so its standard deviation is 4 units.
+- An average of $n$ independent observations with individual variance
+  $\sigma^2$ has variance $\sigma^2/n$.
+- Independent quantities have variances that add when they are added
+  **or subtracted**.
+
+The new task is to compare the difference between **two** averages
+with the uncertainty of that difference under equal population means.
+
+These are two hypothetical studies with the same observed difference:
+
+| Study | Balls in A | Balls in B | Observed mean A | Observed mean B |
+|---|---:|---:|---:|---:|
+| Small batches | 8 | 8 | -1.5 | 1.5 |
+| Large batches | 32 | 32 | -1.5 | 1.5 |
+
+1. Let $D=\bar Y_B-\bar Y_A$. Using the results above,
+   find the variance of each batch average and then the variance and
+   standard deviation of $D$. What is the expected value of $D$ under
+   $H_0$? Write a ratio that measures the observed difference in units of
+   its own standard deviation. Keep all of this in general notation,
+   with individual-ball variances $\sigma_A^2$ and $\sigma_B^2$ and
+   batch sizes $n_A$ and $n_B$.
+
+2. Now use this problem's numbers: individual-ball variance 16 in
+   both batches and the batch sizes in the table. Calculate the
+   standard deviation of $D$ and the ratio for each study. A normal
+   distribution centered at zero with standard deviation one has about
+   95% of its values between -2 and 2. Using that approximation, which
+   study gives stronger evidence against equal population means? Write
+   one sentence reporting what each study does and does not establish.
+
+3. Someone argues, "Both batches have broad, overlapping landing
+   histograms, so the difference between their averages cannot be
+   convincing." Explain the mistake. What changes when the number of
+   balls increases: the spread of individual balls, the uncertainty of
+   the averages, or both? Does the hypothesis of equal means require the
+   population variances to be equal?
+
+## Part 2b — The means agree; do the spreads?
+
+Now both entry positions are zero and the turns remain fair, but the
+horizontal size of a step may differ between the two mechanisms. Both
+population landing means are therefore zero; their variances need not
+agree. Each batch contains 33 independent balls. The constructed
+observed summaries are:
+
+| Batch | Number of balls | Sample mean | Sample variance |
+|---|---:|---:|---:|
+| A | 33 | 0 | 16 |
+| B | 33 | 0 | 36 |
+
+Here $g$ labels a batch (A or B), and $n_g$ is its number of balls.
+The sample variance is
+$s_g^2=\sum_i(Y_{gi}-\bar Y_g)^2/(n_g-1)$. It measures the spread of
+individual landings. It is **not** the variance of a sample mean.
+
+To judge a variance comparison, the instructor generated 10,000 pairs
+of fresh batches under an **equal-spread reference model**. Each pair
+had 33 balls per batch, 16 independent fair turns per ball, and the
+same step size for both batches. The sample means were allowed to
+vary; the repetitions were not restricted to equal sample means.
+The common step size can be set to one because changing it multiplies
+both variances by the same factor and leaves their ratio unchanged.
+
+For each pair, the larger sample variance was divided by the smaller:
+
+$$T=\frac{\max(s_A^2,s_B^2)}{\min(s_A^2,s_B^2)}.$$
+
+The supplied reference results are:
+
+| Variance ratio in a reference repetition | Number of repetitions |
+|---|---:|
+| Less than 2.25 | 9,792 |
+| At least 2.25 | 208 |
+
+These are computed simulation results for the stated quincunx model,
+not a universal table for variance comparisons. You do not need to
+reproduce them.
+
+1. What would the numerator of the mean-comparison statistic from
+   Part 2a be for these observed summaries? Describe two landing
+   histograms consistent with the same center and different spreads;
+   feel free to include a sketch. What feature would a comparison of
+   means miss?
+
+2. State the equal-variance hypothesis and its alternative, then
+   calculate the observed $T$. Why put the larger sample variance on
+   top when either batch might be more variable? Would changing the
+   measurement units change $T$?
+
+3. Use the supplied repetitions to estimate how often an equal-spread
+   mechanism produces a variance ratio at least as large as the observed
+   one. Would you call this unusual using a 5% reference rule? State
+   your conclusion with the sampling model attached. Does your fraction
+   give the probability that the population variances are equal?
+
+4. Why is observing $16\ne36$ insufficient on its own to establish
+   unequal population variances? If a variance ratio were common in the
+   reference repetitions, what could you conclude? Would this reference
+   table still apply unchanged to batches of 8 balls, dependent balls,
+   or mechanisms with a different landing shape? Explain.
+
+## Part 2c — An open question: when are distributions the same?
+
+Step beyond the particular 16-row mechanism. Imagine two populations
+whose means **and** variances agree. In about 150–200 words, explain
+whether their distributions must agree. Give a possible difference in
+shape, tails, or the pattern of landing bins; a sketch or small example
+is welcome. Propose something you could compare in two samples and
+explain how you would decide whether its discrepancy exceeds ordinary
+sampling variation. Would comparing entire distributions generally be
+easier or harder than comparing just means or just variances? Explain
+what your answer depends on. You do not need to name or implement a
+formal test, and "we did not find a difference" should not be treated
+as proof of equality.
+
+# Data sources
+
+The supplied heights come from the `GaltonFamilies` transcription in
+the R package [HistData](https://friendly.github.io/HistData/reference/GaltonFamilies.html),
+based on Galton's notebook and transcribed by Beverley Shipley in 2001.
+The pair construction, family weights, source links, and limitations
+are documented in `data/SOURCES.md`. The fitted regressions you compute
+are modern least-squares summaries, not reproductions of Galton's
+graphical fitting procedure.
+
+Problem 2 uses constructed summaries and an instructor-generated
+quincunx reference experiment. No additional data file is needed.
