@@ -15,7 +15,7 @@ format:
 ::: callout-important
 ## Due date
 
-This assignment is due **Wednesday, November 18, at 11:59pm**. To be considered on time:
+This assignment is due **Thursday, November 19, at 11:59pm**. To be considered on time:
 
 - Your final rendered document (with all code, output, and answers) pushed to your GitHub
   repo
