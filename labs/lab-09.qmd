@@ -1,0 +1,384 @@
+---
+title: "Lab 09: Simulate the data, then fit the line"
+subtitle: "rnorm(), runif(), and what happens to a slope when a variable is left out"
+execute:
+  eval: false
+  echo: true
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-copy: true
+editor:
+  markdown:
+    wrap: 72
+---
+
+::: callout-important
+## Due date
+
+This lab is due **today, by the end of class**. Commit and push your
+`lab-09.qmd` and rendered PDF to your own lab repo, and submit that PDF
+on Gradescope.
+:::
+
+# Introduction
+
+In lecture, we saw how Yule turned regression from a law of inheritance into a
+general method: fit a line by least squares and read its slope as what
+happens to $y$ when $x$ changes **and everything else in the model stays
+fixed**. Two worries came with that reading. First, a relationship can
+look nonlinear, or even absent, in every scatterplot and still be exactly
+linear once the right predictors are in the model together. Second, if a
+variable that matters is left out, the slope you get may not be the one
+you wanted.
+
+Today we explore these two concerns in details by simulating data (giving us access to the truth) and analyzing the results.
+
+## Learning goals
+
+In this lab, you will...
+
+- draw random numbers with `rnorm()` and `runif()`, and use
+  `set.seed()` to make them reproducible;
+- simulate a data set from a rule you choose, by building columns
+  that depend on earlier columns;
+- simulate the lecture's $X_1$, $X_2 = X_1^2 + U$ example, and see why
+  neither scatterplot alone reveals the rule that `lm()` recovers from
+  both predictors;
+- compare the estimate of $\beta_1$ with and without $X_2$ in the model,
+  when $X_1$ and $X_2$ are independent and when they are strongly
+  correlated;
+- use the lecture's omitted-variable formula to predict the size and
+  direction of the bias, and to find when leaving a variable out causes
+  no bias at all.
+
+# Part 1 — Homework presentations
+
+There is no separate written submission for Part 1.
+
+## Get ready to code
+
+Find your repo beginning with `lab-09` in the
+[statistical-history organization](https://github.com/statistical-history).
+Clone it in RStudio using **File → New Project → Version Control → Git**
+and its SSH address. If you have already cloned it, open that project
+and **Pull**.
+
+Open `lab-09.qmd`, enter your name, and render once. There is no `data/`
+folder today: every data set is one you simulate. The practice chunks are
+in that document, not on this page. In skeletons, replace each `___` and
+uncomment those code lines. Where a chunk has only a `YOUR CODE HERE`
+comment, write your own code below it and leave the comment as a comment.
+Change `#| eval: false` to `#| eval: true` when a chunk is ready. Keep all
+code and output visible. Answers can be short.
+
+**Keep the `set.seed()` lines exactly as written** and draw your random
+numbers in the order the skeleton shows. Then your numbers will match
+your classmates' and the key, which makes it easy to check your work.
+
+# Part 2 — Random numbers on demand
+
+## `rnorm()`: draws from a normal curve
+
+`rnorm(n, mean, sd)` draws `n` independent numbers **r**andoly from a **norm**al
+distribution with the mean and standard deviation you give. (You met `rnorm()` briefly in HW 06.) With no `mean` or `sd`, R uses mean 0 and standard deviation 1.
+
+```{r}
+#| label: demo-rnorm
+#| eval: true
+rnorm(5)
+rnorm(5, mean = 10, sd = 2)
+```
+
+Your numbers will differ from these, and they will change every time you
+run the chunk. That is what random means.
+
+## `runif()`: every value in a range equally likely
+
+`runif(n, min, max)` draws `n` numbers that are equally likely  to land
+anywhere between `min` and `max`. The name is short for *r*andom
+*unif*orm. A histogram of many uniform draws is flat rather than
+bell-shaped.
+
+```{r}
+#| label: demo-runif
+#| eval: true
+runif(5, min = 0, max = 4)
+```
+
+For a uniform distribution from 0 to 4, the long-run mean is the midpoint,
+$\frac{4+0}{2}=2$, and the standard deviation is $\sqrt\frac{(4-0)^2}{12} = 4/\sqrt{12} \approx 1.15$. For
+`rnorm(n, mean = 0, sd = 0.8)`, the long-run mean and standard deviation
+are the two numbers you typed: 0 and 0.8.
+
+## `set.seed()`: the same random numbers again
+
+You used `set.seed()` with `sample()` in Lab 03. It works the same way
+here: it fixes the starting point of R's random number generator, so the
+draws that follow are the same every time you run the code, on any
+computer. Every draw after it moves the generator along, so a second draw
+without a new `set.seed()` gives new numbers.
+
+```{r}
+#| label: demo-seed
+#| eval: true
+set.seed(2026)
+rnorm(3)
+set.seed(2026)
+rnorm(3)   # same three numbers: we reset the seed
+rnorm(3)   # three new numbers: the generator moved on
+```
+
+## Build a data set from a rule
+
+To simulate data, decide on the rule first and then let R supply the
+noise. Below, the true rule is $y = 1 + 2x + \varepsilon$, where
+$\varepsilon$ is normal noise with standard deviation 1. `tibble()` builds
+its columns **in order**, so a later column can use an earlier one: `y`
+can be computed from the `x` column created just before it. (Base R's
+`data.frame()` cannot do this.)
+
+```{r}
+#| label: demo-simulate
+#| eval: true
+#| message: false
+library(tidyverse)
+set.seed(9)
+demo <- tibble(
+  x = runif(6, min = 0, max = 10),       # six x values between 0 and 10
+  y = 1 + 2 * x + rnorm(6, mean = 0, sd = 1)  # true rule + noise
+)
+demo
+coef(lm(y ~ x, data = demo))
+```
+
+The fitted intercept and slope are close to the true 1 and 2, but not
+equal, because the six noise values did not cancel exactly. Here we
+**know** the true slope is 2, so we can see how far off the estimate is.
+With real data we can never check that directly.
+
+**2.1** Set the seed to 119. Draw 1000 values from a uniform distribution
+from 0 to 4 and save them as `u`; then draw 1000 values from a normal
+distribution with mean 0 and standard deviation 0.8 and save them as `z`.
+Print the mean and standard deviation of each. How close are they to the
+long-run values (2 and 1.15 for `u`; 0 and 0.8 for `z`)?
+
+**2.2** Make a histogram of `u` and a histogram of `z` (in Lab 05 you used
+`geom_histogram()`; put each vector in a one-column tibble first). Describe
+each shape in a few words. Then calculate `mean(u < 1)`, the fraction of
+`u` below 1. What fraction would you expect, and why?
+
+# Part 3 — The lecture's example
+
+In lecture we looked at three variables built like this:
+
+$$
+\begin{aligned}
+X_1 &\sim \text{Uniform}(0, 4), \\
+X_2 &= X_1^2 + U, \qquad U \sim \text{Normal}(0,\ \text{sd} = 0.8), \\
+Y &= 4X_1 - X_2 + \varepsilon, \qquad \varepsilon \sim \text{Normal}(0,\ \text{sd} = 0.15).
+\end{aligned}
+$$
+
+So $Y$ is **exactly linear** in $X_1$ and $X_2$ together, with true
+coefficients $4$ and $-1$ and intercept 0. But $X_2$ depends on $X_1$
+through a square, and only $X_1$, $X_2$, and $Y$ are observed. Someone
+handed this data set would have three columns. They would never see $U$
+or $\varepsilon$.
+
+Each line of the model becomes one column of a tibble:
+
+| Math | R, inside `tibble()` |
+|---|---|
+| $X_1 \sim \text{Uniform}(0, 4)$ | `x1 = runif(n, min = 0, max = 4)` |
+| $X_2 = X_1^2 + U$ | `x2 = x1^2 + rnorm(n, mean = 0, sd = 0.8)` |
+| $Y = 4X_1 - X_2 + \varepsilon$ | `y = 4 * x1 - x2 + rnorm(n, mean = 0, sd = 0.15)` |
+
+Each `rnorm()` draws fresh noise, one value per row. The noise is used to
+build the column, but it is not saved as a column of its own, which
+matches the setting: we observe $X_2$, not $U$.
+
+**3.1** Set the seed to 25 and simulate `n = 200` rows of `x1`, `x2`, and
+`y` in a tibble called `yule`, building the columns in the order `x1`, `x2`, `y`. Print the
+first six rows. Which symbols in the model have no column in `yule`?
+
+**3.2** Make two scatterplots: `y` against `x1`, and `y` against `x2`.
+Describe each shape. Would a single straight line describe either plot
+well?
+
+**3.3** Fit three models: `y ~ x1`, `y ~ x2`, and `y ~ x1 + x2`, and
+print the coefficients of each. Which model recovers the true
+coefficients 4 and −1? In the model with both predictors, what does the
+`x1` coefficient say happens to predicted `y` when `x1` goes up by 1?
+Compare that with the slope from `y ~ x1` alone.
+
+## Observed against predicted
+
+A scatterplot of `y` against one predictor cannot show a rule that uses
+two predictors at once. A plot that works for any number of predictors
+puts each row's **predicted** `y` across and its **observed** `y` up. If
+the model's predictions are right, every point lands on the line
+$y = x$, where predicted equals observed; noise scatters the points a
+little above and below it. A straight-line pattern along $y = x$ means the
+rule's linear combination of predictors matches the data.
+
+In your document, the skeleton adds each model's predictions for the
+fitting rows to `yule` with `fitted()` (Lab 07), then draws one plot per
+model. `xlim(-2.5, 6.5)` gives every plot the same x-axis, so the three
+models can be compared directly: without it, R would zoom each plot in on
+its own range of predictions.
+
+**3.4** For each of the three models, plot observed `y` against
+predicted `y`, with the line $y = x$ in red (as in Lab 05). Give all three
+plots the same x-axis. For which model do the points lie along the
+red line? What do the predictions from the two one-predictor models look
+like, and why?
+
+# Part 4 — Omitted variable bias
+
+## One true rule, three settings
+
+Now the true rule is
+
+$$
+Y = 1 + 2X_1 + \beta_2 X_2 + \varepsilon, \qquad \varepsilon \sim \text{Normal}(0, 1),
+$$
+
+so we **know** $\beta_1 = 2$. The question is how good an estimate of
+$\beta_1$ we get when we fit `y ~ x1 + x2`, and when we leave $X_2$ out
+and fit `y ~ x1` alone. We will change two things: how strongly `x2`
+follows `x1`, and whether `x2` matters for `y` at all.
+
+| Setting | How $X_2$ is made | Correlation of $X_1$ and $X_2$ | $\beta_2$ | `make_data()` arguments |
+|---|---|---|---|---|
+| Uncorrelated | `x2 = rnorm(n)`, no connection to `x1` | about 0 | 3 | `link = 0, x2_sd = 1, b2 = 3` |
+| Correlated | `x2 = 0.9 * x1 + rnorm(n, sd = 0.3)` | about 0.95 | 3 | `link = 0.9, x2_sd = 0.3, b2 = 3` |
+| Correlated, `x2` does not matter | as in Correlated | about 0.95 | 0 | `link = 0.9, x2_sd = 0.3, b2 = 0` |
+
+The function below simulates one data set from this rule. `link` sets how
+strongly `x2` follows `x1`, `x2_sd` sets how much extra noise `x2` has of
+its own, and `b2` is the true coefficient $\beta_2$ on `x2`. Your document
+already contains it. Run its chunk before Part 4. With 1000 rows, one data
+set gives estimates close to their long-run averages, so a single
+simulation is enough to see a bias.
+
+```{r}
+#| label: make-data
+#| eval: true
+make_data <- function(n, link, x2_sd, b2) {
+  x1 <- rnorm(n, mean = 0, sd = 1)
+  x2 <- link * x1 + rnorm(n, mean = 0, sd = x2_sd)
+  y <- 1 + 2 * x1 + b2 * x2 + rnorm(n, mean = 0, sd = 1)
+  tibble(x1, x2, y)
+}
+```
+
+Here is one small data set from the correlated setting. `cor(x, y)`
+computes the correlation coefficient from lecture.
+
+```{r}
+#| label: demo-make-data
+#| eval: true
+set.seed(3)
+small <- make_data(n = 5, link = 0.9, x2_sd = 0.3, b2 = 3)
+small
+cor(small$x1, small$x2)
+```
+
+## The lecture's formula
+
+In lecture we fit the short model $Y = \tilde\alpha + \tilde\beta X$ when
+the truth is $Y = \alpha + \beta X + \gamma Z + \varepsilon$, and found
+
+$$
+E[\hat{\tilde\beta}] = \beta + \gamma \times (\text{slope from regressing } Z \text{ on } X).
+$$
+
+In today's notation, with $X = X_1$ and $Z = X_2$: the slope on `x1`
+without `x2` is, on average,
+
+$$
+\beta_1 + \beta_2 \times (\text{slope of } X_2 \text{ on } X_1).
+$$
+
+The slope of $X_2$ on $X_1$ is what `coef(lm(x2 ~ x1, data = ...))["x1"]`
+estimates. Its true value is the `link`: 0 in the uncorrelated setting and
+0.9 in the two correlated ones.
+
+## The same five steps for each setting
+
+For each of 4.1–4.3, do these steps in order:
+
+1. **Predict first.** Before running anything, put the true $\beta_2$ and
+   the true slope of $X_2$ on $X_1$ into the formula to predict the slope
+   on `x1` when `x2` is left out. Write your prediction in your document.
+2. Simulate 1000 rows with the seed given, and print the correlation of
+   `x1` and `x2`.
+3. Fit `y ~ x1` and `y ~ x1 + x2`, and print the `x1` coefficient from each.
+4. Fit `lm(x2 ~ x1)` and plug its slope into the formula.
+5. Compare both estimates with the true $\beta_1 = 2$ and with your
+   prediction.
+
+**4.1** **Uncorrelated.** Set the seed to 1, simulate `sim_unc`
+(1000 rows, uncorrelated setting), and follow the five steps. Does
+leaving out `x2` bias the slope on `x1`?
+
+**4.2** **Correlated.** Set the seed to 2, simulate `sim_cor` (1000 rows,
+correlated setting), and follow the five steps. Is the slope without `x2`
+too big or too small, and by about how much? Does the formula account for
+the gap?
+
+**4.3** **Correlated, but `x2` does not matter.** Set the seed to 5,
+simulate `sim_zero` (1000 rows, `b2 = 0`), and follow the five steps.
+`x1` and `x2` are as strongly correlated as in 4.2. Is the slope without
+`x2` biased now?
+
+**4.4** **When do we not get bias?** Using 4.1–4.3 and the formula, name
+the two conditions under which leaving out `x2` does **not** bias the
+slope on `x1`. Now suppose `x2` had never been measured, so your data have
+only `x1` and `y`. Could you check either condition from those data? What
+would you have to argue before reporting the slope from `y ~ x1` as "the
+effect of `x1` with `x2` held fixed"?
+
+## If you finished early (not graded)
+
+- Predict the direction of the bias with `link = -0.9, x2_sd = 0.3, b2 = 3`,
+  then check it.
+- Do the same with `link = 0.9, x2_sd = 0.3, b2 = -3`.
+
+# Wrap-up
+
+## Render, commit, push, and submit
+
+Restart R and render. Check that every chunk in Parts 2–4 is enabled and
+that the code, output, figures, and short answers appear. Commit and push
+your `lab-09.qmd` and PDF to your own lab repo, then submit the PDF on
+Gradescope.
+
+**Exit ticket (on paper, with your name):**
+
+1. Muddiest point.
+2. One thing you learned today.
+3. One thing you are looking forward to over Thanksgiving break.
+
+# R reference
+
+| Task | Pattern |
+|---|---|
+| Normal draws | `rnorm(n, mean = 0, sd = 1)` |
+| Uniform draws | `runif(n, min = 0, max = 1)` |
+| Reproducible draws | `set.seed(119)` once, before the draws |
+| Simulate a data set | `tibble(x = runif(n, 0, 4), y = 2 * x + rnorm(n))` |
+| Fraction meeting a condition | `mean(u < 1)` |
+| Histogram of a vector | `ggplot(tibble(value = u), aes(x = value)) + geom_histogram(bins = 30)` |
+| Correlation | `cor(dat$x1, dat$x2)` |
+| One coefficient | `coef(lm(y ~ x1, data = dat))["x1"]` |
+| Predictions for the fitting rows | `fitted(fit)` |
+| Red line $y = x$ | `geom_abline(slope = 1, intercept = 0, color = "firebrick")` |
+| Same x-axis on several plots | `xlim(-2.5, 6.5)` |
+
+Use `?rnorm` and `?runif` in RStudio, or the official help pages for
+[`rnorm()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Normal.html)
+and
+[`runif()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Uniform.html).
